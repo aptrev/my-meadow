@@ -1,10 +1,21 @@
 import React, { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
+import { useNavigate } from "react-router-dom";
 
 const Onboarding = () => {
   const [location, setLocation] = useState("Indoor");
   const [dimensions, setDimensions] = useState("2 × 5 ft");
   const [template, setTemplate] = useState("Empty");
+
+  const navigate = useNavigate();
+
+  const handleSubmit = () => {
+    if (location === "Indoor") {
+      navigate("/home");
+    } else {
+      alert("Outdoor garden redirection not yet implemented!");
+    }
+  };
 
   return (
     <div className="container d-flex flex-column align-items-center py-4" style={{ backgroundColor: "#D3E3D2", minHeight: "100vh" }}>
@@ -53,7 +64,7 @@ const Onboarding = () => {
         </div>
       </div>
 
-      <button className="btn btn-success w-50">Create</button>
+      <button className="btn btn-success w-50" onClick={handleSubmit}>Create</button>
     </div>
   );
 };

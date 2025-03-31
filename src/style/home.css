@@ -1,0 +1,92 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f5f5f5;
+}
+
+.app {
+  max-width: 375px;
+  margin: auto;
+  padding: 10px;
+}
+
+.subtitle {
+  color: gray;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #295f3d;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.top-bar select {
+  padding: 5px;
+  border-radius: 4px;
+  border: none;
+  font-size: 14px;
+}
+
+.top-bar button {
+  background: none;
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.shelf {
+  margin-top: 20px;
+}
+
+.shelf-row {
+  height: 60px;
+  border-top: 8px solid #444;
+  margin-bottom: 20px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.plant {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.water-drop {
+  width: 16px;
+  margin-bottom: -4px;
+}
+
+.plant-img {
+  width: 40px;
+}
+
+.plant-info {
+  margin-top: 20px;
+  background: #cbe9d8;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.plant-info h2 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+.icons {
+  margin-top: 10px;
+  font-size: 20px;
+}
