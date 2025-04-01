@@ -1,5 +1,5 @@
 .plant-button {
-    filter: grayscale();
+    /* filter: grayscale(); */
 }
 
 .plant-button.active {

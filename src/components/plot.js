@@ -1,12 +1,20 @@
 import { Group, Circle, Arc, Ellipse, Line, Path, Rect, RegularPolygon, Ring, Star, Wedge, Text } from 'react-konva';
 import Colors from '../utilities/Colors'
 
-export default function Plot({ shape, shapeProps, plant, onDragEnd, onTransformEnd, plotRefs }) {
+export default function Plot({ shape, shapeProps, plant, plant_species, onDragEnd, plotRefs }) {
+
+    const getFill = () => {
+        console.log(plant);
+        const p = plant_species.find(p => { console.log(p); return p.id === plant;});
+        if (!p)
+            return 'white'
+        return p.color;
+    }
 
     const generatePlot = () => {
         const defaultProps = {
             id: shapeProps.id,
-            fill: 'white',
+            fill: getFill(),
             stroke: 'black',
             strokeWidth: 4,
             onDragEnd: (e) => onDragEnd(e),

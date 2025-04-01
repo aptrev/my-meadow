@@ -7,7 +7,7 @@ import GardenNavbar from '../components/GardenNavbar';
 import Sidebar from '../components/Sidebar';
 import Colors from '../utilities/Colors'
 
-import ToggleButton from 'react-bootstrap/ToggleButton';
+import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -152,8 +152,8 @@ export default function OutdoorEditPage() {
     const transformerRef = useRef();
     const plotRefs = useRef(new Map());
     const [plant, setPlant] = useState('');
-    const plantRef = useState(0);
-    const [selectedPlant, setSelectedPlant] = useState(0);
+    const plantRef = useRef('');
+    const species = plant_species;
 
     const loadSelectedGarden = () => {
         // const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
@@ -198,15 +198,7 @@ export default function OutdoorEditPage() {
         }
 
         loadSelectedGarden();
-
-        // Update stage size on window resize
-        updateSize();
-        window.addEventListener('resize', updateSize);
-
-        return () => {
-            window.removeEventListener('resize', updateSize);
-        };
-    });
+    }, []);
 
     // Update stage size on window resize
     useEffect(() => {
@@ -230,6 +222,28 @@ export default function OutdoorEditPage() {
             transformerRef.current.nodes([]);
         }
     }, [selectedIds]);
+
+    const handleAssign = (plant_id) => {
+        const nodes = transformerRef.current.nodes();
+        const newPlots = [...plots];
+
+        if (nodes.length > 0) {
+            nodes.forEach(node => {
+                const id = node.id();
+                const index = newPlots.findIndex(plot => plot.id === id);
+
+                if (index !== -1) {
+                    newPlots[index] = {
+                        ...newPlots[index],
+                        plant: plant_id,
+                    };
+                }
+            })
+        }
+
+        setPlots(newPlots);
+        saveHistory(newPlots);
+    }
 
     const handleDragStart = (src) => {
         setPlant(src);
@@ -446,14 +460,12 @@ export default function OutdoorEditPage() {
                 </div>
                 <ButtonGroup className='d-flex flex-row justify-content-center g-2' style={{ width: '100%', marginBottom: '10px' }}>
                     {plant_species.map((plant, index) =>
-                        <ToggleButton
-                            className={(selectedPlant === index ? 'active ' : '') + 'plant-button d-flex flex-column justify-content-center align-items-center flex-fill'}
+                        <Button
+                            className='plant-button d-flex flex-column justify-content-center align-items-center flex-fill'
                             style={{ backgroundColor: plant.color, height: '50px' }}
-                            type="radio"
+                            type="input"
                             id={"plant-" + index}
-                            value={index}
-                            checked={selectedPlant === index}
-                            onChange={(e) => {console.log(selectedPlant + " " + e.currentTarget.value); setSelectedPlant(e.currentTarget.value);}}
+                            onClick={(e) => handleAssign(plant.id)}
                         >
                             <img
                                 key={plant.id}
@@ -464,7 +476,7 @@ export default function OutdoorEditPage() {
 
                                 style={{ height: '100%' }}
                             />
-                        </ToggleButton>
+                        </Button>
                     )}
                 </ButtonGroup>
                 <Stage
@@ -477,12 +489,13 @@ export default function OutdoorEditPage() {
                     onMousemove={handleMouseMove}
                     onMouseup={handleMouseUp}
                     onClick={handleStageClick}
+                    onTap={handleStageClick}
                 >
                     <Layer>
                         {plots.map((plot) => {
                             const { shape, plant, ...restProps } = plot;
                             return (
-                                <Plot shape={shape} shapeProps={restProps} plant={garden.plants[plant]} onDragEnd={handleDragEnd} plotRefs={plotRefs} />
+                                <Plot shape={shape} shapeProps={restProps} plant={plant} plant_species={species} onDragEnd={handleDragEnd} plotRefs={plotRefs} />
                             )
                         })}
 
