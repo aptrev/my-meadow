@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../style/home.css';
 import shelf from '../images/shelf.png'; 
 
 const Home = () => {
+  const [template, setTemplate] = useState(null);
+
+  useEffect(() => {
+    const selectedTemplate = localStorage.getItem("selectedTemplate");
+    setTemplate(selectedTemplate);
+  }, []);
+
   return (
     <div className="app">
       {/* Header */}
@@ -15,17 +22,18 @@ const Home = () => {
         </div>
       </header>
 
-      {/* Shelf image with plant on it */}
-      <div className="shelf-wrapper">
-        <img src={shelf} alt="Shelf" className="shelf-img" />
-        <div className="plant-container">
-          {/* TODO: place plant */}
+      {/* Shelf or Empty */}
+      {template === "Shelf" && (
+        <div className="shelf-wrapper">
+          <img src={shelf} alt="Shelf" className="shelf-img" />
+          <div className="plant-container">
+            {/* TODO: place plant */}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Info Card */}
+      {/* Info Card (always shown) */}
       <div className="plant-info">
-        {/* TODO: replace to info of plant that is placed */}
         <h2>🌺 Begonia</h2>
         <p>
           <strong>Begonia 'Art Hodes'</strong> is an amazing flowering plant species
