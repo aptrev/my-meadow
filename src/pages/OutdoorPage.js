@@ -1,41 +1,47 @@
 import React, { useEffect, useState } from 'react';
+import GardenNavbar from '../components/GardenNavbar';
+import Sidebar from '../components/Sidebar';
 import cobblestoneImage from '../images/cobblestone.png';
 import '../style/home.css';
 
 const Outdoor = () => {
-  const [template, setTemplate] = useState(null);
+  const [garden, setGarden] = useState(null);
+  const [showSidebar, setShowSidebar] = useState(false);
+
+  const loadSelectedGarden = () => {
+    const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
+    const selectedId = JSON.parse(localStorage.getItem("selectedGardenId"));
+    const selected = gardens.find(g => g.id === selectedId);
+    setGarden(selected);
+  };
 
   useEffect(() => {
-    const selectedTemplate = localStorage.getItem("selectedTemplate");
-    setTemplate(selectedTemplate);
+    loadSelectedGarden();
   }, []);
+
+  if (!garden) return <p>Loading garden...</p>;
 
   return (
     <div className="app">
-      {/* Header */}
-      <header>
-        <div className="top-bar">
-          <select>
-            <option>My Garden 1</option>
-          </select>
-          <button id="edit-btn" onClick={() => alert('Edit feature coming soon!')}>Edit</button>
-        </div>
-      </header>
+      <GardenNavbar onGardenChange={loadSelectedGarden} onSidebarToggle={() => setShowSidebar(true)} />
+      <Sidebar show={showSidebar} onClose={() => setShowSidebar(false)} />
 
-      {/* Template view */}
-      {template === "Cobblestone" && (
+      {garden.template === "Cobblestone" && (
         <div className="template-wrapper">
           <img src={cobblestoneImage} alt="Cobblestone Layout" className="template-img" />
+          <div className="plant-container">
+            {garden.plants?.map((plant, idx) => (
+              <div key={idx} style={{ position: 'absolute', left: plant.x, top: plant.y }}>
+                🌿
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Plant info stays the same */}
       <div className="plant-info">
         <h2>🌿 Lavender</h2>
-        <p>
-          <strong>Lavandula angustifolia</strong> is a fragrant perennial herb, loved for its soothing scent and pollinator-friendly blooms.
-          Great for any outdoor garden!
-        </p>
+        <p><strong>Lavandula angustifolia</strong> is a fragrant perennial herb, loved for its scent and pollinator-friendly blooms.</p>
         <div className="icons">
           <span>💧</span>
           <span>☀️</span>
