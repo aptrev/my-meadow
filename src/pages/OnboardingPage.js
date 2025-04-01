@@ -12,10 +12,21 @@ const Onboarding = () => {
   const navigate = useNavigate();
 
   const handleSubmit = () => {
-    localStorage.setItem("selectedTemplate", template);
-    localStorage.setItem("selectedLocation", location);
-    localStorage.setItem("selectedDimensions", dimensions);
-
+    const newGarden = {
+      id: Date.now(),
+      name: `My Garden ${Date.now() % 10000}`,
+      location,
+      dimensions,
+      template,
+      plants: [] // start empty
+    };
+  
+    const existingGardens = JSON.parse(localStorage.getItem("gardens")) || [];
+    const updatedGardens = [...existingGardens, newGarden];
+  
+    localStorage.setItem("gardens", JSON.stringify(updatedGardens));
+    localStorage.setItem("selectedGardenId", newGarden.id);
+  
     if (location === "Indoor") {
       navigate("/indoor");
     } else {

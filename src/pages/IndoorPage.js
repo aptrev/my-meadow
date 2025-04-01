@@ -1,45 +1,47 @@
 import React, { useEffect, useState } from 'react';
+import GardenNavbar from '../components/GardenNavbar';
+import Sidebar from '../components/Sidebar';
+import shelf from '../images/shelf.png';
 import '../style/home.css';
-import shelf from '../images/shelf.png'; 
 
 const Indoor = () => {
-  const [template, setTemplate] = useState(null);
+  const [garden, setGarden] = useState(null);
+  const [showSidebar, setShowSidebar] = useState(false);
+
+  const loadSelectedGarden = () => {
+    const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
+    const selectedId = JSON.parse(localStorage.getItem("selectedGardenId"));
+    const selected = gardens.find(g => g.id === selectedId);
+    setGarden(selected);
+  };
 
   useEffect(() => {
-    const selectedTemplate = localStorage.getItem("selectedTemplate");
-    setTemplate(selectedTemplate);
+    loadSelectedGarden();
   }, []);
+
+  if (!garden) return <p>Loading garden...</p>;
 
   return (
     <div className="app">
-      {/* Header */}
-      <header>
-        <div className="top-bar">
-          <select>
-            <option>My Garden 1</option>
-          </select>
-          <button id="edit-btn" onClick={() => alert('Edit feature coming soon!')}>Edit</button>
-        </div>
-      </header>
+      <GardenNavbar onGardenChange={loadSelectedGarden} onSidebarToggle={() => setShowSidebar(true)} />
+      <Sidebar show={showSidebar} onClose={() => setShowSidebar(false)} />
 
-      {/* Shelf or Empty */}
-      {template === "Shelf" && (
+      {garden.template === "Shelf" && (
         <div className="shelf-wrapper">
           <img src={shelf} alt="Shelf" className="shelf-img" />
           <div className="plant-container">
-            {/* TODO: place plant */}
+            {garden.plants?.map((plant, idx) => (
+              <div key={idx} style={{ position: 'absolute', left: plant.x, top: plant.y }}>
+                🪴
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      {/* Info Card (always shown) */}
       <div className="plant-info">
         <h2>🌺 Begonia</h2>
-        <p>
-          <strong>Begonia 'Art Hodes'</strong> is an amazing flowering plant species
-          with large and beautiful flowers with orange and yellow streaked petals.
-          It's an ideal choice for any garden due to its resilience and ease of care.
-        </p>
+        <p><strong>Begonia 'Art Hodes'</strong> is a resilient, easy-care flowering plant perfect for indoor gardens.</p>
         <div className="icons">
           <span>💧</span>
           <span>☀️</span>
