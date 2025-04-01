@@ -23,10 +23,6 @@ const Outdoor = () => {
 
   const navigate = useNavigate();
 
-  const handleEdit = () => {
-    navigate("/outdoor/edit");
-  }
-
   if (!garden) return <p>Loading garden...</p>;
 
   return (
@@ -54,10 +50,6 @@ const Outdoor = () => {
           <span>💧</span>
           <span>☀️</span>
         </div>
-      </div>
-
-      <div className='d-flex justify-content-center m-2'>
-        <Button onClick={handleEdit}>Edit</Button>
       </div>
     </div>
   );

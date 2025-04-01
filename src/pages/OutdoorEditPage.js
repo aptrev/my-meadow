@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Stage, Layer, Rect, Transformer, Image } from 'react-konva';
 import { useImage } from 'react-konva-utils';
-import Plot from '../components/Plot'
+import Plot from '../components/plot'
 import GardenNavbar from '../components/GardenNavbar';
 import Sidebar from '../components/Sidebar';
 import Colors from '../utilities/Colors'
