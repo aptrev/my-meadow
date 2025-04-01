@@ -135,7 +135,7 @@ const plant_species = [
 ]
 
 export default function OutdoorEditPage() {
-    const [garden, setGarden] = useState(init_garden);
+    const [garden, setGarden] = useState(null);
     const [showSidebar, setShowSidebar] = useState(false);
     const [plots, setPlots] = useState(init_garden.plots);
     const [history, setHistory] = useState([JSON.stringify(init_garden.plots)]);
@@ -155,21 +155,26 @@ export default function OutdoorEditPage() {
     const [plant, setPlant] = useState('');
     const plantRef = useRef('');
     const species = plant_species;
+    const [sceneWidth, setSceneWidth] = useState(0);
+    const [sceneHeight, setSceneHeight] = useState(0);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        loadSelectedGarden();
+    }, []);
+
     const loadSelectedGarden = () => {
-        // const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
-        // const selectedId = JSON.parse(localStorage.getItem("selectedGardenId"));
-        // const selected = gardens.find(g => g.id === selectedId);
-        // setGarden(selected);
+        const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
+        const selectedId = JSON.parse(localStorage.getItem("selectedGardenId"));
+        const selected = gardens.find(g => g.id === selectedId);
+        setGarden(selected);
+        setPlots(selected.plots);
     };
 
     // Responsive canvas
-    const sceneWidth = garden.stage.width;
-    const sceneHeight = garden.stage.height;
     const [stageSize, setStageSize] = useState({
-        width: sceneWidth,
-        height: sceneHeight,
+        width: 0,
+        height: 0,
         scale: 1
     });
     const containerRef = useRef(null);
@@ -193,14 +198,22 @@ export default function OutdoorEditPage() {
 
     useEffect(() => {
         // Add white paper background for stage.
-        if (containerRef.current) {
+        if (garden && containerRef.current) {
             const container = stageRef.current.container();
             container.style.backgroundColor = 'white';
             // container.style.width = '700px';
         }
-
-        loadSelectedGarden();
-    }, []);
+        if (garden) {
+            setSceneWidth(garden.stage.width);
+            setSceneHeight(garden.stage.height);
+            setStageSize({
+                width: garden.stage.width,
+                height: garden.stage.height,
+                scale: 1
+            })
+            garden.plants = plant_species;
+        }
+    }, [garden]);
 
     // Update stage size on window resize
     useEffect(() => {
@@ -452,6 +465,14 @@ export default function OutdoorEditPage() {
     };
 
     const handleSave = () => {
+        const newGarden = garden;
+        newGarden.plots = plots;
+        const existingGardens = JSON.parse(localStorage.getItem("gardens")) || [];
+        const selectedId = JSON.parse(localStorage.getItem("selectedGardenId"));
+        const updatedGardens = existingGardens.map((g) => {
+            return g.id === selectedId ? newGarden : g;
+        });
+        localStorage.setItem("gardens", JSON.stringify(updatedGardens));
         navigate("/outdoor/");
     }
 
@@ -459,76 +480,78 @@ export default function OutdoorEditPage() {
         <div className="app">
             <GardenNavbar onGardenChange={loadSelectedGarden} onSidebarToggle={() => setShowSidebar(true)} isEditing={true} onSave={handleSave} />
             <Sidebar show={showSidebar} onClose={() => setShowSidebar(false)} />
-            <div ref={containerRef} style={{ width: '100%', height: '100%', backgroundColor: Colors.lightGreen }}>
-                <div style={{ marginBottom: '10px' }}>
-                    <button onClick={handleUndo}>Undo</button>
-                    <button onClick={handleRedo}>Redo</button>
-                </div>
-                <ButtonGroup className='d-flex flex-row justify-content-center g-2' style={{ width: '100%', marginBottom: '10px' }}>
-                    {plant_species.map((plant, index) =>
-                        <Button
-                            className='plant-button d-flex flex-column justify-content-center align-items-center flex-fill'
-                            style={{ backgroundColor: plant.color, height: '50px' }}
-                            type="input"
-                            id={"plant-" + index}
-                            onClick={(e) => handleAssign(plant.id)}
-                        >
-                            <img
-                                key={plant.id}
-                                alt={plant.name}
-                                src={require('../images/' + plant.src)}
-                                draggable="true"
-                                onDragStart={(e) => { plantRef.current = e.target.src; }}
+            {garden &&
+                <div ref={containerRef} style={{ width: '100%', height: '100%', backgroundColor: Colors.lightGreen }}>
+                    <div style={{ marginBottom: '10px' }}>
+                        <button onClick={handleUndo}>Undo</button>
+                        <button onClick={handleRedo}>Redo</button>
+                    </div>
+                    <ButtonGroup className='d-flex flex-row justify-content-center g-2' style={{ width: '100%', marginBottom: '10px' }}>
+                        {garden.plants.map((plant, index) =>
+                            <Button
+                                className='plant-button d-flex flex-column justify-content-center align-items-center flex-fill'
+                                style={{ backgroundColor: plant.color, height: '50px' }}
+                                type="input"
+                                id={"plant-" + index}
+                                onClick={(e) => handleAssign(plant.id)}
+                            >
+                                <img
+                                    key={plant.id}
+                                    alt={plant.name}
+                                    src={require('../images/' + plant.src)}
+                                    draggable="true"
+                                    onDragStart={(e) => { plantRef.current = e.target.src; }}
 
-                                style={{ height: '100%' }}
-                            />
-                        </Button>
-                    )}
-                </ButtonGroup>
-                <Stage
-                    width={stageSize.width}
-                    height={stageSize.height}
-                    scaleX={stageSize.scale}
-                    scaleY={stageSize.scale}
-                    ref={stageRef}
-                    onMouseDown={handleMouseDown}
-                    onMousemove={handleMouseMove}
-                    onMouseup={handleMouseUp}
-                    onClick={handleStageClick}
-                    onTap={handleStageClick}
-                >
-                    <Layer>
-                        {plots.map((plot) => {
-                            const { shape, plant, ...restProps } = plot;
-                            return (
-                                <Plot shape={shape} shapeProps={restProps} plant={plant} plant_species={species} onDragEnd={handleDragEnd} plotRefs={plotRefs} />
-                            )
-                        })}
-
-                        <Transformer
-                            ref={transformerRef}
-                            boundBoxFunc={(oldBox, newBox) => {
-                                // Limit resize
-                                if (newBox.width < 5 || newBox.height < 5) {
-                                    return oldBox;
-                                }
-                                return newBox;
-                            }}
-                            onTransformEnd={handleTransformEnd}
-                        />
-
-                        {selectionRectangle.visible && (
-                            <Rect
-                                x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
-                                y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
-                                width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
-                                height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
-                                fill="rgba(0,0,255,0.5)"
-                            />
+                                    style={{ height: '100%' }}
+                                />
+                            </Button>
                         )}
-                    </Layer>
-                </Stage>
-            </div>
+                    </ButtonGroup>
+                    <Stage
+                        width={stageSize.width}
+                        height={stageSize.height}
+                        scaleX={stageSize.scale}
+                        scaleY={stageSize.scale}
+                        ref={stageRef}
+                        onMouseDown={handleMouseDown}
+                        onMousemove={handleMouseMove}
+                        onMouseup={handleMouseUp}
+                        onClick={handleStageClick}
+                        onTap={handleStageClick}
+                    >
+                        <Layer>
+                            {plots.map((plot) => {
+                                const { shape, plant, ...restProps } = plot;
+                                return (
+                                    <Plot shape={shape} shapeProps={restProps} plant={plant} plant_species={species} onDragEnd={handleDragEnd} plotRefs={plotRefs} />
+                                )
+                            })}
+
+                            <Transformer
+                                ref={transformerRef}
+                                boundBoxFunc={(oldBox, newBox) => {
+                                    // Limit resize
+                                    if (newBox.width < 5 || newBox.height < 5) {
+                                        return oldBox;
+                                    }
+                                    return newBox;
+                                }}
+                                onTransformEnd={handleTransformEnd}
+                            />
+
+                            {selectionRectangle.visible && (
+                                <Rect
+                                    x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
+                                    y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
+                                    width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
+                                    height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
+                                    fill="rgba(0,0,255,0.5)"
+                                />
+                            )}
+                        </Layer>
+                    </Stage>
+                </div>
+            }
         </div>
     )
 }

@@ -4,6 +4,73 @@ import { useNavigate } from "react-router-dom";
 import shelfImage from '../images/shelf.png';
 import cobblestoneImage from '../images/cobblestone.png';
 
+const templates = [
+  {
+    plots: [
+      {
+        id: 'plot-0',
+        shape: 'circle',
+        name: 'plot',
+        plant: 0,
+        x: 100,
+        y: 100,
+        radius: 50,
+        width: 100,
+        height: 100,
+        draggable: true
+      },
+      {
+        id: 'plot-1',
+        shape: 'circle',
+        name: 'plot',
+        plant: 0,
+        x: 200,
+        y: 200,
+        radius: 50,
+        width: 100,
+        height: 100,
+        draggable: true
+      },
+      {
+        id: 'plot-2',
+        shape: 'circle',
+        name: 'plot',
+        plant: 0,
+        x: 300,
+        y: 300,
+        radius: 50,
+        width: 100,
+        height: 100,
+        draggable: true
+      },
+      {
+        id: 'plot-3',
+        shape: 'circle',
+        name: 'plot',
+        plant: 0,
+        x: 400,
+        y: 400,
+        radius: 50,
+        width: 100,
+        height: 100,
+        draggable: true
+      },
+      {
+        id: 'plot-4',
+        shape: 'circle',
+        name: 'plot',
+        plant: 0,
+        x: 500,
+        y: 500,
+        radius: 50,
+        width: 100,
+        height: 100,
+        draggable: true
+      }
+    ],
+  }
+]
+
 const Onboarding = () => {
   const [location, setLocation] = useState("Indoor");
   const [dimensions, setDimensions] = useState("2 × 5 ft");
@@ -12,21 +79,31 @@ const Onboarding = () => {
   const navigate = useNavigate();
 
   const handleSubmit = () => {
+    const gardenProps = {
+      width: 700,
+      height: 700,
+      dimensions_units: 'ft',
+      stage: {
+        width: 700,
+        height: 700
+      },
+    }
+
     const newGarden = {
+      ...gardenProps,
       id: Date.now(),
       name: `My Garden ${Date.now() % 10000}`,
       location,
-      dimensions,
-      template,
-      plants: [] // start empty
+      plots: templates[0].plots,
+      plants: [], // start empty
     };
-  
+
     const existingGardens = JSON.parse(localStorage.getItem("gardens")) || [];
     const updatedGardens = [...existingGardens, newGarden];
-  
+
     localStorage.setItem("gardens", JSON.stringify(updatedGardens));
     localStorage.setItem("selectedGardenId", newGarden.id);
-  
+
     if (location === "Indoor") {
       navigate("/indoor");
     } else {

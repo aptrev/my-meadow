@@ -4,8 +4,7 @@ import Colors from '../utilities/Colors'
 export default function Plot({ shape, shapeProps, plant, plant_species, onDragEnd, plotRefs }) {
 
     const getFill = () => {
-        console.log(plant);
-        const p = plant_species.find(p => { console.log(p); return p.id === plant;});
+        const p = plant_species.find(p => p.id === plant);
         if (!p)
             return 'white'
         return p.color;
