@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import cobblestoneImage from '../images/cobblestone.png';
 import '../style/home.css';
-import shelf from '../images/shelf.png'; 
 
-const Home = () => {
+const Outdoor = () => {
   const [template, setTemplate] = useState(null);
 
   useEffect(() => {
@@ -22,23 +22,19 @@ const Home = () => {
         </div>
       </header>
 
-      {/* Shelf or Empty */}
-      {template === "Shelf" && (
-        <div className="shelf-wrapper">
-          <img src={shelf} alt="Shelf" className="shelf-img" />
-          <div className="plant-container">
-            {/* TODO: place plant */}
-          </div>
+      {/* Template view */}
+      {template === "Cobblestone" && (
+        <div className="template-wrapper">
+          <img src={cobblestoneImage} alt="Cobblestone Layout" className="template-img" />
         </div>
       )}
 
-      {/* Info Card (always shown) */}
+      {/* Plant info stays the same */}
       <div className="plant-info">
-        <h2>🌺 Begonia</h2>
+        <h2>🌿 Lavender</h2>
         <p>
-          <strong>Begonia 'Art Hodes'</strong> is an amazing flowering plant species
-          with large and beautiful flowers with orange and yellow streaked petals.
-          It's an ideal choice for any garden due to its resilience and ease of care.
+          <strong>Lavandula angustifolia</strong> is a fragrant perennial herb, loved for its soothing scent and pollinator-friendly blooms.
+          Great for any outdoor garden!
         </p>
         <div className="icons">
           <span>💧</span>
@@ -49,4 +45,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Outdoor;

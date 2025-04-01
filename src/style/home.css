@@ -124,3 +124,17 @@ body {
   margin-top: 0.625rem;
   font-size: 1.25rem;
 }
+
+.template-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.template-img {
+  width: 90%;
+  max-width: 30rem;
+  height: auto;
+  display: block;
+}
