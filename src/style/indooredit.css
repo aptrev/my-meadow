@@ -1,0 +1,25 @@
+.toolbar {
+    margin-top: 10px;
+    background-color: #cbded3;
+    display: flex;            /* Enable flexbox layout */
+    justify-content: space-evenly;  /* Distribute buttons evenly with space between them */
+    align-items: center;      /* Center buttons vertically if needed */
+    width: 100%;
+}
+
+.toolbar-btn{
+    border: none;
+    background: none;
+    padding: 0;
+}
+
+.indooredit {
+    max-width: 375px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    background-color: darkgrey;
+  }

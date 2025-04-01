@@ -4,6 +4,7 @@ import Onboarding from "./pages/OnboardingPage";
 import Indoor from "./pages/IndoorPage";
 import Outdoor from "./pages/OutdoorPage";
 import CalendarPage from "./pages/CalendarPage"
+import IndoorEdit from "./pages/IndoorEditPage";
 
 function App() {
   return (
@@ -12,7 +13,8 @@ function App() {
         <Route path="/" element={<Onboarding />} />
         <Route path="/indoor" element={<Indoor />} />
         <Route path="/outdoor" element={<Outdoor />} />
-        <Route path="/calendar" element={<CalendarPage />} /> {/* Add this route */}
+        <Route path="/calendar" element={<CalendarPage />} />
+        <Route path="/indoor/edit" element={<IndoorEdit />} />
       </Routes>
     </Router>
   );

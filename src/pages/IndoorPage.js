@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import '../style/home.css';
-import shelf from '../images/shelf.png'; 
+import shelf from '../images/shelf.png';
+import { useNavigate } from "react-router-dom";
 
 const Indoor = () => {
   const [template, setTemplate] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const selectedTemplate = localStorage.getItem("selectedTemplate");
@@ -18,7 +20,9 @@ const Indoor = () => {
           <select>
             <option>My Garden 1</option>
           </select>
-          <button id="edit-btn" onClick={() => alert('Edit feature coming soon!')}>Edit</button>
+          <button id="edit-btn" onClick={() => {
+              navigate("/indoor/edit");
+            }}>Edit</button>
         </div>
       </header>
 
