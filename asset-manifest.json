@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/my-meadow/static/css/main.028e2289.css",
-    "main.js": "/my-meadow/static/js/main.75b32247.js",
+    "main.js": "/my-meadow/static/js/main.41e16de5.js",
     "static/js/453.b7a6a364.chunk.js": "/my-meadow/static/js/453.b7a6a364.chunk.js",
     "static/media/begonia.png": "/my-meadow/static/media/begonia.04e902cf29cfa213d82b.png",
     "static/media/marigold.png": "/my-meadow/static/media/marigold.6a55b93183a57ec2a3a4.png",
@@ -15,11 +15,11 @@
     "static/media/adaptive-icon.png": "/my-meadow/static/media/adaptive-icon.e4e802086f8059b5b5ba.png",
     "index.html": "/my-meadow/index.html",
     "main.028e2289.css.map": "/my-meadow/static/css/main.028e2289.css.map",
-    "main.75b32247.js.map": "/my-meadow/static/js/main.75b32247.js.map",
+    "main.41e16de5.js.map": "/my-meadow/static/js/main.41e16de5.js.map",
     "453.b7a6a364.chunk.js.map": "/my-meadow/static/js/453.b7a6a364.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.028e2289.css",
-    "static/js/main.75b32247.js"
+    "static/js/main.41e16de5.js"
   ]
 }
