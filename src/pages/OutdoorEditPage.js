@@ -2,10 +2,11 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Stage, Layer, Rect, Transformer, Image } from 'react-konva';
 import { useImage } from 'react-konva-utils';
-import Plot from '../components/plot'
+import Plot from '../components/Plot'
 import GardenNavbar from '../components/GardenNavbar';
 import Sidebar from '../components/Sidebar';
 import Colors from '../utilities/Colors'
+import { useNavigate } from "react-router-dom";
 
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -154,6 +155,7 @@ export default function OutdoorEditPage() {
     const [plant, setPlant] = useState('');
     const plantRef = useRef('');
     const species = plant_species;
+    const navigate = useNavigate();
 
     const loadSelectedGarden = () => {
         // const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
@@ -449,9 +451,13 @@ export default function OutdoorEditPage() {
         setPlots(JSON.parse(history[newStep]));
     };
 
+    const handleSave = () => {
+        navigate("/outdoor/");
+    }
+
     return (
         <div className="app">
-            <GardenNavbar onGardenChange={loadSelectedGarden} onSidebarToggle={() => setShowSidebar(true)} />
+            <GardenNavbar onGardenChange={loadSelectedGarden} onSidebarToggle={() => setShowSidebar(true)} isEditing={true} onSave={handleSave} />
             <Sidebar show={showSidebar} onClose={() => setShowSidebar(false)} />
             <div ref={containerRef} style={{ width: '100%', height: '100%', backgroundColor: Colors.lightGreen }}>
                 <div style={{ marginBottom: '10px' }}>

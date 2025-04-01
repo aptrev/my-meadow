@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Navbar, Dropdown, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-const GardenNavbar = ({ onGardenChange, onSidebarToggle }) => {
+const GardenNavbar = ({ onGardenChange, onSidebarToggle, isEditing, onSave }) => {
   const [gardens, setGardens] = useState([]);
   const [selectedGardenId, setSelectedGardenId] = useState(null);
   const navigate = useNavigate();
@@ -64,8 +64,8 @@ const GardenNavbar = ({ onGardenChange, onSidebarToggle }) => {
 
       {/* Right-side buttons: Edit + Notifications */}
       <div className="d-flex align-items-center gap-2">
-        <Button variant="light" aria-label="Notifications">🔔</Button>
-        <Button variant="light" onClick={handleEdit}>Edit</Button>
+        {/* <Button variant="light" aria-label="Notifications">🔔</Button> */}
+        <Button variant="light" onClick={isEditing ? onSave : handleEdit}>{(isEditing) ? 'Save' : 'Edit'}</Button>
       </div>
     </Navbar>
   );
