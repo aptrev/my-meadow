@@ -1,9 +1,17 @@
 // Uses tutorials from https://konvajs.org/docs/.
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Stage, Layer, Rect, Transformer, Image } from 'react-konva';
 import { useImage } from 'react-konva-utils';
-import Plot from '../components/plot'
+import Plot from '../components/Plot'
+import GardenNavbar from '../components/GardenNavbar';
+import Sidebar from '../components/Sidebar';
+import Colors from '../utilities/Colors'
+
+import ToggleButton from 'react-bootstrap/ToggleButton';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import 'bootstrap/dist/css/bootstrap.css';
+
+import '../style/outdooredit.css';
 
 const Konva = window.Konva;
 
@@ -103,19 +111,19 @@ const plant_species = [
         id: 1473,
         name: "Marigold",
         src: 'marigold.png',
-            color: 'orange'
+        color: 'orange'
     },
     {
         id: 324,
         name: 'Magnolia',
         src: 'magnolia.png',
-            color: 'beige'
+        color: 'beige'
     },
     {
         id: 1194,
         name: 'Begonia',
         src: 'begonia.png',
-            color: 'pink'
+        color: 'pink'
     },
     {
         id: 6791,
@@ -125,22 +133,9 @@ const plant_species = [
     }
 ]
 
-const URLImage = ({ image }) => {
-    const [img] = useImage(image.src);
-    return (
-        <Image
-            image={img}
-            x={image.x}
-            y={image.y}
-            // I will use offset to set origin to the center of the image
-            offsetX={img ? img.width / 2 : 0}
-            offsetY={img ? img.height / 2 : 0}
-            draggable
-        />
-    );
-};
-export default function Outdoor() {
+export default function OutdoorEditPage() {
     const [garden, setGarden] = useState(init_garden);
+    const [showSidebar, setShowSidebar] = useState(false);
     const [plots, setPlots] = useState(init_garden.plots);
     const [history, setHistory] = useState([JSON.stringify(init_garden.plots)]);
     const [historyStep, setHistoryStep] = useState(0);
@@ -158,14 +153,73 @@ export default function Outdoor() {
     const plotRefs = useRef(new Map());
     const [plant, setPlant] = useState('');
     const plantRef = useState(0);
+    const [selectedPlant, setSelectedPlant] = useState(0);
+
+    const loadSelectedGarden = () => {
+        // const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
+        // const selectedId = JSON.parse(localStorage.getItem("selectedGardenId"));
+        // const selected = gardens.find(g => g.id === selectedId);
+        // setGarden(selected);
+    };
+
+    // Responsive canvas
+    const sceneWidth = garden.stage.width;
+    const sceneHeight = garden.stage.height;
+    const [stageSize, setStageSize] = useState({
+        width: sceneWidth,
+        height: sceneHeight,
+        scale: 1
+    });
+    const containerRef = useRef(null);
+
+    const updateSize = useCallback(() => {
+        if (!stageRef.current) return;
+
+        // Get container width
+        const containerWidth = containerRef.current.offsetWidth;
+
+        // Calculate scale
+        const scale = containerWidth / sceneWidth;
+
+        // Update state with new dimensions
+        setStageSize({
+            width: sceneWidth * scale,
+            height: sceneHeight * scale,
+            scale: scale
+        });
+    }, [sceneWidth, sceneHeight]);
 
     useEffect(() => {
-        if (stageRef.current) {
+        // Add white paper background for stage.
+        if (containerRef.current) {
             const container = stageRef.current.container();
             container.style.backgroundColor = 'white';
-            container.style.width = '700px';
+            // container.style.width = '700px';
         }
 
+        loadSelectedGarden();
+
+        // Update stage size on window resize
+        updateSize();
+        window.addEventListener('resize', updateSize);
+
+        return () => {
+            window.removeEventListener('resize', updateSize);
+        };
+    });
+
+    // Update stage size on window resize
+    useEffect(() => {
+        updateSize();
+        window.addEventListener('resize', updateSize);
+
+        return () => {
+            window.removeEventListener('resize', updateSize);
+        };
+    }, [updateSize]);
+
+    // Add transformer to selected plots.
+    useEffect(() => {
         if (selectedIds.length && transformerRef.current) {
             const nodes = selectedIds
                 .map(id => plotRefs.current.get(id))
@@ -382,66 +436,80 @@ export default function Outdoor() {
     };
 
     return (
-        <div className="vw-100 vh-100" style={{ backgroundColor: 'grey' }}>
-            <div style={{ marginBottom: '10px' }}>
-                <button onClick={handleUndo}>Undo</button>
-                <button onClick={handleRedo}>Redo</button>
-            </div>
-            <div style={{ marginBottom: '10px'}}>
-                {plant_species.map((plant) =>
-                    <div style={{display: 'inline-flex', backgroundColor: plant.color, width: 'auto', height: 'auto'}}>
-                        <img
-                            key={plant.id}
-                            id={plant.id}
-                            alt={plant.name}
-                            src={require('../images/' + plant.src)}
-                            draggable="true"
-                            onDragStart={(e) => { plantRef.current = e.target.src; }}
-                            style={{ width: 100, height: 100 }}
-                        />
-                    </div>
-                )}
-            </div>
-            <Stage
-                width={garden.stage.width}
-                height={garden.stage.height}
-                ref={stageRef}
-                onMouseDown={handleMouseDown}
-                onMousemove={handleMouseMove}
-                onMouseup={handleMouseUp}
-                onClick={handleStageClick}
-            >
-                <Layer>
-                    {plots.map((plot) => {
-                        const { shape, plant, ...restProps } = plot;
-                        return (
-                            <Plot shape={shape} shapeProps={restProps} plant={garden.plants[plant]} onDragEnd={handleDragEnd} plotRefs={plotRefs} />
-                        )
-                    })}
+        <div className="app">
+            <GardenNavbar onGardenChange={loadSelectedGarden} onSidebarToggle={() => setShowSidebar(true)} />
+            <Sidebar show={showSidebar} onClose={() => setShowSidebar(false)} />
+            <div ref={containerRef} style={{ width: '100%', height: '100%', backgroundColor: Colors.lightGreen }}>
+                <div style={{ marginBottom: '10px' }}>
+                    <button onClick={handleUndo}>Undo</button>
+                    <button onClick={handleRedo}>Redo</button>
+                </div>
+                <ButtonGroup className='d-flex flex-row justify-content-center g-2' style={{ width: '100%', marginBottom: '10px' }}>
+                    {plant_species.map((plant, index) =>
+                        <ToggleButton
+                            className={(selectedPlant === index ? 'active ' : '') + 'plant-button d-flex flex-column justify-content-center align-items-center flex-fill'}
+                            style={{ backgroundColor: plant.color, height: '50px' }}
+                            type="radio"
+                            id={"plant-" + index}
+                            value={index}
+                            checked={selectedPlant === index}
+                            onChange={(e) => {console.log(selectedPlant + " " + e.currentTarget.value); setSelectedPlant(e.currentTarget.value);}}
+                        >
+                            <img
+                                key={plant.id}
+                                alt={plant.name}
+                                src={require('../images/' + plant.src)}
+                                draggable="true"
+                                onDragStart={(e) => { plantRef.current = e.target.src; }}
 
-                    <Transformer
-                        ref={transformerRef}
-                        boundBoxFunc={(oldBox, newBox) => {
-                            // Limit resize
-                            if (newBox.width < 5 || newBox.height < 5) {
-                                return oldBox;
-                            }
-                            return newBox;
-                        }}
-                        onTransformEnd={handleTransformEnd}
-                    />
-
-                    {selectionRectangle.visible && (
-                        <Rect
-                            x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
-                            y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
-                            width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
-                            height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
-                            fill="rgba(0,0,255,0.5)"
-                        />
+                                style={{ height: '100%' }}
+                            />
+                        </ToggleButton>
                     )}
-                </Layer>
-            </Stage>
+                </ButtonGroup>
+                <Stage
+                    width={stageSize.width}
+                    height={stageSize.height}
+                    scaleX={stageSize.scale}
+                    scaleY={stageSize.scale}
+                    ref={stageRef}
+                    onMouseDown={handleMouseDown}
+                    onMousemove={handleMouseMove}
+                    onMouseup={handleMouseUp}
+                    onClick={handleStageClick}
+                >
+                    <Layer>
+                        {plots.map((plot) => {
+                            const { shape, plant, ...restProps } = plot;
+                            return (
+                                <Plot shape={shape} shapeProps={restProps} plant={garden.plants[plant]} onDragEnd={handleDragEnd} plotRefs={plotRefs} />
+                            )
+                        })}
+
+                        <Transformer
+                            ref={transformerRef}
+                            boundBoxFunc={(oldBox, newBox) => {
+                                // Limit resize
+                                if (newBox.width < 5 || newBox.height < 5) {
+                                    return oldBox;
+                                }
+                                return newBox;
+                            }}
+                            onTransformEnd={handleTransformEnd}
+                        />
+
+                        {selectionRectangle.visible && (
+                            <Rect
+                                x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
+                                y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
+                                width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
+                                height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
+                                fill="rgba(0,0,255,0.5)"
+                            />
+                        )}
+                    </Layer>
+                </Stage>
+            </div>
         </div>
     )
 }

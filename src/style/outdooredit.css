@@ -1,0 +1,13 @@
+.plant-button {
+    filter: grayscale();
+}
+
+.plant-button.active {
+    filter: none;
+    box-shadow: 0px 1px grey;
+}
+
+.plant-button:hover {
+    filter: none;
+    box-shadow: 0px 1px grey;
+}

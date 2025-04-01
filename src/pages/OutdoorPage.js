@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import GardenNavbar from '../components/GardenNavbar';
 import Sidebar from '../components/Sidebar';
 import cobblestoneImage from '../images/cobblestone.png';
+import { useNavigate } from "react-router-dom";
+import Button from 'react-bootstrap/Button';
 import '../style/home.css';
 
 const Outdoor = () => {
@@ -18,6 +20,12 @@ const Outdoor = () => {
   useEffect(() => {
     loadSelectedGarden();
   }, []);
+
+  const navigate = useNavigate();
+
+  const handleEdit = () => {
+    navigate("/outdoor/edit");
+  }
 
   if (!garden) return <p>Loading garden...</p>;
 
@@ -46,6 +54,10 @@ const Outdoor = () => {
           <span>💧</span>
           <span>☀️</span>
         </div>
+      </div>
+
+      <div className='d-flex justify-content-center m-2'>
+        <Button onClick={handleEdit}>Edit</Button>
       </div>
     </div>
   );
