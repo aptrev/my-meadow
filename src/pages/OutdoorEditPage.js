@@ -223,7 +223,7 @@ export default function OutdoorEditPage() {
         return () => {
             window.removeEventListener('resize', updateSize);
         };
-    }, [updateSize]);
+    }, [garden, updateSize]);
 
     // Add transformer to selected plots.
     useEffect(() => {
