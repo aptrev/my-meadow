@@ -5,10 +5,11 @@ import Onboarding from "./pages/OnboardingPage";
 import Indoor from "./pages/IndoorPage";
 import Outdoor from "./pages/OutdoorPage";
 import OutdoorEditPage from "./pages/OutdoorEditPage";
-import CalendarPage from "./pages/CalendarPage";
+import MyMeadowCalendar from "./pages/CalendarPage";
 import IndoorEdit from "./pages/IndoorEditPage";
 import Login from "./pages/Login"
 import SignUp from "./pages/SignUp"
+import Profile from "./pages/Profile"
 import Header from './components/Header'
 import AuthProvider from "./components/AuthProvider";
 import ThemeProvider from './components/ThemeProvider'
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
         element: <SignUp />
       },
       {
+        path: '/profile/:id',
+        element: <Profile />
+      },
+      {
         path: '/create',
         element: <Onboarding />,
       },
@@ -73,6 +78,10 @@ const router = createBrowserRouter([
       {
         path: '/outdoor/:id/edit',
         element: <OutdoorEditPage />,
+      },
+      {
+        path: '/calendar/:id',
+        element: <MyMeadowCalendar />
       },
     ]
   }

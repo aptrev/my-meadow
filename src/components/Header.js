@@ -78,7 +78,7 @@ const Header = () => {
             } else {
                 const q = query(gardensRef, where('id', 'in', data.data().gardens));
                 const querySnapshot = await getDocs(q);
-                const gardenData = querySnapshot.docs.map((doc) => ({...doc.data()}));
+                const gardenData = querySnapshot.docs.map((doc) => ({ ...doc.data() }));
                 return gardenData;
             }
         } catch (error) {
@@ -88,17 +88,19 @@ const Header = () => {
     }
 
     useEffect(() => {
- 
-        retrieveGarden(id)
-        .then((data) => {
-            setGarden(data);
-        });
 
-        retrieveGardens()
-        .then((data) => {
-            setGardens(data);
-        });
-        
+        if (pathname.includes('indoor') || pathname.includes('outdoor') || pathname.includes('calendar')) {
+            retrieveGarden(id)
+                .then((data) => {
+                    setGarden(data);
+                });
+
+            retrieveGardens()
+                .then((data) => {
+                    setGardens(data);
+                });
+        }
+
     }, []);
 
     const handleGoHome = () => {
@@ -154,23 +156,28 @@ const Header = () => {
 
     const handleGardenSwitch = (gardenId) => {
         retrieveGarden(id, true)
-        .then((data) => {
-            setGarden(data);
-            if (pathname.includes('edit')) {
-                navigate(`${garden.location}/${gardenId}/edit`, {state: {garden, gardens}})
-            } else {
-                navigate(`${garden.location}/${gardenId}`, {state: {garden, gardens}})
-            }   
-        });
+            .then((data) => {
+                setGarden(data);
+                if (pathname.includes('edit')) {
+                    navigate(`${garden.location}/${gardenId}/edit`, { state: { garden, gardens } })
+                } else {
+                    navigate(`${garden.location}/${gardenId}`, { state: { garden, gardens } })
+                }
+            });
     };
+
+    const handleGoToProfile = () => {
+        navigate(`/profile/${user.uid}`);
+    }
 
     function HomeElements() {
         return (
             <>
                 {/* Left Bar Element: Profile */}
                 <Button
+                    className='mr-auto'
                     variant="bar"
-                    onClick={() => alert('Profile page not yet implemented.')}
+                    onClick={handleGoToProfile}
                     aria-label="Go to Profile"
                 >
                     <PersonCircle color='currentColor' size={24} />
@@ -191,7 +198,7 @@ const Header = () => {
 
                 {/* Right Bar Elemenet: Sign Out */}
                 <Button
-                    className='d-flex align-items-center'
+                    className='ml-auto d-flex align-items-center'
                     variant="bar"
                     onClick={handleSignOut}
                     aria-label="Sign Out (Return to Login Screen)">
