@@ -1,13 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.css';
 import { useNavigate } from "react-router-dom";
-import shelfImage from '../assets/images/shelf.png';
-import cobblestoneImage from '../assets/images/cobblestone.png';
-import '../style/home.css';
-import AppContainer from "../components/AppContainer";
-import { collection, addDoc, updateDoc, doc, getDoc, arrayUnion } from "firebase/firestore";
-import db from '../firebase/FirebaseDB'
-import { AuthContext } from "../components/AuthProvider";
+import shelfImage from '../images/shelf.png';
+import cobblestoneImage from '../images/cobblestone.png';
 
 const templates = [
   {
@@ -16,7 +11,7 @@ const templates = [
         id: 'plot-0',
         shape: 'circle',
         name: 'plot',
-        plant: null,
+        plant: 0,
         x: 100,
         y: 100,
         radius: 50,
@@ -28,7 +23,7 @@ const templates = [
         id: 'plot-1',
         shape: 'circle',
         name: 'plot',
-        plant: null,
+        plant: 0,
         x: 200,
         y: 200,
         radius: 50,
@@ -40,7 +35,7 @@ const templates = [
         id: 'plot-2',
         shape: 'circle',
         name: 'plot',
-        plant: null,
+        plant: 0,
         x: 300,
         y: 300,
         radius: 50,
@@ -52,7 +47,7 @@ const templates = [
         id: 'plot-3',
         shape: 'circle',
         name: 'plot',
-        plant: null,
+        plant: 0,
         x: 400,
         y: 400,
         radius: 50,
@@ -64,7 +59,7 @@ const templates = [
         id: 'plot-4',
         shape: 'circle',
         name: 'plot',
-        plant: null,
+        plant: 0,
         x: 500,
         y: 500,
         radius: 50,
@@ -77,17 +72,16 @@ const templates = [
 ]
 
 const Onboarding = () => {
-  const [location, setLocation] = useState("indoor");
+  const [location, setLocation] = useState("Indoor");
   const [dimensions, setDimensions] = useState("2 × 5 ft");
   const [template, setTemplate] = useState("Empty");
-  const { user } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     const gardenProps = {
-      width: 10,
-      height: 10,
+      width: 700,
+      height: 700,
       dimensions_units: 'ft',
       stage: {
         width: 700,
@@ -97,45 +91,29 @@ const Onboarding = () => {
 
     const newGarden = {
       ...gardenProps,
-      id: null,
+      id: Date.now(),
       name: `My Garden ${Date.now() % 10000}`,
       location,
       plots: templates[0].plots,
       plants: [], // start empty
     };
 
-    localStorage.setItem("selectedTemplate", template);
+    const existingGardens = JSON.parse(localStorage.getItem("gardens")) || [];
+    const updatedGardens = [...existingGardens, newGarden];
 
-    try {
+    localStorage.setItem("gardens", JSON.stringify(updatedGardens));
+    localStorage.setItem("selectedGardenId", newGarden.id);
 
-      // Add new garden to gardens collection
-      const gardenRef = await addDoc(collection(db, 'gardens'), {
-        ...newGarden
-      });
-
-      // Update new garden with id.
-      newGarden.id = gardenRef.id;
-      await updateDoc(gardenRef, { id: gardenRef.id });
-
-      // Add garden id to user's garden list.
-      const userRef = doc(db, 'users', user.uid);
-      await updateDoc(userRef, { gardens: arrayUnion(newGarden.id) });
-
-      // Set local garden id and gardens data.
-      const existingGardens = JSON.parse(localStorage.getItem("gardens")) || [];
-      const updatedGardens = [...existingGardens, newGarden];
-      localStorage.setItem("gardens", JSON.stringify(updatedGardens));
-
-      console.log(`New Garden written to Local Storage with id: ${gardenRef.id}}`);
-      navigate(`/${location}/${newGarden.id}`, {state: {garden: newGarden}});
-    } catch (e) {
-      console.error(`Error creating new garden: ${newGarden.name}`, e);
+    if (location === "Indoor") {
+      navigate("/indoor");
+    } else {
+      navigate("/outdoor");
     }
   };
 
   // Template options depending on location
   const getTemplateOptions = () => {
-    if (location === "indoor") {
+    if (location === "Indoor") {
       return (
         <>
           <option value="Empty">Empty</option>
@@ -167,7 +145,7 @@ const Onboarding = () => {
   };
 
   return (
-    <AppContainer>
+    <div className="container d-flex flex-column align-items-center py-4" style={{ backgroundColor: "#CCDED3", minHeight: "100vh" }}>
       <header className="text-center mb-4">
         <h2 className="fw-bold">MYMEADOW</h2>
         <p className="text-muted">Grow with ease, nurture with care.</p>
@@ -175,18 +153,18 @@ const Onboarding = () => {
 
       <h3 className="mb-3">Customize Your Garden!</h3>
 
-      <div className="mb-3 w-100">
+      <div className="mb-3 w-100" style={{ maxWidth: "300px" }}>
         <label className="form-label">Garden location:</label>
         <div className="btn-group w-100">
           <button
             style={{
-              backgroundColor: location === "indoor" ? "#3B6255" : "transparent",
+              backgroundColor: location === "Indoor" ? "#3B6255" : "transparent",
               borderColor: "#3B6255",
-              color: location === "indoor" ? "#fff" : "#3B6255",
+              color: location === "Indoor" ? "#fff" : "#3B6255",
             }}
             className="btn"
             onClick={() => {
-              setLocation("indoor");
+              setLocation("Indoor");
               setTemplate("Empty"); // reset template for indoor
             }}
           >
@@ -195,13 +173,13 @@ const Onboarding = () => {
 
           <button
             style={{
-              backgroundColor: location === "outdoor" ? "#3B6255" : "transparent",
+              backgroundColor: location === "Outdoor" ? "#3B6255" : "transparent",
               borderColor: "#3B6255",
-              color: location === "outdoor" ? "#fff" : "#3B6255",
+              color: location === "Outdoor" ? "#fff" : "#3B6255",
             }}
             className="btn"
             onClick={() => {
-              setLocation("outdoor");
+              setLocation("Outdoor");
               setTemplate("Empty"); // reset template for outdoor
             }}
           >
@@ -248,7 +226,7 @@ const Onboarding = () => {
       >
         Create
       </button>
-    </AppContainer>
+    </div>
   );
 };
 

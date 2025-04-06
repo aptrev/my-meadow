@@ -14,7 +14,9 @@ const Sidebar = ({ show, onClose }) => {
   }, []);
 
   const goToHome = () => {
-    navigate('/');
+    if (!firstGarden) return;
+    localStorage.setItem("selectedGardenId", firstGarden.id);
+    navigate(firstGarden.location === "Indoor" ? "/indoor" : "/outdoor");
   };
 
   return (

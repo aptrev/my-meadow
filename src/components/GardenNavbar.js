@@ -34,7 +34,7 @@ const GardenNavbar = ({ onGardenChange, onSidebarToggle, isEditing, onSave }) =>
   const selectedGarden = gardens.find((g) => g.id === selectedGardenId);
 
   return (
-    <Navbar style={{ backgroundColor: "#3B6255" }} variant="dark" expand="lg" className="w-100 justify-content-between">
+    <Navbar style={{ backgroundColor: "#3B6255" }} variant="dark" expand="lg" className="p-3 justify-content-between">
       {/* Sidebar button */}
       <Button
         variant="light"
