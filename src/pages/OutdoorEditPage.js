@@ -1,23 +1,111 @@
 // Uses tutorials from https://konvajs.org/docs/.
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Stage, Layer, Rect, Transformer, Image } from 'react-konva';
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { collection, addDoc, getDoc, updateDoc, doc, query, where, getDocs } from "firebase/firestore";
-import db from '../firebase/FirebaseDB'
 import { useImage } from 'react-konva-utils';
 import Plot from '../components/Plot'
 import GardenNavbar from '../components/GardenNavbar';
 import Sidebar from '../components/Sidebar';
 import Colors from '../utilities/Colors'
+import { useNavigate } from "react-router-dom";
 
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import 'bootstrap/dist/css/bootstrap.css';
 
 import '../style/outdooredit.css';
-import AppContainer from "../components/AppContainer";
 
 const Konva = window.Konva;
+
+const init_garden = {
+    location: 'outdoor',
+    width: 10,
+    height: 10,
+    dimensions_units: 'ft',
+    stage: {
+        width: 700,
+        height: 700
+    },
+    plots: [
+        {
+            id: 'plot-0',
+            shape: 'circle',
+            name: 'plot',
+            plant: 0,
+            x: 100,
+            y: 100,
+            radius: 50,
+            width: 100,
+            height: 100,
+            draggable: true
+        },
+        {
+            id: 'plot-1',
+            shape: 'circle',
+            name: 'plot',
+            plant: 0,
+            x: 200,
+            y: 200,
+            radius: 50,
+            width: 100,
+            height: 100,
+            draggable: true
+        },
+        {
+            id: 'plot-2',
+            shape: 'circle',
+            name: 'plot',
+            plant: 0,
+            x: 300,
+            y: 300,
+            radius: 50,
+            width: 100,
+            height: 100,
+            draggable: true
+        },
+        {
+            id: 'plot-3',
+            shape: 'circle',
+            name: 'plot',
+            plant: 0,
+            x: 400,
+            y: 400,
+            radius: 50,
+            width: 100,
+            height: 100,
+            draggable: true
+        },
+        {
+            id: 'plot-4',
+            shape: 'circle',
+            name: 'plot',
+            plant: 0,
+            x: 500,
+            y: 500,
+            radius: 50,
+            width: 100,
+            height: 100,
+            draggable: true
+        }
+    ],
+    plants: [
+        {
+            id: 1473,
+            name: "Marigold",
+        },
+        {
+            id: 324,
+            name: 'Magnolia',
+        },
+        {
+            id: 1194,
+            name: 'Begonia',
+        },
+        {
+            id: 6791,
+            name: 'Rose',
+        }
+    ]
+}
 
 const plant_species = [
     {
@@ -47,12 +135,10 @@ const plant_species = [
 ]
 
 export default function OutdoorEditPage() {
-    const { state } = useLocation();
-    const { id } = useParams();
     const [garden, setGarden] = useState(null);
     const [showSidebar, setShowSidebar] = useState(false);
-    const [plots, setPlots] = useState(null);
-    const [history, setHistory] = useState([JSON.stringify(null)]);
+    const [plots, setPlots] = useState(init_garden.plots);
+    const [history, setHistory] = useState([JSON.stringify(init_garden.plots)]);
     const [historyStep, setHistoryStep] = useState(0);
     const stageRef = useRef(null);
     const [selectedIds, setSelectedIds] = useState([]);
@@ -73,31 +159,17 @@ export default function OutdoorEditPage() {
     const [sceneHeight, setSceneHeight] = useState(0);
     const navigate = useNavigate();
 
-    const fetchData = async (gardenId) => {
-        if (state && state.garden && state.garden.id === id) {
-            return state.garden;
-        }
-        try {
-            const gardenRef = doc(db, 'gardens', gardenId);
-            const gardenSnap = await getDoc(gardenRef);
-            if (gardenSnap.exists()) {
-                return gardenSnap.data();
-            }
-            throw new Error();
-        } catch (e) {
-            console.error(`Error retrieving garden with ID: ${gardenId}`, e);
-            navigate('/');
-        }
-    }
-
     useEffect(() => {
-        fetchData(id)
-            .then((data) => {
-                data.plants = plant_species;
-                setPlots(data.plots);
-                setGarden(data);
-            });
+        loadSelectedGarden();
     }, []);
+
+    const loadSelectedGarden = () => {
+        const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
+        const selectedId = JSON.parse(localStorage.getItem("selectedGardenId"));
+        const selected = gardens.find(g => g.id === selectedId);
+        setGarden(selected);
+        setPlots(selected.plots);
+    };
 
     // Responsive canvas
     const [stageSize, setStageSize] = useState({
@@ -187,6 +259,36 @@ export default function OutdoorEditPage() {
         setPlots(newPlots);
         saveHistory(newPlots);
     }
+
+    const handleDragStart = (src) => {
+        setPlant(src);
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+
+        if (!plant || !stageRef.current) return;
+
+        const stage = stageRef.current;
+
+        stage.setPointersPositions(e);
+        const position = stage.getPointerPosition();
+
+        // Add new image to the list
+        // setImages([
+        //     ...images,
+        //     {
+        //         src: dragImageSrc,
+        //         x: position.x,
+        //         y: position.y,
+        //         id: Date.now().toString()
+        //     }
+        // ]);
+    };
 
     const handleStageClick = (e) => {
         if (selectionRectangle.visible) {
@@ -344,9 +446,6 @@ export default function OutdoorEditPage() {
     const saveHistory = (newPlots) => {
         const newHistory = history.slice(0, historyStep + 1);
         newHistory.push(JSON.stringify(newPlots));
-        const newGarden = garden;
-        newGarden.plots = plots;
-        localStorage.setItem('savedGarden', JSON.stringify(newGarden));
         setHistory(newHistory);
         setHistoryStep(newHistory.length - 1);
     }
@@ -378,7 +477,9 @@ export default function OutdoorEditPage() {
     }
 
     return (
-        <AppContainer>
+        <div className="app">
+            <GardenNavbar onGardenChange={loadSelectedGarden} onSidebarToggle={() => setShowSidebar(true)} isEditing={true} onSave={handleSave} />
+            <Sidebar show={showSidebar} onClose={() => setShowSidebar(false)} />
             {garden &&
                 <div ref={containerRef} style={{ width: '100%', height: '100%', backgroundColor: Colors.lightGreen }}>
                     <div style={{ marginBottom: '10px' }}>
@@ -397,7 +498,7 @@ export default function OutdoorEditPage() {
                                 <img
                                     key={plant.id}
                                     alt={plant.name}
-                                    src={require('../assets/images/' + plant.src)}
+                                    src={require('../images/' + plant.src)}
                                     draggable="true"
                                     onDragStart={(e) => { plantRef.current = e.target.src; }}
 
@@ -420,17 +521,9 @@ export default function OutdoorEditPage() {
                     >
                         <Layer>
                             {plots.map((plot) => {
-                                const { id, shape, plant, ...restProps } = plot;
+                                const { shape, plant, ...restProps } = plot;
                                 return (
-                                    <Plot
-                                        key={id}
-                                        id={id}
-                                        shape={shape}
-                                        shapeProps={restProps}
-                                        plant={plant}
-                                        plant_species={species}
-                                        onDragEnd={handleDragEnd}
-                                        plotRefs={plotRefs} />
+                                    <Plot shape={shape} shapeProps={restProps} plant={plant} plant_species={species} onDragEnd={handleDragEnd} plotRefs={plotRefs} />
                                 )
                             })}
 
@@ -459,6 +552,6 @@ export default function OutdoorEditPage() {
                     </Stage>
                 </div>
             }
-        </AppContainer>
+        </div>
     )
 }
