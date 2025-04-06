@@ -1,7 +1,7 @@
 import { Group, Circle, Arc, Ellipse, Line, Path, Rect, RegularPolygon, Ring, Star, Wedge, Text } from 'react-konva';
 import Colors from '../utilities/Colors'
 
-export default function Plot({ shape, shapeProps, plant, plant_species, onDragEnd, plotRefs }) {
+export default function Plot({ id, shape, shapeProps, plant, plant_species, onDragEnd, plotRefs }) {
 
     const getFill = () => {
         const p = plant_species.find(p => p.id === plant);
@@ -12,22 +12,26 @@ export default function Plot({ shape, shapeProps, plant, plant_species, onDragEn
 
     const generatePlot = () => {
         const defaultProps = {
-            id: shapeProps.id,
+            id,
             fill: getFill(),
             stroke: 'black',
             strokeWidth: 4,
             onDragEnd: (e) => onDragEnd(e),
-            ref:  (node) => {
+        }
+
+        if (plotRefs) {
+            defaultProps.ref = (node) => {
                 if (node) {
                     plotRefs.current.set(shapeProps.id, node);
                 }
             }
         }
+
         switch (shape) {
             case 'arc': return <Arc key={shapeProps.id} {...shapeProps} {...defaultProps} />
             case 'ellipse': return <Ellipse key={shapeProps.id} {...shapeProps} {...defaultProps} />
             case 'line': return <Line key={shapeProps.id} {...shapeProps} {...defaultProps} closed />
-            case 'Rect': return <Rect key={shapeProps.id} {...shapeProps} {...defaultProps} />
+            case 'rect': return <Rect key={shapeProps.id} {...shapeProps} {...defaultProps} />
             case 'polygon': return <RegularPolygon key={shapeProps.id} {...shapeProps} {...defaultProps} />
             case 'ring': return <Ring key={shapeProps.id} {...shapeProps} {...defaultProps} />
             case 'star': return <Star key={shapeProps.id} {...shapeProps} {...defaultProps} />
