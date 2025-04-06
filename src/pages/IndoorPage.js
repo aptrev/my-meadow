@@ -1,31 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import GardenNavbar from '../components/GardenNavbar';
 import Sidebar from '../components/Sidebar';
-import shelf from '../images/shelf.png';
-import '../style/home.css';
+import shelf from '../assets/images/shelf.png';
+import AppContainer from '../components/AppContainer';
+import { collection, addDoc, updateDoc, doc, getDoc, arrayUnion } from "firebase/firestore";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import db from '../firebase/FirebaseDB'
+import { AuthContext } from "../components/AuthProvider";
 
 const Indoor = () => {
+  const { state } = useLocation();
+  const { id } = useParams();
   const [garden, setGarden] = useState(null);
-  const [showSidebar, setShowSidebar] = useState(false);
 
-  const loadSelectedGarden = () => {
-    const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
-    const selectedId = JSON.parse(localStorage.getItem("selectedGardenId"));
-    const selected = gardens.find(g => g.id === selectedId);
-    setGarden(selected);
-  };
+  const navigate = useNavigate();
+
+  const fetchData = async (gardenId) => {
+    if (state && state.garden && state.garden.id === id) {
+      console.log(`State: ${state.garden.name}`);
+      return state.garden;
+    }
+    try {
+      const gardenRef = doc(db, 'gardens', gardenId);
+      const gardenSnap = await getDoc(gardenRef);
+      if (gardenSnap.exists()) {
+        return gardenSnap.data();
+      }
+      throw new Error();
+    } catch (e) {
+      console.error(`Error retrieving garden with ID: ${gardenId}`, e);
+      navigate('/');
+    }
+  }
 
   useEffect(() => {
-    loadSelectedGarden();
-  }, []);
+      fetchData(id)
+        .then((data) => {
+          console.log(data);
+          setGarden(data);
+        });
+    }, [id, setGarden])
+
 
   if (!garden) return <p>Loading garden...</p>;
 
   return (
-    <div className="app">
-      <GardenNavbar onGardenChange={loadSelectedGarden} onSidebarToggle={() => setShowSidebar(true)} />
-      <Sidebar show={showSidebar} onClose={() => setShowSidebar(false)} />
-
+    <AppContainer>
       {garden.template === "Shelf" && (
         <div className="shelf-wrapper">
           <img src={shelf} alt="Shelf" className="shelf-img" />
@@ -47,7 +67,7 @@ const Indoor = () => {
           <span>☀️</span>
         </div>
       </div>
-    </div>
+    </AppContainer>
   );
 };
 
