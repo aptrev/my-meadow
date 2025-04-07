@@ -1,6 +1,7 @@
 :root {
   --primaryDarkGreen: #3B6255;
   --primaryLightGreen: #D3E3D2;
+  --secondaryGray: #757575;
 }
 
 body {
@@ -9,7 +10,6 @@ body {
   /* font-family: 'Arial', sans-serif; */
   background-color: var(--primaryLightGreen);
   font-size: 16px; 
-  margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -18,11 +18,11 @@ body {
 }
 
 .app {
-  /* max-width: 375px; */
+  position: relative;
+  padding: 0;
   width: 100vw;
   min-height: 100vh;
   margin: 0 auto;
-  /* padding: 1rem; */
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -55,6 +55,16 @@ body {
 .btn-main:hover {
   background-color: rgba(0,0,0,0.05) !important;
   /* background-color: var(--primaryLightGreen) !important; */
+}
+
+.btn-toolbar {
+  background-color: transparent;
+  color: var(--secondaryGray);
+}
+
+.btn-toolbar:hover {
+  background-color: white;
+  color: var(--primaryDarkGreen);
 }
 
 .home-garden-list {

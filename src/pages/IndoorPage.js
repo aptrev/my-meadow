@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import GardenNavbar from '../components/GardenNavbar';
-import Sidebar from '../components/Sidebar';
 import shelf from '../assets/images/shelf.png';
 import AppContainer from '../components/AppContainer';
-import { collection, addDoc, updateDoc, doc, getDoc, arrayUnion } from "firebase/firestore";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import db from '../firebase/FirebaseDB'
-import { AuthContext } from "../components/AuthProvider";
+import {useParams } from "react-router-dom";
 import { retrieveGarden } from '../utilities/FirebaseUtils';
 
 const Indoor = () => {
-  const { state } = useLocation();
   const { id } = useParams();
   const [garden, setGarden] = useState(null);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (id) {

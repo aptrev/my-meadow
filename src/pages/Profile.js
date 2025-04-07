@@ -1,19 +1,16 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { collection, addDoc, updateDoc, doc, getDoc, getDocs, query, where, deleteDoc } from "firebase/firestore";
-import db from '../firebase/FirebaseDB';
+import React, { useEffect, useState } from 'react';
+import { useParams } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../components/AuthProvider";
 import AppContainer from "../components/AppContainer";
 import AppModal from '../components/AppModal';
-import { retrieveUser, retrieveGardens, clearGardens } from '../utilities/FirebaseUtils';
+import { retrieveUser, clearGardens } from '../utilities/FirebaseUtils';
 
 // Bootstrap Imports
 import { PersonCircle } from 'react-bootstrap-icons';
 import Image from 'react-bootstrap/Image';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import Modal from 'react-bootstrap/Modal';
 
 // Style Imports
 import '../style/home.css';

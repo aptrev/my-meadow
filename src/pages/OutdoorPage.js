@@ -1,17 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import cobblestoneImage from '../assets/images/cobblestone.png';
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Stage, Layer, Rect, Transformer, Image } from 'react-konva';
-import { collection, addDoc, getDoc, updateDoc, doc, query, where, getDocs } from "firebase/firestore";
-import db from '../firebase/FirebaseDB'
 import Plot from '../components/Plot'
 import { retrieveGarden } from '../utilities/FirebaseUtils';
 
 // Component Imports
 import AppContainer from '../components/AppContainer';
-
-import '../style/home.css';
-import { ThemeContext } from '../components/ThemeProvider';
 
 const plant_species = [
   {
@@ -50,6 +44,7 @@ const Outdoor = () => {
 
   const plotRefs = useRef(new Map());
   const stageRef = useRef(null);
+  const containerRef = useRef(null);
   const [sceneWidth, setSceneWidth] = useState(0);
   const [sceneHeight, setSceneHeight] = useState(0);
 
@@ -76,7 +71,6 @@ const Outdoor = () => {
     height: 1,
     scale: 1
   });
-  const containerRef = useRef(null);
 
   const updateSize = useCallback(() => {
     if (!stageRef.current) return;
@@ -96,12 +90,6 @@ const Outdoor = () => {
   }, [sceneWidth, sceneHeight]);
 
   useEffect(() => {
-    // Add white paper background for stage.
-    if (garden && containerRef.current) {
-      const container = stageRef.current.container();
-      container.style.backgroundColor = 'white';
-      // container.style.width = '700px';
-    }
     if (garden) {
       setSceneWidth(garden.stage.width);
       setSceneHeight(garden.stage.height);
@@ -127,7 +115,7 @@ const Outdoor = () => {
   return (
     <AppContainer>
       {garden && (
-        <div ref={containerRef} style={{ width: '100%', height: '100%', backgroundColor: 'var(--primaryLightGreen)' }}>
+        <div ref={containerRef}  style={{ margin: '0 auto', width: '100%', maxWidth: '600px', height: 'auto', backgroundColor: 'white' }}>
           <Stage
             width={stageSize.width}
             height={stageSize.height}

@@ -12,13 +12,10 @@ import all from "../assets/images/all.png";
 import '../style/indooredit.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import AppContainer from '../components/AppContainer';
-import { collection, addDoc, updateDoc, doc, getDoc, arrayUnion } from "firebase/firestore";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import db from '../firebase/FirebaseDB'
+import { useNavigate, useParams } from "react-router-dom";
 import { retrieveGarden } from '../utilities/FirebaseUtils';
 
 const IndoorEditPage = () => {
-  const { state } = useLocation();
   const { id } = useParams();
   const [potImage] = useImage(pot);
   const [garden, setGarden] = useState(null);

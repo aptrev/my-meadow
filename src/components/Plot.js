@@ -1,5 +1,4 @@
-import { Group, Circle, Arc, Ellipse, Line, Path, Rect, RegularPolygon, Ring, Star, Wedge, Text } from 'react-konva';
-import Colors from '../utilities/Colors'
+import { Circle, Arc, Ellipse, Line, Path, Rect, RegularPolygon, Ring, Star, Wedge } from 'react-konva';
 
 export default function Plot({ id, shape, shapeProps, plant, plant_species, onDragEnd, plotRefs }) {
 

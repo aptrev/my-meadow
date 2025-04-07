@@ -1,6 +1,4 @@
-import React, { useEffect, useState, useContext, useRef } from "react";
-import { collection, addDoc, getDoc, updateDoc, doc, query, where, getDocs, setDoc } from "firebase/firestore";
-import db from '../firebase/FirebaseDB'
+import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "./AuthProvider";
 import { Navbar, Dropdown, Button } from "react-bootstrap";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
