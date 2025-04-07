@@ -6,13 +6,11 @@ import { Navbar, Dropdown, Button } from "react-bootstrap";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { PersonCircle, BoxArrowRight, List, Floppy2Fill, PencilSquare } from 'react-bootstrap-icons';
 import { ReactSVG } from 'react-svg'
+import { retrieveGarden, retrieveGardens, updateGarden } from '../utilities/FirebaseUtils';
 import Sidebar from "./Sidebar";
 import logo from '../assets/images/logos/title-logo-white.svg'
 import '../style/home.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import { ThemeContext } from "../components/ThemeProvider";
-
-const gardenPaths = ['/indoor', '/outdoor', '/indoor/edit', '/outdoor/edit', '/calendar'];
 
 function DefaultElements() {
     return (
@@ -34,74 +32,33 @@ function DefaultElements() {
 }
 
 const Header = () => {
-    const { pathname, state } = useLocation();
+    const { pathname } = useLocation();
     const { id } = useParams();
-    const { user, logOut, loading } = useContext(AuthContext);
+    const { user, logOut } = useContext(AuthContext);
     const [showSidebar, setShowSidebar] = useState(false);
-    const { selectedGardenId, setSelectedGardenId } = useState(null);
     const [garden, setGarden] = useState(null);
     const [gardens, setGardens] = useState(null);
 
     const navigate = useNavigate();
 
-    const retrieveGarden = async (gardenId, isNewGarden = false) => {
-        if (state && state.garden && !isNewGarden) {
-            return state.garden;
-        }
-        try {
-            const gardenRef = doc(db, 'gardens', gardenId);
-            const gardenSnap = await getDoc(gardenRef);
-            if (gardenSnap.exists()) {
-                return gardenSnap.data();
-            }
-            throw new Error();
-        } catch (e) {
-            console.error(`Error retrieving garden with ID: ${gardenId}`, e);
-            navigate('/');
-        }
-    }
-
-    const retrieveGardens = async () => {
-        if (state && state.gardens) {
-            return state.gardens;
-        }
-        const storedGardens = localStorage.getItem('gardens');
-        if (storedGardens) {
-            return JSON.parse(storedGardens);
-        }
-        try {
-            const gardensRef = collection(db, 'gardens');
-            const userRef = doc(db, 'users', user.uid);
-            const data = await getDoc(userRef);
-            if (!data.exists) {
-                throw new Error('User gardens snapshot not found.');
-            } else {
-                const q = query(gardensRef, where('id', 'in', data.data().gardens));
-                const querySnapshot = await getDocs(q);
-                const gardenData = querySnapshot.docs.map((doc) => ({ ...doc.data() }));
-                return gardenData;
-            }
-        } catch (error) {
-            console.error("Error fetching gardens:", error);
-            return null;
-        }
-    }
-
     useEffect(() => {
-
         if (pathname.includes('indoor') || pathname.includes('outdoor') || pathname.includes('calendar')) {
-            retrieveGarden(id)
-                .then((data) => {
-                    setGarden(data);
-                });
-
-            retrieveGardens()
-                .then((data) => {
-                    setGardens(data);
-                });
+            if (user && id) {
+                retrieveGarden(id)
+                    .then((data) => { setGarden(data) })
+                    .catch((e) => {
+                        console.error(`Header: Failure to retrieve garden: ${id}: `, e);
+                        navigate('/');
+                    });
+                retrieveGardens(user.uid)
+                    .then((data) => { setGardens(data) })
+                    .catch((e) => {
+                        console.error(`Header: Failure to retrieve gardens: ${user.uid}: `, e);
+                        navigate('/');
+                    });
+            }
         }
-
-    }, []);
+    }, [pathname, user, id, navigate]);
 
     const handleGoHome = () => {
         navigate("/");
@@ -119,8 +76,10 @@ const Header = () => {
 
     const handleSave = async () => {
         const savedGarden = JSON.parse(localStorage.getItem('savedGarden'));
-        const gardenRef = doc(db, 'gardens', id);
-        await setDoc(gardenRef, savedGarden);
+        updateGarden(id, savedGarden)
+        .catch((e) => {
+            console.error(`Error saving garden: ${savedGarden.name}`, e);
+        })
         navigate(`${garden.location}/${id}`);
     }
 
@@ -155,19 +114,23 @@ const Header = () => {
     }
 
     const handleGardenSwitch = (gardenId) => {
-        retrieveGarden(id, true)
+        retrieveGarden(gardenId)
             .then((data) => {
                 setGarden(data);
                 if (pathname.includes('edit')) {
-                    navigate(`${garden.location}/${gardenId}/edit`, { state: { garden, gardens } })
+                    navigate(`${garden.location}/${gardenId}/edit`)
                 } else {
-                    navigate(`${garden.location}/${gardenId}`, { state: { garden, gardens } })
+                    navigate(`${garden.location}/${gardenId}`)
                 }
             });
     };
 
     const handleGoToProfile = () => {
         navigate(`/profile/${user.uid}`);
+    }
+
+    const handleHideSidebar = () => {
+        setShowSidebar(false);
     }
 
     function HomeElements() {
@@ -212,11 +175,11 @@ const Header = () => {
     function GardenElements() {
         return (
             <>
-                <Sidebar show={showSidebar} onClose={() => setShowSidebar(false)} />
+                <Sidebar show={showSidebar} handleClickLink={handleHideSidebar} onClose={() => setShowSidebar(false)} />
                 <Button
                     variant="bar"
                     onClick={() => setShowSidebar(true)}
-                    aria-label="Edit Garden">
+                    aria-label="Show Sidebar">
                     <List className='' color='currentColor' size={24} />
                 </Button>
 
@@ -231,7 +194,7 @@ const Header = () => {
                             </Dropdown.Item>
                         )) : <p>No Gardens</p>}
                         <Dropdown.Divider />
-                        <Dropdown.Item onClick={() => navigate('/home', { state: { screen: 'home' } })}>
+                        <Dropdown.Item onClick={() => navigate('/')}>
                             All Gardens
                         </Dropdown.Item>
                     </Dropdown.Menu>

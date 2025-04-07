@@ -8,6 +8,7 @@ import AppContainer from "../components/AppContainer";
 import { collection, addDoc, updateDoc, doc, getDoc, arrayUnion } from "firebase/firestore";
 import db from '../firebase/FirebaseDB'
 import { AuthContext } from "../components/AuthProvider";
+import { createGarden } from '../utilities/FirebaseUtils'
 
 const templates = [
   {
@@ -106,31 +107,13 @@ const Onboarding = () => {
 
     localStorage.setItem("selectedTemplate", template);
 
-    try {
-
-      // Add new garden to gardens collection
-      const gardenRef = await addDoc(collection(db, 'gardens'), {
-        ...newGarden
+    // Adds new garden to Firestore, navigates to garden page
+    createGarden(user.uid, newGarden)
+      .then((gardenId) => {
+        if (gardenId) {
+          navigate(`/${location}/${gardenId}`);
+        }
       });
-
-      // Update new garden with id.
-      newGarden.id = gardenRef.id;
-      await updateDoc(gardenRef, { id: gardenRef.id });
-
-      // Add garden id to user's garden list.
-      const userRef = doc(db, 'users', user.uid);
-      await updateDoc(userRef, { gardens: arrayUnion(newGarden.id) });
-
-      // Set local garden id and gardens data.
-      const existingGardens = JSON.parse(localStorage.getItem("gardens")) || [];
-      const updatedGardens = [...existingGardens, newGarden];
-      localStorage.setItem("gardens", JSON.stringify(updatedGardens));
-
-      console.log(`New Garden written to Local Storage with id: ${gardenRef.id}}`);
-      navigate(`/${location}/${newGarden.id}`, {state: {garden: newGarden}});
-    } catch (e) {
-      console.error(`Error creating new garden: ${newGarden.name}`, e);
-    }
   };
 
   // Template options depending on location

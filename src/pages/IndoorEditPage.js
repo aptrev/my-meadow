@@ -15,6 +15,7 @@ import AppContainer from '../components/AppContainer';
 import { collection, addDoc, updateDoc, doc, getDoc, arrayUnion } from "firebase/firestore";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import db from '../firebase/FirebaseDB'
+import { retrieveGarden } from '../utilities/FirebaseUtils';
 
 const IndoorEditPage = () => {
   const { state } = useLocation();
@@ -32,28 +33,9 @@ const IndoorEditPage = () => {
     setTemplate(selectedTemplate);
   }, []);
 
-  const fetchData = async (gardenId) => {
-    if (state && state.garden && state.garden.id === id) {
-      console.log(`State: ${state.garden.name}`);
-      return state.garden;
-    }
-    try {
-      const gardenRef = doc(db, 'gardens', gardenId);
-      const gardenSnap = await getDoc(gardenRef);
-      if (gardenSnap.exists()) {
-        return gardenSnap.data();
-      }
-      throw new Error();
-    } catch (e) {
-      console.error(`Error retrieving garden with ID: ${gardenId}`, e);
-      navigate('/');
-    }
-  }
-
   useEffect(() => {
-      fetchData(id)
+    retrieveGarden(id)
         .then((data) => {
-          console.log(data);
           setGarden(data);
         });
     }, [id, setGarden])

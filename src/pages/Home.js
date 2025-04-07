@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import { collection, addDoc, updateDoc, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import db from '../firebase/FirebaseDB';
+import { retrieveGardens } from '../utilities/FirebaseUtils';
 
 // Bootstrap Imports
 import { House, Flower1 } from 'react-bootstrap-icons';
@@ -30,35 +31,18 @@ export default function Home() {
     const handleGoToGarden = (garden) => {
         const path = garden.location;
         const id = garden.id;
-        navigate(`/${path}/${id}`, {state: {garden, gardens}});
-    }
-
-    const fetchData = async () => {
-        try {
-            const gardensRef = collection(db, 'gardens');
-            const userRef = doc(db, 'users', user.uid);
-            const data = await getDoc(userRef);
-            if (!data.exists) {
-                throw new Error('User gardens snapshot not found.');
-            } else {
-                const q = query(gardensRef, where('id', 'in', data.data().gardens));
-                const querySnapshot = await getDocs(q);
-                const gardenData = querySnapshot.docs.map((doc) => ({...doc.data()}));
-                return gardenData;
-            }
-        } catch (error) {
-            console.error("Error fetching gardens:", error);
-            return null;
-        }
+        navigate(`/${path}/${id}`);
     }
 
     useEffect(() => {
-        fetchData()
+        if (user) {
+            retrieveGardens(user.uid)
             .then((data) => {
                 localStorage.setItem('gardens', JSON.stringify(data));
                 setGardens(data);
                 setLoading(false);
             });
+        } 
     }, [user])
 
     return (

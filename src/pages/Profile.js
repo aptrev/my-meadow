@@ -6,6 +6,7 @@ import { useContext } from "react";
 import { AuthContext } from "../components/AuthProvider";
 import AppContainer from "../components/AppContainer";
 import AppModal from '../components/AppModal';
+import { retrieveUser, retrieveGardens, clearGardens } from '../utilities/FirebaseUtils';
 
 // Bootstrap Imports
 import { PersonCircle } from 'react-bootstrap-icons';
@@ -25,63 +26,18 @@ export default function Profile() {
     const [userData, setUserData] = useState(null);
     const [clearGardensShow, setClearGardenShow] = useState(false);
 
-    const fetchData = async (id) => {
-        setLoading(true);
-        try {
-            const userRef = doc(db, 'users', user.uid);
-            const data = await getDoc(userRef);
-            if (!data.exists) {
-                throw new Error('User now found.');
-            } else {
-                return data.data();
-            }
-        } catch (error) {
-            console.error("Error fetching gardens:", error);
-            return null;
-        }
-    };
-
     useEffect(() => {
 
-        fetchData(id)
-            .then((data) => {
-                setUserData(data);
-                setLoading(false);
-            })
+        retrieveUser(id)
+        .then((data) => {
+            setUserData(data);
+            setLoading(false);
+        })
 
     }, [id, user]);
 
-    const clearGardens = async () => {
-        try {
-            const userRef = doc(db, 'users', user.uid);
-            const gardensRef = collection(db, 'gardens');
-
-            console.log(userData.gardens);
-
-            const q = query(gardensRef, where('id', 'in', userData.gardens));
-            const querySnapshot = await getDocs(q);
-
-            // Remove gardens from gardens collection
-            querySnapshot.forEach((docSnap) => {
-                console.log(`Deleting Garden with ID: ${docSnap.id}.`);
-                const docRef = doc(gardensRef, docSnap.id);
-                deleteDoc(docRef);
-            });
-
-            // Remove garden ids from user document
-            updateDoc(userRef, {gardens: []});
-
-            // Update local gardens
-            userData.gardens = [];
-            
-            
-        } catch (error) {
-            console.error("Error clearing gardens:", error);
-        }
-    }
-
     const handleClearGardens = () => {
-        clearGardens();
+        clearGardens(user.uid);
         setClearGardenShow(false);
     }
 

@@ -7,6 +7,7 @@ import { collection, addDoc, updateDoc, doc, getDoc, arrayUnion } from "firebase
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import db from '../firebase/FirebaseDB'
 import { AuthContext } from "../components/AuthProvider";
+import { retrieveGarden } from '../utilities/FirebaseUtils';
 
 const Indoor = () => {
   const { state } = useLocation();
@@ -15,31 +16,15 @@ const Indoor = () => {
 
   const navigate = useNavigate();
 
-  const fetchData = async (gardenId) => {
-    if (state && state.garden && state.garden.id === id) {
-      console.log(`State: ${state.garden.name}`);
-      return state.garden;
-    }
-    try {
-      const gardenRef = doc(db, 'gardens', gardenId);
-      const gardenSnap = await getDoc(gardenRef);
-      if (gardenSnap.exists()) {
-        return gardenSnap.data();
-      }
-      throw new Error();
-    } catch (e) {
-      console.error(`Error retrieving garden with ID: ${gardenId}`, e);
-      navigate('/');
-    }
-  }
-
   useEffect(() => {
-      fetchData(id)
-        .then((data) => {
-          console.log(data);
-          setGarden(data);
-        });
-    }, [id, setGarden])
+    if (id) {
+      retrieveGarden(id)
+      .then((data) => {
+        setGarden(data);
+      });
+    }
+    
+  }, [id, setGarden])
 
 
   if (!garden) return <p>Loading garden...</p>;

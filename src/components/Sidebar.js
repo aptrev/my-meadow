@@ -2,18 +2,19 @@ import React, { useEffect, useState } from "react";
 import { Offcanvas, Nav } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = ({ show, onClose }) => {
+const Sidebar = ({ show, handleClickLink, onClose }) => {
   const navigate = useNavigate();
   const [firstGarden, setFirstGarden] = useState(null);
 
-  useEffect(() => {
-    const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
-    if (gardens.length > 0) {
-      setFirstGarden(gardens[0]);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
+  //   if (gardens.length > 0) {
+  //     setFirstGarden(gardens[0]);
+  //   }
+  // }, []);
 
   const goToHome = () => {
+    handleClickLink();
     navigate('/');
   };
 
@@ -24,7 +25,7 @@ const Sidebar = ({ show, onClose }) => {
       </Offcanvas.Header>
       <Offcanvas.Body>
         <Nav className="flex-column">
-          <Nav.Link onClick={goToHome}>🏡 Home</Nav.Link>
+          <Nav.Link onClick={() => goToHome()}>🏡 Home</Nav.Link>
           <Nav.Link onClick={() => navigate("/calendar")}>🗓️ Calendar</Nav.Link>
           <Nav.Link onClick={() => alert("Print coming soon!")}>🖨️ Print</Nav.Link>
           <Nav.Link onClick={() => alert("Profile coming soon!")}>👤 Profile</Nav.Link>

@@ -5,6 +5,7 @@ import { Stage, Layer, Rect, Transformer, Image } from 'react-konva';
 import { collection, addDoc, getDoc, updateDoc, doc, query, where, getDocs } from "firebase/firestore";
 import db from '../firebase/FirebaseDB'
 import Plot from '../components/Plot'
+import { retrieveGarden } from '../utilities/FirebaseUtils';
 
 // Component Imports
 import AppContainer from '../components/AppContainer';
@@ -47,29 +48,27 @@ const Outdoor = () => {
   const [loading, setLoading] = useState(true);
   const [garden, setGarden] = useState(null);
 
+  const plotRefs = useRef(new Map());
   const stageRef = useRef(null);
   const [sceneWidth, setSceneWidth] = useState(0);
   const [sceneHeight, setSceneHeight] = useState(0);
 
   const navigate = useNavigate();
 
-  const fetchData = async (gardenId) => {
-    if (state && state.garden && state.garden.id === id) {
-      console.log(`State: ${state.garden.name}`);
-      return state.garden;
+  useEffect(() => {
+    if (id) {
+      retrieveGarden(id)
+        .then((data) => {
+          data.plants = plant_species;
+          setGarden(data);
+        })
+        .catch((e) => {
+          console.error(`Outdoor: Failure to retrieve garden with ID: ${id}: `, e);
+          navigate('/');
+        });
     }
-    try {
-      const gardenRef = doc(db, 'gardens', gardenId);
-      const gardenSnap = await getDoc(gardenRef);
-      if (gardenSnap.exists()) {
-        return gardenSnap.data();
-      }
-      throw new Error();
-    } catch (e) {
-      console.error(`Error retrieving garden with ID: ${gardenId}`, e);
-      navigate('/');
-    }
-  }
+
+  }, [id, setGarden, navigate])
 
   // Responsive canvas
   const [stageSize, setStageSize] = useState({
@@ -125,15 +124,6 @@ const Outdoor = () => {
     };
   }, [garden, updateSize]);
 
-  useEffect(() => {
-    fetchData(id)
-      .then((data) => {
-        data.plants = plant_species;
-        console.log(data);
-        setGarden(data);
-      });
-  }, [id, setGarden])
-
   return (
     <AppContainer>
       {garden && (
@@ -158,6 +148,7 @@ const Outdoor = () => {
                     plant={plant}
                     plant_species={plant_species}
                     onDragEnd={() => { }}
+                    plotRefs={plotRefs}
                     draggable='false' />
                 )
               })}

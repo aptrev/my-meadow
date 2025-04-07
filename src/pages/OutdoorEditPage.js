@@ -9,6 +9,7 @@ import Plot from '../components/Plot'
 import GardenNavbar from '../components/GardenNavbar';
 import Sidebar from '../components/Sidebar';
 import Colors from '../utilities/Colors'
+import { retrieveGarden } from '../utilities/FirebaseUtils';
 
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -47,10 +48,8 @@ const plant_species = [
 ]
 
 export default function OutdoorEditPage() {
-    const { state } = useLocation();
     const { id } = useParams();
     const [garden, setGarden] = useState(null);
-    const [showSidebar, setShowSidebar] = useState(false);
     const [plots, setPlots] = useState(null);
     const [history, setHistory] = useState([JSON.stringify(null)]);
     const [historyStep, setHistoryStep] = useState(0);
@@ -73,31 +72,17 @@ export default function OutdoorEditPage() {
     const [sceneHeight, setSceneHeight] = useState(0);
     const navigate = useNavigate();
 
-    const fetchData = async (gardenId) => {
-        if (state && state.garden && state.garden.id === id) {
-            return state.garden;
-        }
-        try {
-            const gardenRef = doc(db, 'gardens', gardenId);
-            const gardenSnap = await getDoc(gardenRef);
-            if (gardenSnap.exists()) {
-                return gardenSnap.data();
-            }
-            throw new Error();
-        } catch (e) {
-            console.error(`Error retrieving garden with ID: ${gardenId}`, e);
-            navigate('/');
-        }
-    }
-
     useEffect(() => {
-        fetchData(id)
-            .then((data) => {
-                data.plants = plant_species;
-                setPlots(data.plots);
-                setGarden(data);
-            });
-    }, []);
+        if (id) {
+            retrieveGarden(id)
+                .then((data) => {
+                    data.plants = plant_species;
+                    setPlots(data.plots);
+                    setHistory([JSON.stringify(data.plots)]);
+                    setGarden(data);
+                });
+        }
+    }, [id]);
 
     // Responsive canvas
     const [stageSize, setStageSize] = useState({
@@ -124,6 +109,8 @@ export default function OutdoorEditPage() {
         });
     }, [sceneWidth, sceneHeight]);
 
+    // Add background color to canvas and initialize stage size of
+    // garden load.
     useEffect(() => {
         // Add white paper background for stage.
         if (garden && containerRef.current) {
@@ -327,6 +314,24 @@ export default function OutdoorEditPage() {
                 node.scaleX(1);
                 node.scaleY(1);
 
+                switch (newPlots[index].shape) {
+                    case 'circle': newPlots[index] = {
+                        ...newPlots[index],
+                        x: node.x(),
+                        y: node.y(),
+                        radius: node.radius(),
+                        width: Math.max(5, node.width() * scaleX),
+                        height: Math.max(node.height() * scaleY),
+                    }; break;
+                    default: newPlots[index] = {
+                        ...newPlots[index],
+                        x: node.x(),
+                        y: node.y(),
+                        width: Math.max(5, node.width() * scaleX),
+                        height: Math.max(node.height() * scaleY),
+                    };
+                }
+
                 newPlots[index] = {
                     ...newPlots[index],
                     x: node.x(),
@@ -334,6 +339,7 @@ export default function OutdoorEditPage() {
                     width: Math.max(5, node.width() * scaleX),
                     height: Math.max(node.height() * scaleY),
                 };
+
             }
         });
 
@@ -344,9 +350,7 @@ export default function OutdoorEditPage() {
     const saveHistory = (newPlots) => {
         const newHistory = history.slice(0, historyStep + 1);
         newHistory.push(JSON.stringify(newPlots));
-        const newGarden = garden;
-        newGarden.plots = plots;
-        localStorage.setItem('savedGarden', JSON.stringify(newGarden));
+        saveGarden(newPlots);
         setHistory(newHistory);
         setHistoryStep(newHistory.length - 1);
     }
@@ -355,6 +359,7 @@ export default function OutdoorEditPage() {
         if (historyStep === 0) return;
         const newStep = historyStep - 1;
         setHistoryStep(newStep);
+        saveGarden(JSON.parse(history[newStep]));
         setPlots(JSON.parse(history[newStep]));
     }
 
@@ -362,19 +367,15 @@ export default function OutdoorEditPage() {
         if (historyStep === history.length - 1) return;
         const newStep = historyStep + 1;
         setHistoryStep(newStep);
+        saveGarden(JSON.parse(history[newStep]));
         setPlots(JSON.parse(history[newStep]));
     };
 
-    const handleSave = () => {
+    const saveGarden = (plots) => {
+        // For use by Save button in Header
         const newGarden = garden;
         newGarden.plots = plots;
-        const existingGardens = JSON.parse(localStorage.getItem("gardens")) || [];
-        const selectedId = JSON.parse(localStorage.getItem("selectedGardenId"));
-        const updatedGardens = existingGardens.map((g) => {
-            return g.id === selectedId ? newGarden : g;
-        });
-        localStorage.setItem("gardens", JSON.stringify(updatedGardens));
-        navigate("/outdoor/");
+        localStorage.setItem('savedGarden', JSON.stringify(newGarden));
     }
 
     return (
@@ -391,11 +392,11 @@ export default function OutdoorEditPage() {
                                 className='plant-button d-flex flex-column justify-content-center align-items-center flex-fill'
                                 style={{ backgroundColor: plant.color, height: '50px' }}
                                 type="input"
+                                key={"plant-" + index}
                                 id={"plant-" + index}
                                 onClick={(e) => handleAssign(plant.id)}
                             >
                                 <img
-                                    key={plant.id}
                                     alt={plant.name}
                                     src={require('../assets/images/' + plant.src)}
                                     draggable="true"

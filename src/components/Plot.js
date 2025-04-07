@@ -17,12 +17,9 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
             stroke: 'black',
             strokeWidth: 4,
             onDragEnd: (e) => onDragEnd(e),
-        }
-
-        if (plotRefs) {
-            defaultProps.ref = (node) => {
+            ref: (node) => {
                 if (node) {
-                    plotRefs.current.set(shapeProps.id, node);
+                    plotRefs.current.set(id, node);
                 }
             }
         }

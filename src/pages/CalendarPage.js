@@ -4,23 +4,34 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Button } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { useParams } from "react-router-dom";
 
 import GardenNavbar from "../components/GardenNavbar";
 import Sidebar from "../components/Sidebar";
+import { retrieveGarden } from '../utilities/FirebaseUtils';
 
 const MyMeadowCalendar = () => {
+  const { id } = useParams();
   const [view, setView] = useState("timeGridDay");
   const [showSidebar, setShowSidebar] = useState(false);
   const [notes, setNotes] = useState("Reap and gather tomatoes from Garden 1\nBuy new iris seeds\nPay neighbor to weed garden");
-  const [selectedGarden, setSelectedGarden] = useState(null);
+  const [garden, setGarden] = useState(null);
 
   useEffect(() => {
     const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
-    const selectedId = JSON.parse(localStorage.getItem("selectedGardenId"));
+    const selectedId = JSON.parse(localStorage.getItem("gardenId"));
     const garden = gardens.find(g => g.id === selectedId);
-    setSelectedGarden(garden);
+    setGarden(garden);
   }, []);
+
+  useEffect(() => {
+    if (id) {
+      retrieveGarden(id)
+        .then((data) => {
+          setGarden(data);
+        });
+    }
+  }, [id, setGarden])
 
   return (
     <div>
