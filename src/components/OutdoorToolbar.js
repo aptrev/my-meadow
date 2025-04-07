@@ -10,7 +10,7 @@ import "../style/toolbar.css";
 export default function OutdoorToolbar({
     onUndo, onRedo,
     plotRef, setPlot, onPlotDragStart, onPlotDrag, onPlotDragEnd,
-    plantRef, setPlant, plants, onPlantDragStart, onPlantDrag, onPlantDragEnd, }) {
+    plantRef, setPlant, plants, onPlantDragStart, onPlantDrag, onPlantDragEnd, onPlantClick}) {
     const [tool, setTool] = useState(0);
     const [element, setElement] = useState(null);
 
@@ -311,6 +311,7 @@ export default function OutdoorToolbar({
                                         onMouseMove={handlePlantMouseMove}
                                         onMouseDown={(e) => handlePlantMouseDown(e, id)}
                                         onMouseUp={handlePlantMouseUp}
+                                        onClick={() => onPlantClick(id)}
                                     >
                                         <img
                                             alt={plant.name}

@@ -437,6 +437,20 @@ export default function OutdoorEditPage() {
         // saveHistory(newPlots);
     }
 
+    const handlePlantClick = (plantId) => {
+        if (selectedIds.length === 0) return;
+
+        const newPlots = plots.map(plot => {
+            if (selectedIds.includes(plot.id)) {
+                return { ...plot, plant: plantId };
+            }
+            return plot;
+        });
+
+        setPlots(newPlots);
+        saveHistory(newPlots);
+    }
+
     return (
         <>
             <AppContainer>
@@ -456,6 +470,7 @@ export default function OutdoorEditPage() {
                             onPlantDrag={handlePlantDrag}
                             onPlantDragEnd={handlePlantDragEnd}
                             plants={plant_species}
+                            onPlantClick = {handlePlantClick}
                         />
                         <div ref={containerRef} style={{ margin: '0 auto', width: '100%', maxWidth: '600px', height: 'auto', backgroundColor: 'white' }}>
                             <Stage
