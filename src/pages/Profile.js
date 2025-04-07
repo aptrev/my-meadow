@@ -34,7 +34,7 @@ export default function Profile() {
     }, [id, user]);
 
     const handleClearGardens = () => {
-        clearGardens(user.uid);
+        clearGardens(user.uid, userData.gardens);
         setClearGardenShow(false);
     }
 

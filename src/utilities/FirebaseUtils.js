@@ -1,16 +1,16 @@
 import { collection, addDoc, getDoc, updateDoc, doc, query, where, getDocs, deleteDoc, arrayUnion, setDoc } from "firebase/firestore";
 import db from '../firebase/FirebaseDB'
 
-async function retrieveGarden(gardenId) {
+async function retrieveGarden(id) {
     try {
-        const gardenRef = doc(db, 'gardens', gardenId);
+        const gardenRef = doc(db, 'gardens', id);
         const gardenSnap = await getDoc(gardenRef);
         if (gardenSnap.exists()) {
             return gardenSnap.data();
         }
         throw new Error('Garden not found.');
     } catch (e) {
-        console.error(`Error retrieving garden with ID: ${gardenId}; `, e);
+        console.error(`Error retrieving garden with ID: ${id}; `, e);
     }
 }
 
@@ -22,14 +22,19 @@ async function retrieveGardens(uid) {
         if (!data.exists) {
             throw new Error('User gardens snapshot not found.');
         } else {
-            const q = query(gardensRef, where('id', 'in', data.data().gardens));
-            const querySnapshot = await getDocs(q);
-            const gardens = querySnapshot.docs.map((doc) => ({ ...doc.data() }));
-            return gardens;
+            const gardens = data.data().gardens;
+            if (!gardens || gardens.length < 1) {
+                return [];
+            } else {
+                const q = query(gardensRef, where('id', 'in', data.data().gardens));
+                const querySnapshot = await getDocs(q);
+                const gardens = querySnapshot.docs.map((doc) => ({ ...doc.data() }));
+                return gardens;
+            }
         }
     } catch (e) {
         console.error("Error fetching gardens:", e);
-        return null;
+        return [];
     }
 }
 
@@ -53,21 +58,32 @@ async function clearGardens(uid, gardens) {
         const userRef = doc(db, 'users', uid);
         const gardensRef = collection(db, 'gardens');
 
-        const q = query(gardensRef, where('id', 'in', gardens));
-        const querySnapshot = await getDocs(q);
+        const gardenIds = gardens ? gardens : retrieveGardens(uid)
+            .then((g) => {
+                if (g.length > 0) {
+                    return g.map((garden) => garden.id);
+                } else {
+                    return [];
+                }
+            })
+            .catch((e) => console.error(`clearGardens: failed to retrieve gardens, `, e));
 
-        // Remove gardens from gardens collection
-        querySnapshot.forEach((docSnap) => {
-            console.log(`Deleting Garden with ID: ${docSnap.id}.`);
-            const docRef = doc(gardensRef, docSnap.id);
-            deleteDoc(docRef);
-        });
+        if (gardenIds.length > 0) {
+            const q = query(gardensRef, where('id', 'in', gardenIds));
+            const querySnapshot = await getDocs(q);
+
+            // Remove gardens from gardens collection
+            querySnapshot.forEach((docSnap) => {
+                console.log(`Deleting Garden with ID: ${docSnap.id}.`);
+                const docRef = doc(gardensRef, docSnap.id);
+                deleteDoc(docRef);
+            });
+        }
 
         // Remove garden ids from user document
-        updateDoc(userRef, { gardens: [] });
+        await updateDoc(userRef, { gardens: [] });
 
         return true;
-
     } catch (e) {
         console.error("Error clearing gardens:", e);
         return false;
@@ -111,11 +127,10 @@ async function updateGarden(id, newGarden) {
         await setDoc(gardenRef, newGarden);
         console.log(`Saved garden with ID: ${id}}`);
         return true;
-    } catch(e) {
+    } catch (e) {
         console.error(`Error saving garden: ${newGarden.name}`, e);
         return false;
     }
-    
 }
 
 export { retrieveGarden, retrieveGardens, retrieveUser, clearGardens, createGarden, updateGarden };
