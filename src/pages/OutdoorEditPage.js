@@ -33,7 +33,7 @@ const plant_options = [
     },
     {
         id: 324,
-        name: begonia,
+        name: "Magnolia",
         src: magnolia,
         color: 'beige',
         format: 'png',

@@ -14,7 +14,7 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
     }, [id, plotRefs]);
 
     const plantInfo = plant_species.find(p => p.id === plant);
-    const [plantImg] = useImage(plantInfo ? require(`../assets/images/${plantInfo.src}`) : null);
+    const [plantImg] = useImage(plantInfo?.src || null);
 
     const getFill = () => {
         if (!plantInfo) return 'white';
