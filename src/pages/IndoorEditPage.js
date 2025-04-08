@@ -40,10 +40,9 @@ export default function IndoorEditPage() {
   const [hoveredSlotIndex, setHoveredSlotIndex] = useState(null);
 
   const potSlots = [
-    { x: 90, y: 50 }, { x: 180, y: 50 }, { x: 270, y: 50 },
-    { x: 90, y: 160 }, { x: 180, y: 160 }, { x: 270, y: 160 },
-    { x: 90, y: 270 }, { x: 180, y: 270 }, { x: 270, y: 270 },
-    { x: 90, y: 370 }, { x: 180, y: 370 }, { x: 270, y: 370 },
+    { x: 105, y: 85 }, { x: 195, y: 85 }, { x: 285, y: 85 },
+    { x: 105, y: 209 }, { x: 195, y: 209 }, { x: 285, y: 209 },
+    { x: 105, y: 328 }, { x: 195, y: 328 }, { x: 285, y: 328 }
   ];
 
   useEffect(() => {
