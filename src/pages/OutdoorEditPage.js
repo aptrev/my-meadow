@@ -608,6 +608,20 @@ export default function OutdoorEditPage() {
         return plant_options.filter((plant => plants.includes(plant.id)));
     }
 
+    // const handlePlantClick = (plantId) => {
+    //     if (selectedIds.length === 0) return;
+
+    //     const newPlots = plots.map(plot => {
+    //         if (selectedIds.includes(plot.id)) {
+    //             return { ...plot, plant: plantId };
+    //         }
+    //         return plot;
+    //     });
+
+    //     setPlots(newPlots);
+    //     saveHistory(newPlots);
+    // }
+
     return (
         <>
             <AppContainer>
@@ -634,6 +648,7 @@ export default function OutdoorEditPage() {
                                     onMouseup={handleMouseUp}
                                     onClick={handleStageClick}
                                     onTap={handleStageClick}
+                                    // onPlantClick={handlePlantClick}
                                 >
                                     <Layer ref={mainLayerRef}>
                                         {plots.map((plot) => {
@@ -680,9 +695,9 @@ export default function OutdoorEditPage() {
                             </div>
                         </div>
 
-                        <Container className='outdoor-plant-info'>
+                        {/* <Container className='outdoor-plant-info'>
                                 <p>{getPlants}</p>
-                        </Container>
+                        </Container> */}
                     </div>
                 }
             </AppContainer>
