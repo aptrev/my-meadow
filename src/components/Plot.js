@@ -33,7 +33,6 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
     };
 
     const generatePlot = () => {
-<<<<<<< HEAD
         const defaultProps = {
             id,
             fill: getFill(),
@@ -47,8 +46,6 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
             }
         }
 
-=======
->>>>>>> b3fa832b6c49d8e45a4084158e95ee84c2edb07a
         switch (shape) {
             case 'arc': return <Arc key={id} {...shapeProps} {...defaultProps} />;
             case 'ellipse': return <Ellipse key={id} {...shapeProps} {...defaultProps} />;
