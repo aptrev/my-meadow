@@ -1,21 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Offcanvas, Nav } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../components/AuthProvider";  // Make sure this is the correct path
 
 const Sidebar = ({ show, handleClickLink, onClose }) => {
+  const { user } = useContext(AuthContext); // Access user from AuthContext
   const navigate = useNavigate();
-  const [firstGarden, setFirstGarden] = useState(null);
+  const [userIdFromStorage, setUserIdFromStorage] = useState(null);
 
-  // useEffect(() => {
-  //   const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
-  //   if (gardens.length > 0) {
-  //     setFirstGarden(gardens[0]);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (user) {
+      setUserIdFromStorage(user.uid); // Set user ID from context
+    }
+  }, [user]); // Re-run when user changes
 
   const goToHome = () => {
     handleClickLink();
     navigate('/');
+  };
+
+  const goToCalendar = () => {
+    if (userIdFromStorage) {
+      navigate(`/calendar/${userIdFromStorage}`); // Use userId from context
+      handleClickLink(); // Close the sidebar after navigation
+    } else {
+      alert("No user found to view the calendar.");
+    }
   };
 
   return (
@@ -34,7 +44,7 @@ const Sidebar = ({ show, handleClickLink, onClose }) => {
         <Nav className="flex-column">
           <Nav.Link onClick={() => navigate("/")} className="py-2">➕ Add Garden</Nav.Link>
           <Nav.Link onClick={goToHome} className="py-2">🏡 Home</Nav.Link>
-          <Nav.Link onClick={() => navigate("/calendar")} className="py-2">🗓️ Calendar</Nav.Link>
+          <Nav.Link onClick={goToCalendar} className="py-2">🗓️ Calendar</Nav.Link>
           <Nav.Link onClick={() => alert("Profile coming soon!")} className="py-2">👤 Profile</Nav.Link>
           <Nav.Link onClick={() => alert("Help coming soon!")} className="py-2">❓ Help</Nav.Link>
         </Nav>

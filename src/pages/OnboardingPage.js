@@ -71,6 +71,7 @@ const Onboarding = () => {
   const [location, setLocation] = useState("indoor");
   const [dimensions, setDimensions] = useState("2 × 5 ft");
   const [template, setTemplate] = useState("Empty");
+  const [gardenName, setGardenName] = useState(`My Garden ${Date.now() % 10000}`);
   const { user } = useContext(AuthContext);
 
   const navigate = useNavigate();
@@ -89,7 +90,7 @@ const Onboarding = () => {
     const newGarden = {
       ...gardenProps,
       id: null,
-      name: `My Garden ${Date.now() % 10000}`,
+      name: gardenName,
       location,
       plots: templates[0].plots,
       plants: [], // start empty
@@ -184,6 +185,16 @@ const Onboarding = () => {
       </div>
 
       <div className="mb-3 w-100" style={{ maxWidth: "300px" }}>
+      <div className="mb-3 w-100" style={{ maxWidth: "300px" }}>
+        <label className="form-label">Garden Name:</label>
+        <input
+          type="text"
+          className="form-control"
+          value={gardenName}
+          onChange={(e) => setGardenName(e.target.value)}
+        />
+      </div>
+
         <label className="form-label">Garden dimensions:</label>
         <select
           className="form-select"
