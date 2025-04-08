@@ -23,3 +23,38 @@
     box-sizing: border-box;
     background-color: darkgrey;
   }
+  
+  .shelf-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .shelf-container {
+    position: relative;
+    display: inline-block;
+    z-index: 1;
+  }
+  
+  .shelf-img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .pot-slot-highlight {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border: 2px dashed #4caf50;
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 2;
+  }
+  
+  .pot {
+    position: absolute;
+    z-index: 3;
+  }
+  
