@@ -14,7 +14,7 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
             id,
             fill: getFill(),
             stroke: 'black',
-            strokeWidth: 4,
+            strokeWidth: 2,
             onDragEnd: (e) => onDragEnd(e),
             ref: (node) => {
                 if (node) {

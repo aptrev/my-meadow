@@ -1,33 +1,38 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import ToggleButton from 'react-bootstrap/ToggleButton'
 import Button from 'react-bootstrap/Button'
 import { Toolbar } from "radix-ui";
 import { Collapsible } from "radix-ui";
-import { PlusCircle, Flower2, XLg, Circle, Square, Star, ArrowCounterclockwise, ArrowClockwise } from 'react-bootstrap-icons';
+import { PlusCircle, Flower2, XLg, Circle, Square, Star, ArrowCounterclockwise, ArrowClockwise, Trash3 } from 'react-bootstrap-icons';
 import Overlay from 'react-bootstrap/Overlay';
+import { ReactSVG } from 'react-svg'
 import "../style/toolbar.css";
 
-export default function OutdoorToolbar({
-    onUndo, onRedo,
-    plotRef, setPlot, onPlotDragStart, onPlotDrag, onPlotDragEnd,
-    plantRef, setPlant, plants, onPlantDragStart, onPlantDrag, onPlantDragEnd, }) {
-    const [tool, setTool] = useState(0);
-    const [element, setElement] = useState(null);
-
-    const [openPlots, setOpenPlots] = useState(false);
-    const [openPlants, setOpenPlants] = useState();
-
-    const [isPlotDragging, setIsPlotDragging] = useState(false)
-    const [isPlantDragging, setIsPlantDragging] = useState(false)
+export default function OutdoorToolbar({ onUndo, onRedo, onDelete, toolbarButtons }) {
     const [position, setPosition] = useState({
         x: 0,
-        y: 0
+        y: 0,
     });
 
+    const [open, setOpen] = useState(null);
+    const [dragging, setDragging] = useState(null);
+
     function getPos(e) {
+        const header = document.getElementById('siteHeader');
+        const toolbarButtun = document.querySelector('.btn-toolbar');
+        const elementButton = document.querySelector('.btn-element');
         return {
-            x: e.pageX,
-            y: e.pageY,
+            x: e.pageX - toolbarButtun.offsetWidth,
+            y: e.pageY - header.offsetHeight - toolbarButtun.offsetHeight,
+        }
+    }
+
+    const handleOnOpenChange = (value) => {
+        if (value === open) {
+            setOpen(null);
+        } else {
+            setOpen(value);
         }
     }
 
@@ -39,188 +44,90 @@ export default function OutdoorToolbar({
         return ref.current
     }
 
-
-    const handleOpenPlots = () => {
-        if (openPlots) {
-            setOpenPlots(false);
-        } else {
-            setOpenPlants(false);
-            setOpenPlots(true);
-        }
-
-    }
-
-    const handleOpenPlants = () => {
-        if (openPlants) {
-            setOpenPlants(false);
-        } else {
-            setOpenPlots(false);
-            setOpenPlants(true);
-        }
-    }
-
-    const handlePlotMouseMove = useCallback(
+    const handleMouseMove = useCallback(
         (e) => {
+            e.preventDefault();
             setPosition(getPos(e));
-            onPlotDrag(e, getPos(e));
+            toolbarButtons.forEach(({ onDrag }, i) => {
+                if (i === open) {
+                    onDrag(e);
+                }
+            })
         },
-        [onPlotDrag]
+        [open, toolbarButtons]
     )
 
-    const handlePlotMouseUp = useCallback(
+    const handleMouseUp = useCallback(
         (e) => {
-            onPlotDragEnd(e, getPos(e));
-            setIsPlotDragging(false);
-            document.removeEventListener('mousemove', handlePlotMouseUp);
-
+            e.preventDefault();
+            toolbarButtons.forEach(({ onDragEnd }, i) => {
+                if (i === open) {
+                    onDragEnd(e);
+                    setDragging(null);
+                }
+            })
+            document.removeEventListener('mousemove', handleMouseMove);
         },
-        [onPlotDragEnd]
+        [open, toolbarButtons, handleMouseMove]
     )
 
-    const handlePlotMouseDown = useCallback(
-        (e, value) => {
+    const handleMouseDown = useCallback(
+        (e, value, index) => {
+            e.preventDefault();
+            toolbarButtons.forEach(({ onDragStart, onSelect }, i) => {
+                if (i === open) {
+                    setDragging(index);
+                    onDragStart(e);
+                    onSelect(value);
+                }
+            })
 
-            onPlotDragStart(e, getPos(e))
-            setPlot(value);
-            setIsPlotDragging(true);
-            document.addEventListener('mousemove', handlePlotMouseMove)
+            document.addEventListener('mousemove', handleMouseMove)
         },
-        [onPlotDragStart, setPlot, handlePlotMouseMove]
+        [open, toolbarButtons, handleMouseMove]
     )
 
-    const prevPlotMouseMove = usePrevious(handlePlotMouseMove)
+    const prevMouseMove = usePrevious(handleMouseMove)
 
     useEffect(
         () => {
-            document.removeEventListener('mousemove', prevPlotMouseMove);
-            if (isPlotDragging) {
-                document.addEventListener('mousemove', handlePlotMouseMove)
+            document.removeEventListener('mousemove', prevMouseMove);
+            if (dragging !== null) {
+                document.addEventListener('mousemove', handleMouseMove)
             }
         },
-        [prevPlotMouseMove, handlePlotMouseMove, isPlotDragging]
-    )
-
-    useEffect(
-        () => {
-            if (isPlotDragging) {
-                document.addEventListener('mouseup', handlePlotMouseUp)
-            }
-            return () => document.removeEventListener('mouseup', handlePlotMouseUp)
-        },
-        [isPlotDragging, handlePlotMouseUp]
-    )
-
-    // Plants
-    const handlePlantMouseMove = useCallback(
-        (e) => {
-            setPosition(getPos(e));
-            onPlantDrag(e, getPos(e));
-        },
-        [onPlantDrag]
-    )
-
-    const handlePlantMouseUp = useCallback(
-        (e) => {
-            onPlantDragEnd(e, getPos(e));
-            setIsPlantDragging(false);
-            document.removeEventListener('mousemove', handlePlantMouseUp);
-
-        },
-        [onPlantDragEnd]
-    )
-
-    const handlePlantMouseDown = useCallback(
-        (e, value) => {
-
-            onPlantDragStart(e, getPos(e))
-            setPlant(value);
-            setIsPlantDragging(true);
-            document.addEventListener('mousemove', handlePlantMouseMove)
-        },
-        [onPlantDragStart, setPlant, handlePlantMouseMove]
-    )
-
-    const prevPlantMouseMove = usePrevious(handlePlantMouseMove)
-
-    useEffect(
-        () => {
-            document.removeEventListener('mousemove', prevPlantMouseMove);
-            if (isPlantDragging) {
-                document.addEventListener('mousemove', handlePlantMouseMove)
-            }
-        },
-        [prevPlantMouseMove, handlePlantMouseMove, isPlantDragging]
+        [prevMouseMove, handleMouseMove, dragging]
     )
 
     useEffect(
         () => {
-            if (isPlantDragging) {
-                document.addEventListener('mouseup', handlePlantMouseUp)
+            if (dragging !== null) {
+                document.addEventListener('mouseup', handleMouseUp)
             }
-            return () => document.removeEventListener('mouseup', handlePlantMouseUp)
+            return () => document.removeEventListener('mouseup', handleMouseUp)
         },
-        [isPlantDragging, handlePlantMouseUp]
+        [dragging, handleMouseUp]
     )
 
     const getShape = () => {
+        if (open !== null && dragging !== null) {
+            const tool = toolbarButtons[open];
+            const option = tool.options[dragging];
 
-        if (isPlotDragging) {
-            switch (plotRef.current) {
-                case 'rect': return <Square
-                    size={64}
-                    style={{
-                        display: (isPlotDragging) ? 'block' : 'none',
-                        position: 'absolute',
-                        left: position.x,
-                        top: position.y,
-                        cursor: 'grab',
-                        color: 'var(--primaryDarkGreen)',
-                        zIndex: 1001,
-                    }}
-                />
-                case 'star': return <Star
-                    size={64}
-                    style={{
-                        display: (isPlotDragging) ? 'block' : 'none',
-                        position: 'absolute',
-                        left: position.x,
-                        top: position.y,
-                        cursor: 'grab',
-                        color: 'var(--primaryDarkGreen)',
-                        zIndex: 1001,
-                    }}
-                />
-                case 'circle':
-                default: return <Circle
-                    size={64}
-                    style={{
-                        display: (isPlotDragging) ? 'block' : 'none',
-                        position: 'absolute',
-                        left: position.x,
-                        top: position.y,
-                        cursor: 'grab',
-                        color: 'var(--primaryDarkGreen)',
-                        zIndex: 1001,
-                    }}
-                />
-            }
-        } else if (isPlantDragging) {
-            const plant = plants.find(({ id }) => {
-                return id === plantRef.current;
-            });
             return <img
-                alt={plant.name}
-                src={require('../assets/images/' + plant.src)}
+                alt={option.name}
+                src={option.src}
                 style={{
-                    display: (isPlantDragging) ? 'block' : 'none',
-                    height: '24px',
-                    width: '24px',
+                    display: (option) ? 'block' : 'none',
+                    height: 64,
+                    width: 64,
                     position: 'absolute',
                     left: position.x,
                     top: position.y,
                     cursor: 'grab',
                     color: 'var(--primaryDarkGreen)',
                     zIndex: 1001,
+                    filter: 'drop-shadow(0 0 0.25rem black)',
                 }}
             />
         }
@@ -230,99 +137,61 @@ export default function OutdoorToolbar({
         <div className='d-flex f-row'>
             {getShape()}
 
-            <Toolbar.Root className="ToolbarRoot position-relative my-2">
+            <Toolbar.Root className="ToolbarRoot position-relative">
                 <ButtonGroup className='d-flex d-row justify-content-center'>
-                    <Collapsible.Root
-                        className="CollapsibleRoot position-relative"
-                        style={{ zIndex: 1000 }}
-                        open={openPlots}
-                        onOpenChange={handleOpenPlots}>
-                        <Collapsible.Trigger className='collapsible-trigger' asChild>
-                            <Button
-                                className={`${openPlots ? 'active' : ''} d-flex align-items-center`}
-                                variant='toolbar'
+                    {toolbarButtons.map((button, index) => {
+                        const buttonOpen = open === index;
+                        return <Collapsible.Root
+                            key={button.id}
+                            id={button.id}
+                            className="CollapsibleRoot position-relative"
+                            style={{ zIndex: 1000 }}
+                            open={buttonOpen}
+                            onOpenChange={(e) => handleOnOpenChange(index)}>
+                            <Collapsible.Trigger className='collapsible-trigger' asChild>
+                                <Button
+                                    className={`${buttonOpen ? 'active' : ''} d-flex align-items-center`}
+                                    variant='toolbar'
+                                >
+                                    {buttonOpen ? button.iconActive : button.iconDisabled}
+                                </Button>
+                            </Collapsible.Trigger>
+                            <Collapsible.Content
+                                className='d-flex flex-row mt-4 position-absolute gap-3'
                             >
-                                {openPlots ? <XLg size={24} /> : <PlusCircle size={24} />}
-                            </Button>
-                        </Collapsible.Trigger>
-                        <Collapsible.Content
-                            className='d-flex flex-row mt-4 position-absolute'
-                        >
-                            {/* Circle */}
-                            <Button
-                                className='d-flex align-items-center'
-                                variant='element'
-                                draggable='true'
-                                onMouseMove={handlePlotMouseMove}
-                                onMouseDown={(e) => handlePlotMouseDown(e, 'circle')}
-                                onMouseUp={handlePlotMouseUp}
-                            >
-                                <Circle size={24} />
-                            </Button>
-                            {/* Rectangle */}
-                            <Button
-                                className='d-flex align-items-center ms-2'
-                                variant='element'
-                                draggable='true'
-                                onMouseMove={handlePlotMouseMove}
-                                onMouseDown={(e) => handlePlotMouseDown(e, 'rect')}
-                                onMouseUp={handlePlotMouseUp}
-                            >
-                                <Square size={24} />
-                            </Button>
-                            {/* Star */}
-                            <Button
-                                className='d-flex align-items-center ms-2'
-                                variant='element'
-                                draggable='true'
-                                onMouseMove={handlePlotMouseMove}
-                                onMouseDown={(e) => handlePlotMouseDown(e, 'star')}
-                                onMouseUp={handlePlotMouseUp}
-                            >
-                                <Star size={24} />
-                            </Button>
-                        </Collapsible.Content>
-                    </Collapsible.Root>
-
-                    <Collapsible.Root
-                        className="CollapsibleRoot position-relative ms-2"
-                        style={{ zIndex: 1000 }}
-                        open={openPlants}
-                        onOpenChange={handleOpenPlants}>
-                        <Collapsible.Trigger className='collapsible-trigger' asChild>
-                            <Button
-                                className={`${openPlants ? 'active' : ''} d-flex align-items-center`}
-                                variant='toolbar'
-                            >
-                                {openPlants ? <XLg size={24} /> : <Flower2 size={24} />}
-                            </Button>
-                        </Collapsible.Trigger>
-                        <Collapsible.Content
-                            className='d-flex flex-row mt-4 position-absolute'
-                        >
-                            {plants.map((plant) => {
-                                const { id, name, src, color } = plant;
-                                return (
-                                    <Button
-                                        key={id}
-                                        className='d-flex align-items-center ms-2'
+                                {button.options.map((option, index) => {
+                                    return <Button
+                                        key={option.id}
+                                        id={option.id}
+                                        className='d-flex shadow-sm justify-content-center align-items-center'
                                         variant='element'
                                         draggable='true'
-                                        onMouseMove={handlePlantMouseMove}
-                                        onMouseDown={(e) => handlePlantMouseDown(e, id)}
-                                        onMouseUp={handlePlantMouseUp}
+                                        onMouseMove={handleMouseMove}
+                                        onMouseDown={(e) => handleMouseDown(e, option.value, index)}
+                                        onMouseUp={handleMouseUp}
                                     >
-                                        <img
-                                            alt={plant.name}
-                                            src={require('../assets/images/' + src)}
-                                            draggable="false"
-                                            style={{ height: '24px', width: '24px' }}
-                                        />
+                                        {(option.format === 'svg') ?
+                                            <ReactSVG
+                                                src={option.src}
+                                                beforeInjection={(svg) => {
+                                                    svg.classList.add('toolbar-element-icon');
+                                                    svg.setAttribute('width', 20);
+                                                    svg.setAttribute('height', 20);
+                                                }}
+                                                wrapper="div"
+                                            />
+                                            : <img
+                                                alt={option.name}
+                                                src={option.src}
+                                                draggable="false"
+                                                style={{ height: '24px', width: '24px' }} />
+                                        }
                                     </Button>
-                                );
-                            })}
-                        </Collapsible.Content>
-                    </Collapsible.Root>
+                                })}
+
+                            </Collapsible.Content>
+                        </Collapsible.Root>
+                    })}
                 </ButtonGroup>
 
                 <Toolbar.Separator className="ToolbarSeparator" />
@@ -348,6 +217,17 @@ export default function OutdoorToolbar({
                         <ArrowClockwise />
                     </Button>
                 </ButtonGroup>
+
+                <Toolbar.Separator className="ToolbarSeparator" />
+
+                {/* Trash */}
+                <Button
+                    className={`d-flex align-items-center`}
+                    variant='outline-danger'
+                    onClick={onDelete}
+                >
+                    <Trash3 />
+                </Button>
 
             </Toolbar.Root>
         </div >

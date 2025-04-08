@@ -38,6 +38,31 @@ button {
     background-color: var(--primaryDarkGreen) !important;
 }
 
+.btn-element>div,
+.btn-element>div>div {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 0;
+	margin: 0;
+}
+
+.toolbar-element-icon {
+	fill: var(--primaryDarkGreen);
+	padding: 0;
+	margin: 0;
+	aspect-ratio: 1/1;
+	align-self: center;
+}
+
+.btn-element:hover .toolbar-element-icon,
+.btn-element:focus .toolbar-element-icon,
+.btn-element:active .toolbar-element-icon {
+	fill: white !important;
+	stroke: white;
+}
+
 .ToolbarRoot {
 	display: flex;
 	padding: 10px;

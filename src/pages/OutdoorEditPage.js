@@ -6,41 +6,79 @@ import Plot from '../components/Plot'
 import { retrieveGarden } from '../utilities/FirebaseUtils';
 import { newCircle, newRect, newStar } from '../utilities/Shapes';
 
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import 'bootstrap/dist/css/bootstrap.css';
-
-import '../style/outdooredit.css';
+import { PlusCircle, Flower2, XLg, CircleSquare } from 'react-bootstrap-icons';
+import Container from 'react-bootstrap/Container'
 import AppContainer from "../components/AppContainer";
 import OutdoorToolbar from "../components/OutdoorToolbar";
+import marigold from '../assets/images/marigold.png'
+import magnolia from '../assets/images/magnolia.png'
+import begonia from '../assets/images/begonia.png'
+import rose from '../assets/images/rose.png'
+import circle from '../assets/images/plots/circle.svg'
+import square from '../assets/images/plots/square.svg'
+import star from '../assets/images/plots/star.svg'
+
+import '../style/outdooredit.css';
 
 const Konva = window.Konva;
 
-const plant_species = [
+const plant_options = [
     {
         id: 1473,
         name: "Marigold",
-        src: 'marigold.png',
-        color: 'orange'
+        src: marigold,
+        color: 'orange',
+        format: 'png',
+        value: 1473,
     },
     {
         id: 324,
-        name: 'Magnolia',
-        src: 'magnolia.png',
-        color: 'beige'
+        name: begonia,
+        src: magnolia,
+        color: 'beige',
+        format: 'png',
+        value: 324,
     },
     {
         id: 1194,
         name: 'Begonia',
-        src: 'begonia.png',
-        color: 'pink'
+        src: begonia,
+        color: 'pink',
+        format: 'png',
+        value: 1194,
     },
     {
         id: 6791,
         name: 'Rose',
-        src: 'rose.png',
-        color: 'red'
+        src: rose,
+        color: 'red',
+        format: 'png',
+        value: 6791,
     }
+]
+
+const plot_options = [
+    {
+        id: 'toolbar-circle-element',
+        name: 'Circle',
+        value: 'circle',
+        src: circle,
+        format: 'svg',
+    },
+    {
+        id: 'toolbar-rect-element',
+        name: 'Rectangle',
+        value: 'rect',
+        src: square,
+        format: 'svg',
+    },
+    {
+        id: 'toolbar-star-element',
+        name: 'Star',
+        value: 'star',
+        src: star,
+        format: 'svg',
+    },
 ]
 
 export default function OutdoorEditPage() {
@@ -61,19 +99,24 @@ export default function OutdoorEditPage() {
     const isSelecting = useRef(false);
     const transformerRef = useRef();
     const plotRefs = useRef(new Map());
-    const species = plant_species;
+    const species = plant_options;
     const [sceneWidth, setSceneWidth] = useState(0);
     const [sceneHeight, setSceneHeight] = useState(0);
+    const [position, setPosition] = useState({
+        x: 0,
+        y: 0
+    });
     const containerRef = useRef(null);
     const plotRef = useRef(null);
     const plantRef = useRef(null);
+    const mainLayerRef = useRef(null);
+    const selectRef = useRef(null);
 
     useEffect(() => {
         if (id) {
-            console.log(id);
             retrieveGarden(id)
                 .then((data) => {
-                    data.plants = plant_species;
+                    data.plants = plant_options;
                     setPlots(data.plots);
                     setHistory([JSON.stringify(data.plots)]);
                     setGarden(data);
@@ -88,6 +131,22 @@ export default function OutdoorEditPage() {
         scale: 1
     });
 
+    useEffect(() => {
+        if (garden) {
+            const wrapper = document.getElementById('stage-wrapper');
+            const width = wrapper.width;
+            const height = wrapper.height;
+            if (width > height) {
+
+            }
+            setStageSize({
+                width: garden.stage.width,
+                height: garden.stage.height,
+                scale: 1,
+            });
+        }
+    }, [garden, setStageSize])
+
     const updateSize = useCallback(() => {
         if (!stageRef.current) return;
 
@@ -97,9 +156,6 @@ export default function OutdoorEditPage() {
 
         // Calculate scale
         const scale = containerWidth / sceneWidth;
-
-        // console.log('Width ' + containerWidth);
-        // console.log('Height ' + containerHeight);
 
         // Update state with new dimensions
         setStageSize({
@@ -121,11 +177,10 @@ export default function OutdoorEditPage() {
                 height: garden.stage.height,
                 scale: 1
             })
-            garden.plants = plant_species;
         }
     }, [garden]);
 
-    // Update stage size on window resize
+    // // Update stage size on window resize
     useEffect(() => {
         updateSize();
         window.addEventListener('resize', updateSize);
@@ -134,19 +189,6 @@ export default function OutdoorEditPage() {
             window.removeEventListener('resize', updateSize);
         };
     }, [garden, updateSize]);
-
-    // Add transformer to selected plots.
-    useEffect(() => {
-        if (selectedIds.length && transformerRef.current) {
-            const nodes = selectedIds
-                .map(id => plotRefs.current.get(id))
-                .filter(node => node);
-
-            transformerRef.current.nodes(nodes);
-        } else if (transformerRef.current) {
-            transformerRef.current.nodes([]);
-        }
-    }, [selectedIds]);
 
     const handleAssign = (plant_id) => {
         const nodes = transformerRef.current.nodes();
@@ -176,7 +218,8 @@ export default function OutdoorEditPage() {
         }
 
         if (e.target === e.target.getStage()) {
-            setSelectedIds([]);
+            const newIds = [];
+            setSelectedIds(newIds);
             return;
         }
 
@@ -205,12 +248,13 @@ export default function OutdoorEditPage() {
 
         isSelecting.current = true;
         const pos = e.target.getStage().getPointerPosition();
+        console.log(pos);
         setSelectionRectangle({
             visible: true,
-            x1: pos.x,
-            y1: pos.y,
-            x2: pos.x,
-            y2: pos.y,
+            x1: pos.x * (1 / stageSize.scale),
+            y1: pos.y * (1 / stageSize.scale),
+            x2: pos.x * (1 / stageSize.scale),
+            y2: pos.y * (1 / stageSize.scale),
         });
     };
 
@@ -222,8 +266,8 @@ export default function OutdoorEditPage() {
         const pos = e.target.getStage().getPointerPosition();
         setSelectionRectangle({
             ...selectionRectangle,
-            x2: pos.x,
-            y2: pos.y,
+            x2: pos.x * (1 / stageSize.scale),
+            y2: pos.y * (1 / stageSize.scale),
         });
     };
 
@@ -247,16 +291,21 @@ export default function OutdoorEditPage() {
             height: Math.abs(selectionRectangle.y2 - selectionRectangle.y1),
         };
 
-        const selected = plots.filter(plot => {
+        const nodes = plots
+            .map(({ id }) => plotRefs.current.get(id))
+            .filter(node => node);
+
+        const selected = nodes.filter((node, index) => {
+
             return Konva.Util.haveIntersection(selBox, {
-                x: plot.x,
-                y: plot.y,
-                width: plot.width,
-                height: plot.height,
+                x: node.x(),
+                y: node.y(),
+                width: node.width(),
+                height: node.height(),
             });
         });
 
-        setSelectedIds(selected.map(rect => rect.id));
+        setSelectedIds(selected.map(plot => plot.id()));
     };
 
     const handleDragEnd = (e) => {
@@ -293,6 +342,20 @@ export default function OutdoorEditPage() {
         saveHistory(newPlots);
     }
 
+    useEffect(() => {
+        if (selectedIds.length && transformerRef.current) {
+            const nodes = selectedIds
+                .map(id => {
+                    return plotRefs.current.get(id)
+                })
+                .filter(node => node);
+
+            transformerRef.current.nodes(nodes);
+        } else if (transformerRef.current) {
+            transformerRef.current.nodes([]);
+        }
+    }, [selectedIds]);
+
     const handleTransformEnd = (e) => {
         const nodes = transformerRef.current.nodes();
 
@@ -310,13 +373,19 @@ export default function OutdoorEditPage() {
                 node.scaleY(1);
 
                 switch (newPlots[index].shape) {
+                    case 'star': newPlots[index] = {
+                        ...newPlots[index],
+                        x: node.x(),
+                        y: node.y(),
+                        innerRadius: node.innerRadius() * scaleX,
+                        outerRadius: node.outerRadius() * scaleX,
+                        rotation: node.rotation(),
+                    }; break;
                     case 'circle': newPlots[index] = {
                         ...newPlots[index],
                         x: node.x(),
                         y: node.y(),
-                        radius: node.radius(),
-                        width: Math.max(5, node.width() * scaleX),
-                        height: Math.max(node.height() * scaleY),
+                        radius: node.radius() * scaleX,
                     }; break;
                     default: newPlots[index] = {
                         ...newPlots[index],
@@ -324,16 +393,9 @@ export default function OutdoorEditPage() {
                         y: node.y(),
                         width: Math.max(5, node.width() * scaleX),
                         height: Math.max(node.height() * scaleY),
+                        rotation: node.rotation(),
                     };
                 }
-
-                newPlots[index] = {
-                    ...newPlots[index],
-                    x: node.x(),
-                    y: node.y(),
-                    width: Math.max(5, node.width() * scaleX),
-                    height: Math.max(node.height() * scaleY),
-                };
 
             }
         });
@@ -350,43 +412,44 @@ export default function OutdoorEditPage() {
         setHistoryStep(newHistory.length - 1);
     }
 
-    const handleUndo = () => {
+    const saveGarden = useCallback((plots) => {
+        // For use by Save button in Header
+        const newGarden = garden;
+        newGarden.plots = plots;
+        localStorage.setItem('savedGarden', JSON.stringify(newGarden));
+    }, [garden])
+
+    const handleUndo = useCallback((e) => {
         if (historyStep === 0) return;
         const newStep = historyStep - 1;
         setHistoryStep(newStep);
         saveGarden(JSON.parse(history[newStep]));
         setPlots(JSON.parse(history[newStep]));
-    }
+    }, [history, historyStep, saveGarden])
 
-    const handleRedo = () => {
+    const handleRedo = useCallback((e) => {
         if (historyStep === history.length - 1) return;
         const newStep = historyStep + 1;
         setHistoryStep(newStep);
         saveGarden(JSON.parse(history[newStep]));
         setPlots(JSON.parse(history[newStep]));
-    };
+    }, [history, historyStep, saveGarden])
 
-    const saveGarden = (plots) => {
-        // For use by Save button in Header
-        const newGarden = garden;
-        newGarden.plots = plots;
-        localStorage.setItem('savedGarden', JSON.stringify(newGarden));
-    }
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.ctrlKey && event.key === 'z') {
+                handleUndo();
+            } else if (event.ctrlKey && event.shiftKey && event.key === 'Z') {
+                handleRedo();
+            }
+        };
 
-    const setPlot = (shape) => {
-        plotRef.current = shape;
-    }
+        document.addEventListener('keydown', handleKeyDown);
 
-    const setPlant = (plant) => {
-        plantRef.current = plant;
-    }
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [handleUndo, handleRedo]);
 
-    const handlePlotDragStart = (e, pos) => {
-        // console.log(`Start: (${pos.x}, ${pos.y})`);
-    }
-
-    const handlePlotDrag = (e, pos) => {
-        // console.log(`Move: (${pos.x}, ${pos.y})`);
+    const handlePlotDragStart = (e) => {
     }
 
     const getNewPlot = () => {
@@ -407,8 +470,11 @@ export default function OutdoorEditPage() {
         }])
     }
 
-    const handlePlotDragEnd = (e, pos) => {
-        e.preventDefault();
+    const handlePlotDrag = (e) => {
+        // setPosition(pos);
+    }
+
+    const handlePlotDragEnd = (e) => {
 
         stageRef.current.setPointersPositions(e);
 
@@ -418,23 +484,128 @@ export default function OutdoorEditPage() {
         saveHistory(newPlots);
     }
 
-    const handlePlantDragStart = (e, pos) => {
-        // console.log(`Start: (${pos.x}, ${pos.y})`);
+    const handlePlantDragStart = (e) => {
+        // setPosition(pos);
     }
 
-    const handlePlantDrag = (e, pos) => {
-        // console.log(`Move: (${pos.x}, ${pos.y})`);
+    const previousShape = useRef(null);
+    const prevPlantColor = useRef(null);
+    const handlePlantDrag = (e) => {
+        stageRef.current.setPointersPositions(e);
+        const pos = stageRef.current.getPointerPosition();
+        if (pos) {
+            const shape = stageRef.current.getIntersection(pos);
+            const plant = plant_options.find((p) => p.id === plantRef.current);
+
+            if (previousShape.current && shape) {
+                if (previousShape.current !== shape) {
+                    prevPlantColor.current = shape.fill()
+                    shape.fill(plant.color);
+                    previousShape.current = shape;
+                }
+            } else if (!previousShape.current && shape) {
+                prevPlantColor.current = shape.fill()
+                shape.fill(plant.color);
+                previousShape.current = shape;
+            } else if (previousShape.current && !shape) {
+                previousShape.current.fill(prevPlantColor.current);
+                previousShape.current = null;
+            }
+        }
+
     }
 
-    const handlePlantDragEnd = (e, pos) => {
-        e.preventDefault();
+    const handlePlantDragEnd = (e) => {
+        stageRef.current.setPointersPositions(e);
+        const pos = stageRef.current.getPointerPosition();
+        if (pos) {
+            const shape = stageRef.current.getIntersection(pos);
+            const plant = plant_options.find((p) => p.id === plantRef.current);
+            if (shape) {
+                previousShape.current = null;
+                prevPlantColor.current = null
+                shape.fill(plant.color);
+                console.log(shape);
+                const newPlots = plots.map((plot) => {
+                    if (plot.id === shape.id()) {
+                        const updates = {
+                            plant: plantRef.current,
+                            fill: plant.color,
+                        }
+                        return { ...plot, 
+                            ...updates,
+                        };
+                    }
+                    return plot;
+                });
+                plantRef.current = null;
 
-        // stageRef.current.setPointersPositions(e);
+                console.log(plots);
 
-        // const newPlots = getNewPlot();
+                setPlots(newPlots);
+                saveHistory(newPlots);
+            }
+        }
+    }
 
-        // setPlots(newPlots);
-        // saveHistory(newPlots);
+    const handleChangePlot = (plot) => {
+        plotRef.current = plot;
+    }
+
+    const handleChangePlant = (plant) => {
+        plantRef.current = plant;
+    }
+
+    const handleDelete = (e) => {
+
+        const newPlots = plots.filter((plot) => !selectedIds.includes(plot.id));
+        const newSelectedIds = [];
+        setSelectedIds(newSelectedIds);
+
+        setPlots(newPlots);
+        saveHistory(newPlots);
+    }
+
+    const onDragEnter = (e) => {
+        e.target.fill('red');
+    }
+
+    const toolbarButtons = [
+        {
+            id: 'toolbar-plot-button',
+            value: 'plot',
+            type: 'radio',
+            name: 'Plots',
+            options: plot_options,
+            ref: plotRef,
+            isDragging: false,
+            onDrag: (e, pos) => handlePlotDrag(e, pos),
+            onDragEnd: (e, pos) => handlePlotDragEnd(e, pos),
+            onDragStart: (e, pos) => handlePlotDragStart(e, pos),
+            onSelect: (plot) => handleChangePlot(plot),
+            iconActive: <XLg size={24} />,
+            iconDisabled: <CircleSquare size={24} />,
+        },
+        {
+            id: 'toolbar-plant-button',
+            value: 'plant',
+            type: 'radio',
+            name: 'Plants',
+            options: plant_options,
+            ref: plantRef,
+            isDragging: false,
+            onDrag: (e, pos) => handlePlantDrag(e, pos),
+            onDragEnd: (e, pos) => handlePlantDragEnd(e, pos),
+            onDragStart: (e, pos) => handlePlantDragStart(e, pos),
+            onSelect: (plant) => handleChangePlant(plant),
+            iconActive: <XLg size={24} />,
+            iconDisabled: <Flower2 size={24} />,
+        }
+    ]
+
+    const getPlants = () => {
+        const plants = plots.map((plot) => plot.plant);
+        return plant_options.filter((plant => plants.includes(plant.id)));
     }
 
     return (
@@ -445,71 +616,73 @@ export default function OutdoorEditPage() {
                         <OutdoorToolbar
                             onUndo={handleUndo}
                             onRedo={handleRedo}
-                            onPlotDragStart={handlePlotDragStart}
-                            onPlotDrag={handlePlotDrag}
-                            onPlotDragEnd={handlePlotDragEnd}
+                            onDelete={handleDelete}
                             plotRef={plotRef}
-                            setPlot={setPlot}
                             plantRef={plantRef}
-                            setPlant={setPlant}
-                            onPlantDragStart={handlePlantDragStart}
-                            onPlantDrag={handlePlantDrag}
-                            onPlantDragEnd={handlePlantDragEnd}
-                            plants={plant_species}
+                            toolbarButtons={toolbarButtons}
                         />
-                        <div ref={containerRef} style={{ margin: '0 auto', width: '100%', maxWidth: '600px', height: 'auto', backgroundColor: 'white' }}>
-                            <Stage
-                                width={stageSize.width}
-                                height={stageSize.height}
-                                scaleX={stageSize.scale}
-                                scaleY={stageSize.scale}
-                                ref={stageRef}
-                                onMouseDown={handleMouseDown}
-                                onMousemove={handleMouseMove}
-                                onMouseup={handleMouseUp}
-                                onClick={handleStageClick}
-                                onTap={handleStageClick}
-                            >
-                                <Layer>
-                                    {plots.map((plot) => {
-                                        const { id, shape, plant, ...restProps } = plot;
-                                        return (
-                                            <Plot
-                                                key={id}
-                                                id={id}
-                                                shape={shape}
-                                                shapeProps={restProps}
-                                                plant={plant}
-                                                plant_species={species}
-                                                onDragEnd={handleDragEnd}
-                                                plotRefs={plotRefs} />
-                                        )
-                                    })}
+                        <div id='stage-wrapper' className='mt-4'>
+                            <div className='white-canvas d-flex' ref={containerRef} style={{ margin: '0 auto', width: 'fit-content', height: 'fit-content' }}>
+                                <Stage
+                                    width={stageSize.width}
+                                    height={stageSize.height}
+                                    scaleX={stageSize.scale}
+                                    scaleY={stageSize.scale}
+                                    ref={stageRef}
+                                    onMouseDown={handleMouseDown}
+                                    onMousemove={handleMouseMove}
+                                    onMouseup={handleMouseUp}
+                                    onClick={handleStageClick}
+                                    onTap={handleStageClick}
+                                >
+                                    <Layer ref={mainLayerRef}>
+                                        {plots.map((plot) => {
+                                            const { id, shape, plant, ...restProps } = plot;
+                                            return (
+                                                <Plot
+                                                    key={id}
+                                                    id={id}
+                                                    shape={shape}
+                                                    shapeProps={restProps}
+                                                    plant={plant}
+                                                    plant_species={species}
+                                                    onDragEnd={handleDragEnd}
+                                                    plotRefs={plotRefs} />
+                                            )
+                                        })}
 
-                                    <Transformer
-                                        ref={transformerRef}
-                                        boundBoxFunc={(oldBox, newBox) => {
-                                            // Limit resize
-                                            if (newBox.width < 5 || newBox.height < 5) {
-                                                return oldBox;
-                                            }
-                                            return newBox;
-                                        }}
-                                        onTransformEnd={handleTransformEnd}
-                                    />
-
-                                    {selectionRectangle.visible && (
-                                        <Rect
-                                            x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
-                                            y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
-                                            width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
-                                            height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
-                                            fill="rgba(0,0,255,0.5)"
+                                        <Transformer
+                                            ref={transformerRef}
+                                            boundBoxFunc={(oldBox, newBox) => {
+                                                // Limit resize
+                                                if (newBox.width < 5 || newBox.height < 5) {
+                                                    return oldBox;
+                                                }
+                                                return newBox;
+                                            }}
+                                            onTransformEnd={handleTransformEnd}
                                         />
-                                    )}
-                                </Layer>
-                            </Stage>
+
+                                        {selectionRectangle.visible && (
+                                            <Rect
+                                                x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
+                                                y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
+                                                width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
+                                                height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
+                                                fill="var(--primaryDarkGreen)"
+                                                opacity={0.25}
+                                                ref={selectRef}
+                                            />
+                                        )}
+
+                                    </Layer>
+                                </Stage>
+                            </div>
                         </div>
+
+                        <Container className='outdoor-plant-info'>
+                                <p>{getPlants}</p>
+                        </Container>
                     </div>
                 }
             </AppContainer>

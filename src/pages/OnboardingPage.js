@@ -21,8 +21,6 @@ const templates = [
         x: 100,
         y: 100,
         radius: 50,
-        width: 100,
-        height: 100,
         draggable: true
       },
       {
@@ -33,8 +31,6 @@ const templates = [
         x: 200,
         y: 200,
         radius: 50,
-        width: 100,
-        height: 100,
         draggable: true
       },
       {
@@ -45,8 +41,6 @@ const templates = [
         x: 300,
         y: 300,
         radius: 50,
-        width: 100,
-        height: 100,
         draggable: true
       },
       {
@@ -57,8 +51,6 @@ const templates = [
         x: 400,
         y: 400,
         radius: 50,
-        width: 100,
-        height: 100,
         draggable: true
       },
       {
@@ -69,8 +61,6 @@ const templates = [
         x: 500,
         y: 500,
         radius: 50,
-        width: 100,
-        height: 100,
         draggable: true
       }
     ],

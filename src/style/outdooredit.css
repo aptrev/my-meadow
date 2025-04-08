@@ -11,3 +11,21 @@
     filter: none;
     box-shadow: 0px 1px grey;
 }
+
+.white-canvas {
+    /* width: auto;
+    height: auto;
+    overflow: 'auto'; */
+    background-size: 10px 10px;
+    background-image:
+    linear-gradient(to right, lightBlue 1px, white 1px),
+    linear-gradient(to bottom, lightBlue 1px, white 1px);
+}
+
+#stage-wrapper {
+    background-color: beige;
+}
+
+.outdoor-plant-info {
+    background-color: var(--secondaryLightGreen);
+}

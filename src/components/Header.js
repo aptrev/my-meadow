@@ -215,7 +215,7 @@ const Header = () => {
     }
 
     return (
-        <Navbar style={{ backgroundColor: "#3B6255" }} variant="dark" className="p-3 justify-content-between">
+        <Navbar id='siteHeader' style={{ backgroundColor: "#3B6255" }} variant="dark" className="p-3 justify-content-between">
             {getBarElements()}
         </Navbar>
     );
