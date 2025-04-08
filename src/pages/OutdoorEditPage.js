@@ -413,11 +413,27 @@ export default function OutdoorEditPage() {
     }
 
     const saveGarden = useCallback((plots) => {
-        // For use by Save button in Header
-        const newGarden = garden;
-        newGarden.plots = plots;
+        const newGarden = { ...garden, plots };
+    
+        // Find newly added plants
+        const addedPlantIds = plots.map(p => p.plant).filter(Boolean);
+        const uniqueIds = [...new Set(addedPlantIds)];
+    
+        const addedPlants = uniqueIds.map(
+            id => plant_options.find(opt => opt.id === id)?.name
+        ).filter(Boolean);
+    
+        // Save to localStorage only if plants were added
+        if (addedPlants.length > 0) {
+            localStorage.setItem('recentlyAddedPlants', JSON.stringify(addedPlants));
+        } else {
+            localStorage.removeItem('recentlyAddedPlants');
+        }
+    
         localStorage.setItem('savedGarden', JSON.stringify(newGarden));
-    }, [garden])
+    }, [garden]);
+    
+    
 
     const handleUndo = useCallback((e) => {
         if (historyStep === 0) return;

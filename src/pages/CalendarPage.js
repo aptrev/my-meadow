@@ -10,12 +10,81 @@ import GardenNavbar from "../components/GardenNavbar";
 import Sidebar from "../components/Sidebar";
 import { retrieveGarden } from '../utilities/FirebaseUtils';
 
+const plant_species = [
+  {
+    id: 1473,
+    name: "Marigold",
+    src: 'marigold.png',
+    color: 'orange',
+    waterFrequency: 'every 2 days'
+  },
+  {
+    id: 324,
+    name: 'Magnolia',
+    src: 'magnolia.png',
+    color: 'beige',
+    waterFrequency: 'weekly'
+  },
+  {
+    id: 1194,
+    name: 'Begonia',
+    src: 'begonia.png',
+    color: 'pink',
+    waterFrequency: 'every 3 days'
+  },
+  {
+    id: 6791,
+    name: 'Rose',
+    src: 'rose.png',
+    color: 'red',
+    waterFrequency: 'every 2 days'
+  }
+];
+
+const frequencyMap = {
+  "every 2 days": 2,
+  "every 3 days": 3,
+  "weekly": 7
+};
+
 const MyMeadowCalendar = () => {
   const { id } = useParams();
   const [view, setView] = useState("timeGridDay");
   const [showSidebar, setShowSidebar] = useState(false);
   const [notes, setNotes] = useState("Reap and gather tomatoes from Garden 1\nBuy new iris seeds\nPay neighbor to weed garden");
   const [garden, setGarden] = useState(null);
+  const [events, setEvents] = useState([]);
+
+  // generate watering events based on plots and plant schedule
+  const generateWateringEvents = (plots) => {
+    const now = new Date(); // current date
+    const plantIds = plots.map(p => p.plant).filter(Boolean); // get all planted IDs
+    const uniquePlantIds = [...new Set(plantIds)];
+
+    let newEvents = [];
+
+    uniquePlantIds.forEach(id => {
+      const plant = plant_species.find(p => p.id === id);
+      if (!plant || !plant.waterFrequency) return;
+
+      const interval = frequencyMap[plant.waterFrequency];
+      if (!interval) return;
+
+      let current = new Date(now);
+
+      for (let i = 0; i < 10; i++) {
+        const date = new Date(current);
+        date.setHours(8, 0, 0, 0); // 8am
+        newEvents.push({
+          title: `Water ${plant.name}`,
+          start: date.toISOString()
+        });
+        current.setDate(current.getDate() + interval);
+      }
+    });
+
+    return newEvents;
+  };
 
   useEffect(() => {
     const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
@@ -28,10 +97,18 @@ const MyMeadowCalendar = () => {
     if (id) {
       retrieveGarden(id)
         .then((data) => {
+          data.plants = plant_species;
           setGarden(data);
         });
     }
-  }, [id, setGarden])
+  }, [id]);
+
+  useEffect(() => {
+    if (garden?.plots) {
+      const generated = generateWateringEvents(garden.plots);
+      setEvents(generated);
+    }
+  }, [garden]);
 
   return (
     <div>
@@ -46,10 +123,7 @@ const MyMeadowCalendar = () => {
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView={view}
-          events={[
-            { title: "Water", start: "2024-03-10T12:00:00" },
-            { title: "Weed Garden 1", start: "2024-03-10T11:00:00" }
-          ]}
+          events={events}
         />
       </div>
 
