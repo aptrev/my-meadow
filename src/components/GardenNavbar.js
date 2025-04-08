@@ -9,7 +9,7 @@ const GardenNavbar = ({ onGardenChange, onSidebarToggle, isEditing, onSave }) =>
 
   useEffect(() => {
     const storedGardens = JSON.parse(localStorage.getItem("gardens")) || [];
-    const selectedId = JSON.parse(localStorage.getItem("selectedGardenId"));
+    const selectedId = localStorage.getItem("selectedGardenId");
     setGardens(storedGardens);
     setSelectedGardenId(selectedId);
   }, []);

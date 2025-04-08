@@ -87,8 +87,13 @@ const MyMeadowCalendar = () => {
   };
 
   useEffect(() => {
-    const gardens = JSON.parse(localStorage.getItem("gardens")) || [];
-    const selectedId = JSON.parse(localStorage.getItem("gardenId"));
+    let gardens = [];
+    try {
+      gardens = JSON.parse(localStorage.getItem("gardens")) || [];
+    } catch (e) {
+      gardens = [];
+    }
+    const selectedId = localStorage.getItem("gardenId");
     const garden = gardens.find(g => g.id === selectedId);
     setGarden(garden);
   }, []);
