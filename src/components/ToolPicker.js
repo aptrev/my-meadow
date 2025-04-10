@@ -10,7 +10,6 @@ import { TbChevronCompactLeft } from "react-icons/tb";
 import '../style/home.css';
 import '../style/outdooredit.css';
 
-
 export default function ToolPicker({ tool, onHide, options }) {
 
     return (

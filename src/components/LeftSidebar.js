@@ -69,17 +69,17 @@ export default function LeftSidebar({ tool, onChangeTool, options }) {
 
     return (
         <div
-            className='p-0 m-0 z-1 overflow-auto'
-            style={{ backgroundColor: 'var(--secondaryLightGreen)', height: 'calc(100dvh + 0)', scrollMarginTop: '75px'}}
+            className='p-0 m-0 z-1'
+            style={{ backgroundColor: 'var(--secondaryLightGreen)', height: 'calc(100dvh + 75px)', scrollMarginTop: '75px'}}
         >
-            <div className='folder-picker p-2'>
+            <div className=' p-2 d-flex flex-column justify-content-center align-items-center position-relative'>
                 <div 
                 className='sidebar-label position-absolute top-0 d-flex flex-column justify-content-center align-items-center p-1'
                 style={{zIndex: '0'}}>
                     <span>Select</span>
                     <span>Tool</span>
                 </div>
-                <Stack gap={2} className=' py-1 h-100' 
+                <Stack gap={2} className='overflow-auto py-1 h-100' 
                 style={{marginTop: '50px', scrollMarginTop: '0px', zIndex: 1}}>
                     {
                         sidebar.map((item) => {

@@ -22,7 +22,7 @@
 .btn-tool {
     background-color: transparent !important;
     color: var(--secondaryGray) !important;
-    padding: 5px 15px !important;
+    padding: 5px !important;
     border: none !important;
   }
 
