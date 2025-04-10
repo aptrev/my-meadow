@@ -2,12 +2,14 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Stage, Layer, Rect, Transformer } from 'react-konva';
 import { useParams } from "react-router-dom";
-import Plot from '../components/Plot'
 import { retrieveGarden } from '../utilities/FirebaseUtils';
 import { newCircle, newRect, newStar } from '../utilities/Shapes';
 
 import { PlusCircle, Flower2, XLg, CircleSquare } from 'react-bootstrap-icons';
 import Container from 'react-bootstrap/Container'
+import Stack from 'react-bootstrap/Stack'
+
+import Plot from '../components/Plot'
 import AppContainer from "../components/AppContainer";
 import OutdoorToolbar from "../components/OutdoorToolbar";
 import marigold from '../assets/images/marigold.png'
@@ -19,6 +21,8 @@ import square from '../assets/images/plots/square.svg'
 import star from '../assets/images/plots/star.svg'
 
 import '../style/outdooredit.css';
+import LeftSidebar from "../components/LeftSidebar";
+import ToolPicker from '../components/ToolPicker'
 
 const Konva = window.Konva;
 
@@ -100,8 +104,12 @@ export default function OutdoorEditPage() {
     const transformerRef = useRef();
     const plotRefs = useRef(new Map());
     const species = plant_options;
-    const [sceneWidth, setSceneWidth] = useState(0);
-    const [sceneHeight, setSceneHeight] = useState(0);
+    const [scene, setScene] = useState({});
+    const [stageSize, setStageSize] = useState({
+        width: 0,
+        height: 0,
+        scale: 1
+    });
     const [position, setPosition] = useState({
         x: 0,
         y: 0
@@ -113,9 +121,20 @@ export default function OutdoorEditPage() {
     const selectRef = useRef(null);
 
     useEffect(() => {
+        setStageSize({
+            ...scene,
+            scale: 1
+        })
+    }, [scene])
+
+    useEffect(() => {
         if (id) {
             retrieveGarden(id)
                 .then((data) => {
+                    setScene({
+                        width: data.stage.width,
+                        height: data.stage.height,
+                    });
                     data.plants = plant_options;
                     setPlots(data.plots);
                     setHistory([JSON.stringify(data.plots)]);
@@ -125,62 +144,30 @@ export default function OutdoorEditPage() {
     }, [id]);
 
     // Responsive canvas
-    const [stageSize, setStageSize] = useState({
-        width: 500,
-        height: 500,
-        scale: 1
-    });
-
-    useEffect(() => {
-        if (garden) {
-            const wrapper = document.getElementById('stage-wrapper');
-            const width = wrapper.width;
-            const height = wrapper.height;
-            if (width > height) {
-
-            }
-            setStageSize({
-                width: garden.stage.width,
-                height: garden.stage.height,
-                scale: 1,
-            });
-        }
-    }, [garden, setStageSize])
-
     const updateSize = useCallback(() => {
         if (!stageRef.current) return;
+        // console.log(scene);
 
-        // Get container dimensions
-        const containerWidth = containerRef.current.offsetWidth;
-        const containerHeight = containerRef.current.offsetHeight;
+        if (scene && scene.width) {
 
-        // Calculate scale
-        const scale = containerWidth / sceneWidth;
+            // Get container dimensions
+            const containerWidth = containerRef.current.offsetWidth;
+            // const containerHeight = containerRef.current.offsetHeight;
 
-        // Update state with new dimensions
-        setStageSize({
-            width: sceneWidth * scale,
-            height: sceneHeight * scale,
-            scale: scale
-        });
+            // Calculate scale
+            const scale = containerWidth / scene.width;
 
-    }, [sceneWidth, sceneHeight]);
-
-    // Add background color to canvas and initialize stage size of
-    // garden load.
-    useEffect(() => {
-        if (garden) {
-            setSceneWidth(garden.stage.width);
-            setSceneHeight(garden.stage.height);
+            // Update state with new dimensions
             setStageSize({
-                width: garden.stage.width,
-                height: garden.stage.height,
-                scale: 1
-            })
+                width: scene.width * scale,
+                height: scene.height * scale,
+                scale: scale
+            });
         }
-    }, [garden]);
 
-    // // Update stage size on window resize
+    }, [scene]);
+
+    // Update stage size on window resize
     useEffect(() => {
         updateSize();
         window.addEventListener('resize', updateSize);
@@ -188,7 +175,7 @@ export default function OutdoorEditPage() {
         return () => {
             window.removeEventListener('resize', updateSize);
         };
-    }, [garden, updateSize]);
+    }, [updateSize]);
 
     const handleAssign = (plant_id) => {
         const nodes = transformerRef.current.nodes();
@@ -248,7 +235,6 @@ export default function OutdoorEditPage() {
 
         isSelecting.current = true;
         const pos = e.target.getStage().getPointerPosition();
-        console.log(pos);
         setSelectionRectangle({
             visible: true,
             x1: pos.x * (1 / stageSize.scale),
@@ -414,26 +400,26 @@ export default function OutdoorEditPage() {
 
     const saveGarden = useCallback((plots) => {
         const newGarden = { ...garden, plots };
-    
+
         // Find newly added plants
         const addedPlantIds = plots.map(p => p.plant).filter(Boolean);
         const uniqueIds = [...new Set(addedPlantIds)];
-    
+
         const addedPlants = uniqueIds.map(
             id => plant_options.find(opt => opt.id === id)?.name
         ).filter(Boolean);
-    
+
         // Save to localStorage only if plants were added
         if (addedPlants.length > 0) {
             localStorage.setItem('recentlyAddedPlants', JSON.stringify(addedPlants));
         } else {
             localStorage.removeItem('recentlyAddedPlants');
         }
-    
+
         localStorage.setItem('savedGarden', JSON.stringify(newGarden));
     }, [garden]);
-    
-    
+
+
 
     const handleUndo = useCallback((e) => {
         if (historyStep === 0) return;
@@ -480,7 +466,7 @@ export default function OutdoorEditPage() {
         }
 
         return plots.concat([{
-            id: `plot-${plots.length}`,
+            id: `plot-${Date.now()}`,
             ...shape,
             ...stageRef.current.getPointerPosition(),
         }])
@@ -541,22 +527,20 @@ export default function OutdoorEditPage() {
                 previousShape.current = null;
                 prevPlantColor.current = null
                 shape.fill(plant.color);
-                console.log(shape);
                 const newPlots = plots.map((plot) => {
                     if (plot.id === shape.id()) {
                         const updates = {
                             plant: plantRef.current,
                             fill: plant.color,
                         }
-                        return { ...plot, 
+                        return {
+                            ...plot,
                             ...updates,
                         };
                     }
                     return plot;
                 });
                 plantRef.current = null;
-
-                console.log(plots);
 
                 setPlots(newPlots);
                 saveHistory(newPlots);
@@ -638,85 +622,97 @@ export default function OutdoorEditPage() {
     //     saveHistory(newPlots);
     // }
 
+    const [tool, setTool] = useState(null);
+
+    const onChangeTool = (value) => {
+        setTool((value !== tool) ? value : null)
+    };
+
     return (
-        <>
-            <AppContainer>
-                {garden &&
-                    <div style={{ width: '100%', height: '100%' }}>
-                        <OutdoorToolbar
-                            onUndo={handleUndo}
-                            onRedo={handleRedo}
-                            onDelete={handleDelete}
-                            plotRef={plotRef}
-                            plantRef={plantRef}
-                            toolbarButtons={toolbarButtons}
-                        />
-                        <div id='stage-wrapper' className='mt-4'>
-                            <div className='white-canvas d-flex' ref={containerRef} style={{ margin: '0 auto', width: 'fit-content', height: 'fit-content' }}>
-                                <Stage
-                                    width={stageSize.width}
-                                    height={stageSize.height}
-                                    scaleX={stageSize.scale}
-                                    scaleY={stageSize.scale}
-                                    ref={stageRef}
-                                    onMouseDown={handleMouseDown}
-                                    onMousemove={handleMouseMove}
-                                    onMouseup={handleMouseUp}
-                                    onClick={handleStageClick}
-                                    onTap={handleStageClick}
+        <Stack
+            className='position-relative flex-grow-1 m-0 p-0 align-items-start'
+            direction="horizontal"
+            style={{ backgroundColor: 'var(--edit-background-color)' }}>
+            <LeftSidebar
+                tool={tool}
+                onChangeTool={onChangeTool}
+                options={toolbarButtons} />
+            <ToolPicker
+                tool={tool}
+                onHide={onChangeTool}
+             />
+            {garden &&
+                <div className='w-100' style={{ height: 'calc(100dvh + 75px)', scrollMarginTop: '75px' }}>
+                    <Container fluid className='w-100 h-100 my-2 d-flex flex-row justify-content-center align-items-center'>
+                        <div className='position-relative h-100' ref={containerRef} style={{maxWidth: '800px', width: '100%'}}>
+                            <OutdoorToolbar
+                                onUndo={handleUndo}
+                                onRedo={handleRedo}
+                                onDelete={handleDelete}
+                                plotRef={plotRef}
+                                plantRef={plantRef}
+                                toolbarButtons={toolbarButtons}
+                            />
+                            <div id='stage-wrapper' className='h-100' style={{ marginTop: '75px',width: '100%',maxWidth: '800px' }}>
+                                <div className='white-canvas' style={{ margin: '0 auto', width: 'fit-content', height: 'fit-content' }}>
+                                    <Stage
+                                        width={stageSize.width}
+                                        height={stageSize.height}
+                                        scaleX={stageSize.scale}
+                                        scaleY={stageSize.scale}
+                                        ref={stageRef}
+                                        onMouseDown={handleMouseDown}
+                                        onMousemove={handleMouseMove}
+                                        onMouseup={handleMouseUp}
+                                        onClick={handleStageClick}
+                                        onTap={handleStageClick}
                                     // onPlantClick={handlePlantClick}
-                                >
-                                    <Layer ref={mainLayerRef}>
-                                        {plots.map((plot) => {
-                                            const { id, shape, plant, ...restProps } = plot;
-                                            return (
-                                                <Plot
-                                                    key={id}
-                                                    id={id}
-                                                    shape={shape}
-                                                    shapeProps={restProps}
-                                                    plant={plant}
-                                                    plant_species={species}
-                                                    onDragEnd={handleDragEnd}
-                                                    plotRefs={plotRefs} />
-                                            )
-                                        })}
-
-                                        <Transformer
-                                            ref={transformerRef}
-                                            boundBoxFunc={(oldBox, newBox) => {
-                                                // Limit resize
-                                                if (newBox.width < 5 || newBox.height < 5) {
-                                                    return oldBox;
-                                                }
-                                                return newBox;
-                                            }}
-                                            onTransformEnd={handleTransformEnd}
-                                        />
-
-                                        {selectionRectangle.visible && (
-                                            <Rect
-                                                x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
-                                                y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
-                                                width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
-                                                height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
-                                                fill="var(--primaryDarkGreen)"
-                                                opacity={0.25}
-                                                ref={selectRef}
+                                    >
+                                        <Layer ref={mainLayerRef}>
+                                            {plots.map((plot) => {
+                                                const { id, shape, plant, ...restProps } = plot;
+                                                return (
+                                                    <Plot
+                                                        key={id}
+                                                        id={id}
+                                                        shape={shape}
+                                                        shapeProps={restProps}
+                                                        plant={plant}
+                                                        plant_species={species}
+                                                        onDragEnd={handleDragEnd}
+                                                        plotRefs={plotRefs} />
+                                                )
+                                            })}
+                                            <Transformer
+                                                ref={transformerRef}
+                                                boundBoxFunc={(oldBox, newBox) => {
+                                                    // Limit resize
+                                                    if (newBox.width < 5 || newBox.height < 5) {
+                                                        return oldBox;
+                                                    }
+                                                    return newBox;
+                                                }}
+                                                onTransformEnd={handleTransformEnd}
                                             />
-                                        )}
-
-                                    </Layer>
-                                </Stage>
+                                            {selectionRectangle.visible && (
+                                                <Rect
+                                                    x={Math.min(selectionRectangle.x1, selectionRectangle.x2)}
+                                                    y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
+                                                    width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
+                                                    height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
+                                                    fill="var(--primaryDarkGreen)"
+                                                    opacity={0.25}
+                                                    ref={selectRef}
+                                                />
+                                            )}
+                                        </Layer>
+                                    </Stage>
+                                </div>
                             </div>
                         </div>
-
-                        {/* <Container className='outdoor-plant-info'>
-                                <p>{getPlants}</p>
-                        </Container> */}
-                    </div>
-                }
-            </AppContainer>
-        </>
+                    </Container>
+                </div>
+            }
+        </Stack>
     )
 }

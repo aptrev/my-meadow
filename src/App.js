@@ -14,6 +14,10 @@ import Header from './components/Header'
 import AuthProvider from "./components/AuthProvider";
 import ThemeProvider from './components/ThemeProvider'
 
+import "@fontsource/inter"; // Defaults to weight 400
+import "@fontsource/inter/400.css"; // Specify weight
+import "@fontsource/inter/400-italic.css"; // Specify weight and style
+
 import './style/home.css';
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -22,8 +26,10 @@ const AppLayout = () => {
     <>
       <AuthProvider>
         <ThemeProvider>
-          <Header />
-          <Outlet />
+          <div className='main position-relative d-flex flex-column overflow-hidden'>
+            <Header />
+            <Outlet />
+          </div>
         </ThemeProvider>
       </AuthProvider>
     </>

@@ -134,7 +134,7 @@ export default function OutdoorToolbar({ onUndo, onRedo, onDelete, toolbarButton
     }
 
     return (
-        <div className='d-flex f-row'>
+        <div className='d-flex flex-row align-items-center justify-content-center position-absolute w-100'>
             {getShape()}
 
             <Toolbar.Root className="ToolbarRoot position-relative">

@@ -1,7 +1,9 @@
 :root {
   --primaryDarkGreen: #3B6255;
   --primaryLightGreen: #D3E3D2;
+  --secondaryLightGreen: #cbe9d8;
   --secondaryGray: #757575;
+  --edit-background-color: #F0F8FF;
 }
 
 body {
@@ -9,21 +11,35 @@ body {
   padding: 0;
   /* font-family: 'Arial', sans-serif; */
   background-color: var(--primaryLightGreen);
-  font-size: 16px; 
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-size: 16px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+.main {
+  flex: 1 1 auto;
+  min-height: 100vh;
+}
+
+.app-header {
+  max-height: 75px;
+}
+
+#siteHeader {
+  height: 75px;
 }
 
 .app {
   position: relative;
   padding: 0;
-  width: 100vw;
+  width: 100%;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
+  /* display: flex;
+  flex-direction: column; */
   box-sizing: border-box;
   background-color: var(--primaryLightGreen);
 }
@@ -35,12 +51,15 @@ body {
 }
 
 .btn-bar {
-  outline: none!important;;
+  outline: none !important;
+  ;
   color: white !important;
   background-color: transparent !important;
 }
 
-.btn-bar:hover, .btn-bar:active, .btn-bar:focus {
+.btn-bar:hover,
+.btn-bar:active,
+.btn-bar:focus {
   color: var(--primaryDarkGreen) !important;
   background-color: white !important;
 }
@@ -52,7 +71,7 @@ body {
 }
 
 .btn-main:hover {
-  background-color: rgba(0,0,0,0.05) !important;
+  background-color: rgba(0, 0, 0, 0.05) !important;
   /* background-color: var(--primaryLightGreen) !important; */
 }
 
@@ -85,14 +104,16 @@ body {
 .top-bar {
   width: 100%;
   box-sizing: border-box;
-  padding: 0.75rem 1.25rem;  /* 🔥 slightly larger padding */
+  padding: 0.75rem 1.25rem;
+  /* 🔥 slightly larger padding */
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: #295f3d;
   color: white;
   border-radius: 0.5rem;
-  font-size: 1rem;           /* 🔥 scale up text */
+  font-size: 1rem;
+  /* 🔥 scale up text */
 }
 
 .top-bar select {
@@ -143,7 +164,7 @@ body {
 }
 
 .shelf-img {
-  max-width: 30rem; 
+  max-width: 30rem;
   height: auto;
   display: block;
 }

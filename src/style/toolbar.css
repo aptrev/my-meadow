@@ -67,7 +67,7 @@ button {
 	display: flex;
 	padding: 10px;
     height: 100%;
-	width: 100%;
+	max-width: 100%;
 	min-width: max-content;
 	border-radius: 6px;
 	background-color: white;

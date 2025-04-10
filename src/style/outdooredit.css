@@ -1,6 +1,3 @@
-.plant-button {
-    /* filter: grayscale(); */
-}
 
 .plant-button.active {
     filter: none;
@@ -22,10 +19,88 @@
     linear-gradient(to bottom, lightBlue 1px, white 1px);
 }
 
-#stage-wrapper {
-    background-color: beige;
+.btn-tool {
+    background-color: transparent !important;
+    color: var(--secondaryGray) !important;
+    padding: 5px 15px !important;
+    border: none !important;
+  }
+
+.btn-tool:hover,
+.btn-tool:focus,
+.btn-tool:active,
+.btn-tool.active {
+  background-color: var(--primaryDarkGreen) !important;
+  color: white !important;
+  outline: none !important;
+  border: none !important;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px !important;
+  height: 100% !important;
+}
+
+.folder-picker {
+    overflow-y: auto;
+}
+
+.folder-label {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.sidebar-label {
+  gap: 0;
+  font-size: 12px;
+  border-bottom: 1px solid var(--secondaryGray);
+}
+
+.tool-picker {
+    width: 0;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
+    z-index: 0;
+    overflow-y: auto;
+    transition: width 0.5s ease-out;
+}
+
+.tool-picker.expanded {
+    width: 300px;
+}
+
+.toolpicker-content {
+    height: 2000px;
 }
 
 .outdoor-plant-info {
     background-color: var(--secondaryLightGreen);
+}
+
+.btn-collapse.expanded {
+    opacity: 1;
+    cursor: pointer;
+    transition: opacity 0.5s;
+}
+
+.btn-collapse {
+    width: 15px;
+    border-radius: 0 !important;
+    /* z-index: 1000; */
+    opacity: 0;
+    cursor:pointer;
+    right: -15px;
+}
+
+.btn-collapse:focus,
+.btn-collapse:active {
+    border: 0 !important;
+    outline: 0 !important;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.btn-collapse>div {
+    background-color: var(--primaryDarkGreen);
+    padding: 30px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0 15px 15px 0;
 }

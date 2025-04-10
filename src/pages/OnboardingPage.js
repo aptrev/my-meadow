@@ -14,7 +14,7 @@ const templates = [
   {
     plots: [
       {
-        id: 'plot-0',
+        id: null,
         shape: 'circle',
         name: 'plot',
         plant: null,
@@ -24,7 +24,7 @@ const templates = [
         draggable: true
       },
       {
-        id: 'plot-1',
+        id: null,
         shape: 'circle',
         name: 'plot',
         plant: null,
@@ -34,7 +34,7 @@ const templates = [
         draggable: true
       },
       {
-        id: 'plot-2',
+        id: null,
         shape: 'circle',
         name: 'plot',
         plant: null,
@@ -44,7 +44,7 @@ const templates = [
         draggable: true
       },
       {
-        id: 'plot-3',
+        id: null,
         shape: 'circle',
         name: 'plot',
         plant: null,
@@ -54,7 +54,7 @@ const templates = [
         draggable: true
       },
       {
-        id: 'plot-4',
+        id: null,
         shape: 'circle',
         name: 'plot',
         plant: null,
@@ -87,12 +87,19 @@ const Onboarding = () => {
       },
     }
 
+    const plots = templates[0].plots.map((plot, index) => {
+      return {
+        ...plot,
+        id: `plot-${index}`
+      }
+    })
+
     const newGarden = {
       ...gardenProps,
       id: null,
       name: gardenName,
       location,
-      plots: templates[0].plots,
+      plots,
       plants: [], // start empty
     };
 
