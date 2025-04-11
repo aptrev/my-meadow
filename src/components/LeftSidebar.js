@@ -64,8 +64,7 @@ const sidebar = [
     },
 ]
 
-export default function LeftSidebar({ tool, onChangeTool, options }) {
-    const [open, setOpen] = useState(null);
+export default function LeftSidebar({ tool, onChangeTool, garden, options }) {
 
     return (
         <div

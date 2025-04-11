@@ -22,7 +22,7 @@ import star from '../assets/images/plots/star.svg'
 
 import '../style/outdooredit.css';
 import LeftSidebar from "../components/LeftSidebar";
-import ToolPicker from '../components/ToolPicker'
+import ElementPicker from '../components/ElementPicker'
 
 const Konva = window.Konva;
 
@@ -119,6 +119,7 @@ export default function OutdoorEditPage() {
     const plantRef = useRef(null);
     const mainLayerRef = useRef(null);
     const selectRef = useRef(null);
+    const [element, setElement] = useState(null);
 
     useEffect(() => {
         setStageSize({
@@ -454,7 +455,7 @@ export default function OutdoorEditPage() {
     const handlePlotDragStart = (e) => {
     }
 
-    const getNewPlot = () => {
+    const getNewPlot = (e) => {
         var shape = null;
         switch (plotRef.current) {
             case 'rect': shape = newRect;
@@ -464,6 +465,8 @@ export default function OutdoorEditPage() {
             case 'circle':
             default: shape = newCircle;
         }
+
+        stageRef.current.setPointersPositions(e);
 
         return plots.concat([{
             id: `plot-${Date.now()}`,
@@ -622,6 +625,24 @@ export default function OutdoorEditPage() {
     //     saveHistory(newPlots);
     // }
 
+    const handleElementDragStart = (e) => {
+    }
+
+    const handleElementDrag = (e) => {
+        // setPosition(pos);
+        stageRef.current.setPointersPositions(e);
+    }
+
+    const handleElementDragEnd = (e) => {
+
+        stageRef.current.setPointersPositions(e);
+
+        const newPlots = getNewPlot(e);
+
+        setPlots(newPlots);
+        saveHistory(newPlots);
+    }
+
     const [tool, setTool] = useState(null);
 
     const onChangeTool = (value) => {
@@ -637,9 +658,16 @@ export default function OutdoorEditPage() {
                 tool={tool}
                 onChangeTool={onChangeTool}
                 options={toolbarButtons} />
-            <ToolPicker
+            <ElementPicker
                 tool={tool}
                 onHide={onChangeTool}
+                garden={garden}
+                element={element}
+                plants={plant_options}
+                plots={plot_options}
+                plotRef={plotRef}
+                onDrag={handleElementDrag}
+                onDragEnd={handleElementDragEnd}
              />
             {garden &&
                 <div className='w-100' style={{ height: 'calc(100dvh + 75px)', scrollMarginTop: '75px' }}>
