@@ -2,27 +2,28 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Stage, Layer, Rect, Transformer } from 'react-konva';
 import { useParams } from "react-router-dom";
-import { retrieveGarden } from '../utilities/FirebaseUtils';
-import { newCircle, newRect, newStar } from '../utilities/Shapes';
-
-import { PlusCircle, Flower2, XLg, CircleSquare } from 'react-bootstrap-icons';
+import { retrieveGarden, updateGarden } from '../utilities/FirebaseUtils';
+import { plotOptions } from '../utilities/Elements';
 import Container from 'react-bootstrap/Container'
 import Stack from 'react-bootstrap/Stack'
 
 import Plot from '../components/Plot'
-import AppContainer from "../components/AppContainer";
 import OutdoorToolbar from "../components/OutdoorToolbar";
+import Grid from '../components/Grid'
 import marigold from '../assets/images/marigold.png'
 import magnolia from '../assets/images/magnolia.png'
 import begonia from '../assets/images/begonia.png'
-import rose from '../assets/images/rose.png'
-import circle from '../assets/images/plots/circle.svg'
-import square from '../assets/images/plots/square.svg'
-import star from '../assets/images/plots/star.svg'
+import rose from '../assets/images/rose.png';
 
 import '../style/outdooredit.css';
 import LeftSidebar from "../components/LeftSidebar";
-import ElementPicker from '../components/ElementPicker'
+import ElementPicker from '../components/ElementPicker';
+
+import { Grid3x3 } from "react-bootstrap-icons";
+
+import {
+    Shape, Circle, Arc, Ellipse, Line, Path, RegularPolygon, Ring, Star, Wedge, Image
+} from 'react-konva';
 
 const Konva = window.Konva;
 
@@ -61,30 +62,6 @@ const plant_options = [
     }
 ]
 
-const plot_options = [
-    {
-        id: 'toolbar-circle-element',
-        name: 'Circle',
-        value: 'circle',
-        src: circle,
-        format: 'svg',
-    },
-    {
-        id: 'toolbar-rect-element',
-        name: 'Rectangle',
-        value: 'rect',
-        src: square,
-        format: 'svg',
-    },
-    {
-        id: 'toolbar-star-element',
-        name: 'Star',
-        value: 'star',
-        src: star,
-        format: 'svg',
-    },
-]
-
 export default function OutdoorEditPage() {
     const { id } = useParams();
     const [garden, setGarden] = useState(null);
@@ -110,16 +87,15 @@ export default function OutdoorEditPage() {
         height: 0,
         scale: 1
     });
-    const [position, setPosition] = useState({
-        x: 0,
-        y: 0
-    });
     const containerRef = useRef(null);
     const plotRef = useRef(null);
     const plantRef = useRef(null);
+    const gridLayerRef = useRef(null)
     const mainLayerRef = useRef(null);
     const selectRef = useRef(null);
     const [element, setElement] = useState(null);
+    const [selectedShapes, setSelectedShapes] = useState(new Set([]));
+    const [selectedElement, setSelectedElement] = useState(null);
 
     useEffect(() => {
         setStageSize({
@@ -147,7 +123,6 @@ export default function OutdoorEditPage() {
     // Responsive canvas
     const updateSize = useCallback(() => {
         if (!stageRef.current) return;
-        // console.log(scene);
 
         if (scene && scene.width) {
 
@@ -200,14 +175,21 @@ export default function OutdoorEditPage() {
         saveHistory(newPlots);
     }
 
+    const handleDeselect = () => {
+        const newShapes = new Set([]);
+        setSelectedShapes(newShapes);
+        const newIds = [];
+        setSelectedIds(newIds);
+        return;
+    }
+
     const handleStageClick = (e) => {
         if (selectionRectangle.visible) {
             return;
         }
 
         if (e.target === e.target.getStage()) {
-            const newIds = [];
-            setSelectedIds(newIds);
+            handleDeselect();
             return;
         }
 
@@ -221,11 +203,18 @@ export default function OutdoorEditPage() {
         const isSelected = selectedIds.includes(clickedId);
 
         if (!metaPressed && !isSelected) {
+            const newShapes = new Set([]);
             setSelectedIds([clickedId]);
+            newShapes.add(e.target.getClassName().toLowerCase());
+            setSelectedShapes(newShapes);
         } else if (metaPressed && isSelected) {
             setSelectedIds(selectedIds.filter(id => id !== clickedId));
+            const newShapes = selectedShapes;
+            newShapes.remove(e.target.getClassName().toLowerCase());
         } else if (metaPressed && !isSelected) {
             setSelectedIds([...selectedIds, clickedId]);
+            const newShapes = selectedShapes;
+            newShapes.add(e.target.getClassName().toLowerCase());
         }
     };
 
@@ -343,6 +332,9 @@ export default function OutdoorEditPage() {
         }
     }, [selectedIds]);
 
+    const handleTransformStart = (e) => {
+    }
+
     const handleTransformEnd = (e) => {
         const nodes = transformerRef.current.nodes();
 
@@ -356,32 +348,72 @@ export default function OutdoorEditPage() {
                 const scaleX = node.scaleX();
                 const scaleY = node.scaleY();
 
-                node.scaleX(1);
-                node.scaleY(1);
+                var newPlot = newPlots[index];
 
-                switch (newPlots[index].shape) {
-                    case 'star': newPlots[index] = {
-                        ...newPlots[index],
+                const pathScaleX = node.scaleX();
+                const pathScaleY = node.scaleY();
+
+                if (selectedShapes[index] !== 'path') {
+                    node.scaleX(1);
+                    node.scaleY(1);
+
+                    newPlot = {
+                        ...newPlot,
                         x: node.x(),
                         y: node.y(),
-                        innerRadius: node.innerRadius() * scaleX,
-                        outerRadius: node.outerRadius() * scaleX,
                         rotation: node.rotation(),
-                    }; break;
-                    case 'circle': newPlots[index] = {
-                        ...newPlots[index],
-                        x: node.x(),
-                        y: node.y(),
-                        radius: node.radius() * scaleX,
-                    }; break;
-                    default: newPlots[index] = {
-                        ...newPlots[index],
-                        x: node.x(),
-                        y: node.y(),
-                        width: Math.max(5, node.width() * scaleX),
-                        height: Math.max(node.height() * scaleY),
-                        rotation: node.rotation(),
-                    };
+                    }
+
+                    switch (newPlot.shape) {
+                        case 'arc': newPlot = {
+                            ...newPlot,
+                            innerRadius: node.innerRadius() * scaleX,
+                            outerRadius: node.outerRadius() * scaleX,
+                            angle: node.angle(),
+                        }; break;
+                        case 'wedge': newPlot = {
+                            ...newPlot,
+                            radius: node.radius() * scaleX,
+                            angle: node.angle(),
+                        }; break;
+                        case 'ellipse': newPlot = {
+                            ...newPlot,
+                            radius: {
+                                x: node.radius().x * scaleX,
+                                y: node.radius().y * scaleY,
+                            }
+                        }; break;
+                        case 'path': newPlot = {
+                            ...newPlot,
+                            sidesX: pathScaleX * scaleX,
+                            scaleY: pathScaleY * scaleY,
+                        }; break;
+                        case 'polygon': newPlot = {
+                            ...newPlot,
+                            sides: node.sides(),
+                            radius: node.radius() * scaleX,
+                        }; break;
+                        case 'ring':
+                        case 'star': newPlot = {
+                            ...newPlot,
+                            innerRadius: node.innerRadius() * scaleX,
+                            outerRadius: node.outerRadius() * scaleX,
+                        }; break;
+                        case 'circle': newPlot = {
+                            ...newPlot,
+                            radius: Math.max(5, node.radius() * scaleX),
+                        }; break;
+                        default: newPlot = {
+                            ...newPlot,
+                            width: Math.max(5, node.width() * scaleX),
+                            height: Math.max(node.height() * scaleY),
+                        };
+                    }
+
+                }
+
+                newPlots[index] = {
+                    ...newPlot,
                 }
 
             }
@@ -390,14 +422,6 @@ export default function OutdoorEditPage() {
         setPlots(newPlots);
         saveHistory(newPlots);
     };
-
-    const saveHistory = (newPlots) => {
-        const newHistory = history.slice(0, historyStep + 1);
-        newHistory.push(JSON.stringify(newPlots));
-        saveGarden(newPlots);
-        setHistory(newHistory);
-        setHistoryStep(newHistory.length - 1);
-    }
 
     const saveGarden = useCallback((plots) => {
         const newGarden = { ...garden, plots };
@@ -420,77 +444,15 @@ export default function OutdoorEditPage() {
         localStorage.setItem('savedGarden', JSON.stringify(newGarden));
     }, [garden]);
 
-
-
-    const handleUndo = useCallback((e) => {
-        if (historyStep === 0) return;
-        const newStep = historyStep - 1;
-        setHistoryStep(newStep);
-        saveGarden(JSON.parse(history[newStep]));
-        setPlots(JSON.parse(history[newStep]));
+    const saveHistory = useCallback((newPlots) => {
+        const newHistory = history.slice(0, historyStep + 1);
+        newHistory.push(JSON.stringify(newPlots));
+        saveGarden(newPlots);
+        setHistory(newHistory);
+        setHistoryStep(newHistory.length - 1);
     }, [history, historyStep, saveGarden])
-
-    const handleRedo = useCallback((e) => {
-        if (historyStep === history.length - 1) return;
-        const newStep = historyStep + 1;
-        setHistoryStep(newStep);
-        saveGarden(JSON.parse(history[newStep]));
-        setPlots(JSON.parse(history[newStep]));
-    }, [history, historyStep, saveGarden])
-
-    useEffect(() => {
-        const handleKeyDown = (event) => {
-            if (event.ctrlKey && event.key === 'z') {
-                handleUndo();
-            } else if (event.ctrlKey && event.shiftKey && event.key === 'Z') {
-                handleRedo();
-            }
-        };
-
-        document.addEventListener('keydown', handleKeyDown);
-
-        return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [handleUndo, handleRedo]);
 
     const handlePlotDragStart = (e) => {
-    }
-
-    const getNewPlot = (e) => {
-        var shape = null;
-        switch (plotRef.current) {
-            case 'rect': shape = newRect;
-                break;
-            case 'star': shape = newStar;
-                break;
-            case 'circle':
-            default: shape = newCircle;
-        }
-
-        stageRef.current.setPointersPositions(e);
-
-        return plots.concat([{
-            id: `plot-${Date.now()}`,
-            ...shape,
-            ...stageRef.current.getPointerPosition(),
-        }])
-    }
-
-    const handlePlotDrag = (e) => {
-        // setPosition(pos);
-    }
-
-    const handlePlotDragEnd = (e) => {
-
-        stageRef.current.setPointersPositions(e);
-
-        const newPlots = getNewPlot();
-
-        setPlots(newPlots);
-        saveHistory(newPlots);
-    }
-
-    const handlePlantDragStart = (e) => {
-        // setPosition(pos);
     }
 
     const previousShape = useRef(null);
@@ -551,79 +513,94 @@ export default function OutdoorEditPage() {
         }
     }
 
-    const handleChangePlot = (plot) => {
-        plotRef.current = plot;
-    }
-
-    const handleChangePlant = (plant) => {
-        plantRef.current = plant;
-    }
-
-    const handleDelete = (e) => {
-
+    const handleDelete = useCallback((e) => {
         const newPlots = plots.filter((plot) => !selectedIds.includes(plot.id));
         const newSelectedIds = [];
         setSelectedIds(newSelectedIds);
 
         setPlots(newPlots);
         saveHistory(newPlots);
-    }
+    }, [plots, saveHistory, selectedIds])
 
-    const onDragEnter = (e) => {
-        e.target.fill('red');
-    }
+    const handleUndo = useCallback((e) => {
+        if (historyStep === 0) return;
+        const newStep = historyStep - 1;
+        handleDeselect();
+        setHistoryStep(newStep);
+        saveGarden(JSON.parse(history[newStep]));
+        setPlots(JSON.parse(history[newStep]));
+    }, [history, historyStep, saveGarden])
 
-    const toolbarButtons = [
+    const handleRedo = useCallback((e) => {
+        if (historyStep === history.length - 1) return;
+        const newStep = historyStep + 1;
+        handleDeselect();
+        setHistoryStep(newStep);
+        saveGarden(JSON.parse(history[newStep]));
+        setPlots(JSON.parse(history[newStep]));
+    }, [history, historyStep, saveGarden])
+
+    const handleSave = useCallback(async () => {
+        const savedGarden = JSON.parse(localStorage.getItem('savedGarden'));
+        updateGarden(id, savedGarden)
+            .catch((e) => {
+                console.error(`Error saving garden: ${savedGarden.name}`, e);
+            })
+    }, [id])
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.ctrlKey && e.key === 'z') {
+                handleUndo();
+            } else if (e.ctrlKey && e.shiftKey && e.key === 'Z') {
+                handleRedo();
+            } else if (e.keyCode === 46) {
+                handleDelete();
+            } else if (e.keyCode === 27 || e.key === 'Escape' || (e.ctrlKey && e.key === 'd')) {
+                e.preventDefault();
+                handleDeselect();
+            } else if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                handleSave();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [handleUndo, handleRedo, handleDelete, handleSave]);
+
+    const [showGrid, setShowGrid] = useState(false);
+
+    const stageButtons = [
         {
-            id: 'toolbar-plot-button',
-            value: 'plot',
+            id: 'toolbar-grid-button',
+            value: 'grid',
             type: 'radio',
-            name: 'Plots',
-            options: plot_options,
-            ref: plotRef,
-            isDragging: false,
-            onDrag: (e, pos) => handlePlotDrag(e, pos),
-            onDragEnd: (e, pos) => handlePlotDragEnd(e, pos),
-            onDragStart: (e, pos) => handlePlotDragStart(e, pos),
-            onSelect: (plot) => handleChangePlot(plot),
-            iconActive: <XLg size={24} />,
-            iconDisabled: <CircleSquare size={24} />,
+            label: <Grid3x3 />,
+            name: (showGrid) ? 'Hide Grid' : 'Show Grid',
+            onSelect: (value) => setShowGrid(value),
         },
-        {
-            id: 'toolbar-plant-button',
-            value: 'plant',
-            type: 'radio',
-            name: 'Plants',
-            options: plant_options,
-            ref: plantRef,
-            isDragging: false,
-            onDrag: (e, pos) => handlePlantDrag(e, pos),
-            onDragEnd: (e, pos) => handlePlantDragEnd(e, pos),
-            onDragStart: (e, pos) => handlePlantDragStart(e, pos),
-            onSelect: (plant) => handleChangePlant(plant),
-            iconActive: <XLg size={24} />,
-            iconDisabled: <Flower2 size={24} />,
-        }
     ]
 
-    const getPlants = () => {
-        const plants = plots.map((plot) => plot.plant);
-        return plant_options.filter((plant => plants.includes(plant.id)));
+    const addNewPlot = (e, shape) => {
+
+        stageRef.current.setPointersPositions(e);
+
+        const pos = stageRef.current.getPointerPosition();
+
+        pos.x = pos.x * (1 / stageSize.scale);
+        pos.y = pos.y * (1 / stageSize.scale);
+
+        const newPlots = plots.concat([{
+            id: `plot-${Date.now()}`,
+            ...shape,
+            ...pos,
+        }])
+
+        setPlots(newPlots);
+        saveHistory(newPlots);
     }
-
-    // const handlePlantClick = (plantId) => {
-    //     if (selectedIds.length === 0) return;
-
-    //     const newPlots = plots.map(plot => {
-    //         if (selectedIds.includes(plot.id)) {
-    //             return { ...plot, plant: plantId };
-    //         }
-    //         return plot;
-    //     });
-
-    //     setPlots(newPlots);
-    //     saveHistory(newPlots);
-    // }
 
     const handleElementDragStart = (e) => {
     }
@@ -633,14 +610,9 @@ export default function OutdoorEditPage() {
         stageRef.current.setPointersPositions(e);
     }
 
-    const handleElementDragEnd = (e) => {
+    const handleElementDragEnd = (e, value) => {
 
-        stageRef.current.setPointersPositions(e);
-
-        const newPlots = getNewPlot(e);
-
-        setPlots(newPlots);
-        saveHistory(newPlots);
+        addNewPlot(e, value);
     }
 
     const [tool, setTool] = useState(null);
@@ -649,39 +621,114 @@ export default function OutdoorEditPage() {
         setTool((value !== tool) ? value : null)
     };
 
+    const handleSelect = (value) => {
+        selectRef.current = value;
+    }
+
+    const getSelectedElement = () => {
+        if (selectedIds.length === 1) {
+            const nodes = transformerRef.current.nodes();
+
+    
+            nodes.forEach(node => { 
+                const id = node.id();
+                const index = plots.findIndex(r => r.id === id);
+    
+                if (index !== -1) {
+                    return plots[index];
+                }
+            });
+        }
+        return null;
+    }
+
+    // const toolbarAssignPlant = (plotId, plantId) => {
+    //     const newPlots = plots.map((plot) => {
+    //         if (plot.id === shape.id()) {
+    //             const updates = {
+    //                 plant: plantRef.current,
+    //                 fill: plant.color,
+    //             }
+    //             return {
+    //                 ...plot,
+    //                 ...updates,
+    //             };
+    //         }
+    //         return plot;
+    //     });
+    // }
+
+    const exportRef = useRef(null);
+
+    function downloadURI(uri, name) {
+        var link = document.createElement('a');
+        link.download = name;
+        link.href = uri;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    const onExport = () => {
+        const uri = exportRef.current.toDataURL();
+        downloadURI(uri, 'square.png')
+    }
+
+
     return (
         <Stack
             className='position-relative flex-grow-1 m-0 p-0 align-items-start'
             direction="horizontal"
             style={{ backgroundColor: 'var(--edit-background-color)' }}>
+            {/* <Stage
+                ref={exportRef}
+                width={550}
+                height={550}
+            >
+                <Layer>
+                    <Rect
+                        x={25}
+                        y={25}
+                        stroke='black'
+                        strokeWidth={1}
+                        fill='white'
+                        width={500}
+                        height={500}
+                    />
+                </Layer>
+            </Stage> */}
             <LeftSidebar
                 tool={tool}
-                onChangeTool={onChangeTool}
-                options={toolbarButtons} />
+                onChangeTool={onChangeTool} />
             <ElementPicker
                 tool={tool}
                 onHide={onChangeTool}
                 garden={garden}
                 element={element}
                 plants={plant_options}
-                plots={plot_options}
-                plotRef={plotRef}
+                plots={plotOptions}
+                onSelect={handleSelect}
                 onDrag={handleElementDrag}
                 onDragEnd={handleElementDragEnd}
-             />
-            {garden &&
+                onDragStart={handleElementDragStart}
+            />
+            {
+                garden &&
                 <div className='w-100' style={{ height: 'calc(100dvh + 75px)', scrollMarginTop: '75px' }}>
+                    {/* <button onClick={onExport}>Export</button> */}
                     <Container fluid className='w-100 h-100 my-2 d-flex flex-row justify-content-center align-items-center'>
-                        <div className='position-relative h-100' ref={containerRef} style={{maxWidth: '800px', width: '100%'}}>
+                        <div className='position-relative h-100' ref={containerRef} style={{ maxWidth: '800px', width: '100%' }}>
                             <OutdoorToolbar
                                 onUndo={handleUndo}
                                 onRedo={handleRedo}
                                 onDelete={handleDelete}
                                 plotRef={plotRef}
                                 plantRef={plantRef}
-                                toolbarButtons={toolbarButtons}
+                                stageButtons={stageButtons}
+                                elementButtons={null}
+                                selectedElement={() => getSelectedElement()}
                             />
-                            <div id='stage-wrapper' className='h-100' style={{ marginTop: '75px',width: '100%',maxWidth: '800px' }}>
+                            <div id='stage-wrapper' className='h-100' style={{ marginTop: '75px', width: '100%', maxWidth: '800px' }}>
                                 <div className='white-canvas' style={{ margin: '0 auto', width: 'fit-content', height: 'fit-content' }}>
                                     <Stage
                                         width={stageSize.width}
@@ -696,6 +743,17 @@ export default function OutdoorEditPage() {
                                         onTap={handleStageClick}
                                     // onPlantClick={handlePlantClick}
                                     >
+                                        <Layer ref={gridLayerRef}>
+                                            {showGrid &&
+                                                < Grid
+                                                    width={stageSize.width * (1 / stageSize.scale)}
+                                                    height={stageSize.height * (1 / stageSize.scale)}
+                                                    cellWidth={10}
+                                                    cellHeight={10}
+                                                />
+                                            }
+
+                                        </Layer>
                                         <Layer ref={mainLayerRef}>
                                             {plots.map((plot) => {
                                                 const { id, shape, plant, ...restProps } = plot;
@@ -708,7 +766,8 @@ export default function OutdoorEditPage() {
                                                         plant={plant}
                                                         plant_species={species}
                                                         onDragEnd={handleDragEnd}
-                                                        plotRefs={plotRefs} />
+                                                        plotRefs={plotRefs}
+                                                        style={{ cursor: 'grab' }} />
                                                 )
                                             })}
                                             <Transformer
@@ -720,7 +779,36 @@ export default function OutdoorEditPage() {
                                                     }
                                                     return newBox;
                                                 }}
+                                                onTransformStart={handleTransformStart}
                                                 onTransformEnd={handleTransformEnd}
+                                                borderStroke="green"
+                                                anchorStroke="#3B6255"
+                                                anchorStrokeWidth={2}
+                                                anchorStyleFunc={(anchor) => {
+                                                    const nodes = transformerRef.current.nodes();
+                                                    const multipleSelections = selectedIds.length > 1;
+                                                    const squareShapeSelected = selectedShapes.size === 1 &&
+                                                        (selectedShapes.has('circle') || selectedShapes.has('regularpolygon') ||
+                                                            selectedShapes.has('arc') || selectedShapes.has('ring') ||
+                                                            selectedShapes.has('wedge') || selectedShapes.has('path') ||
+                                                            selectedShapes.has('star'));
+
+                                                    if (multipleSelections || squareShapeSelected) {
+                                                        if (anchor.hasName('top-center') ||
+                                                            anchor.hasName('bottom-center') ||
+                                                            anchor.hasName('middle-left') ||
+                                                            anchor.hasName('middle-right')) {
+                                                            anchor.scale({ x: 0, y: 0 });
+                                                        }
+                                                    } else {
+                                                        if (anchor.hasName('top-center') ||
+                                                            anchor.hasName('bottom-center') ||
+                                                            anchor.hasName('middle-left') ||
+                                                            anchor.hasName('middle-right')) {
+                                                            anchor.scale({ x: 1, y: 1 });
+                                                        }
+                                                    }
+                                                }}
                                             />
                                             {selectionRectangle.visible && (
                                                 <Rect
@@ -728,7 +816,7 @@ export default function OutdoorEditPage() {
                                                     y={Math.min(selectionRectangle.y1, selectionRectangle.y2)}
                                                     width={Math.abs(selectionRectangle.x2 - selectionRectangle.x1)}
                                                     height={Math.abs(selectionRectangle.y2 - selectionRectangle.y1)}
-                                                    fill="var(--primaryDarkGreen)"
+                                                    fill="#3B6255"
                                                     opacity={0.25}
                                                     ref={selectRef}
                                                 />
@@ -741,6 +829,6 @@ export default function OutdoorEditPage() {
                     </Container>
                 </div>
             }
-        </Stack>
+        </Stack >
     )
 }

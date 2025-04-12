@@ -21,9 +21,9 @@ import '../style/outdooredit.css';
 
 const sidebar = [
     {
-        id: 'tool-file',
-        value: 'file',
-        label: 'File',
+        id: 'tool-garden',
+        value: 'garden',
+        label: 'Garden',
         icon: <LayoutTextSidebarReverse fill='currentColor' size={20} />
     },
     {
@@ -68,7 +68,7 @@ export default function LeftSidebar({ tool, onChangeTool, garden, options }) {
 
     return (
         <div
-            className='p-0 m-0 z-1'
+            className='p-0 m-0 z-1 zindex-sticky'
             style={{ backgroundColor: 'var(--secondaryLightGreen)', height: 'calc(100dvh + 75px)', scrollMarginTop: '75px'}}
         >
             <div className=' p-2 d-flex flex-column justify-content-center align-items-center position-relative'>

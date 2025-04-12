@@ -19,48 +19,78 @@ const templates = [
         name: 'plot',
         plant: null,
         x: 100,
-        y: 100,
+        y: 250,
         radius: 50,
         draggable: true
       },
       {
         id: null,
-        shape: 'circle',
+        shape: 'rect',
         name: 'plot',
         plant: null,
         x: 200,
-        y: 200,
-        radius: 50,
+        y: 250,
+        width: 100,
+        height: 100,
         draggable: true
       },
       {
         id: null,
-        shape: 'circle',
-        name: 'plot',
-        plant: null,
-        x: 300,
-        y: 300,
-        radius: 50,
-        draggable: true
-      },
-      {
-        id: null,
-        shape: 'circle',
+        shape: 'ellipse',
         name: 'plot',
         plant: null,
         x: 400,
-        y: 400,
+        y: 250,
+        radius: {
+          x: 75,
+          y: 50,
+        },
+        draggable: true
+      },
+      {
+        id: null,
+        shape: 'arc',
+        name: 'plot',
+        plant: null,
+        x: 600,
+        y: 250,
+        innerRadius: 25,
+        outerRadius: 50,
+        angle: 180,
+        draggable: true
+      },
+      {
+        id: null,
+        shape: 'polygon',
+        name: 'plot',
+        plant: null,
+        x: 800,
+        y: 250,
+        sides: 6,
         radius: 50,
         draggable: true
       },
       {
         id: null,
-        shape: 'circle',
+        shape: 'wedge',
         name: 'plot',
         plant: null,
-        x: 500,
-        y: 500,
-        radius: 50,
+        x: 100,
+        y: 125,
+        radius: 100,
+        angle: 60,
+        rotation: -120,
+        draggable: true
+      },
+      {
+        id: null,
+        shape: 'ring',
+        name: 'plot',
+        plant: null,
+        x: 400,
+        y: 100,
+        innerRadius: 25,
+        outerRadius: 50,
         draggable: true
       }
     ],
@@ -82,17 +112,19 @@ const Onboarding = () => {
       height: 10,
       dimensions_units: 'ft',
       stage: {
-        width: 700,
-        height: 700
+        width: 1000,
+        height: 500
       },
     }
 
-    const plots = templates[0].plots.map((plot, index) => {
-      return {
-        ...plot,
-        id: `plot-${index}`
-      }
-    })
+    // const plots = templates[0].plots.map((plot, index) => {
+    //   return {
+    //     ...plot,
+    //     id: `plot-${index}`
+    //   }
+    // })
+
+    const plots = [];
 
     const newGarden = {
       ...gardenProps,
@@ -192,15 +224,15 @@ const Onboarding = () => {
       </div>
 
       <div className="mb-3 w-100" style={{ maxWidth: "300px" }}>
-      <div className="mb-3 w-100" style={{ maxWidth: "300px" }}>
-        <label className="form-label">Garden Name:</label>
-        <input
-          type="text"
-          className="form-control"
-          value={gardenName}
-          onChange={(e) => setGardenName(e.target.value)}
-        />
-      </div>
+        <div className="mb-3 w-100" style={{ maxWidth: "300px" }}>
+          <label className="form-label">Garden Name:</label>
+          <input
+            type="text"
+            className="form-control"
+            value={gardenName}
+            onChange={(e) => setGardenName(e.target.value)}
+          />
+        </div>
 
         <label className="form-label">Garden dimensions:</label>
         <select

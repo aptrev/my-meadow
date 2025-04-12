@@ -21,12 +21,12 @@ export default function AppModal({title, body, show, onHide, options, ...props})
                 {body}
             </Modal.Body>
             <Modal.Footer>
-                <ButtonGroup>
+                {/* <ButtonGroup> */}
                     {options && options.map((option, index) => {
                         const {label, onClick, ...optionProps} = option;
                         return <Button key={index} onClick={() => onClick()} {...optionProps} >{label}</Button>;
                     })}
-                </ButtonGroup>
+                {/* </ButtonGroup> */}
             </Modal.Footer>
         </Modal>
     );

@@ -26,6 +26,13 @@ button {
     background-color: var(--primaryDarkGreen) !important;
 }
 
+.btn-toggle {
+    margin: 0 !important;
+    padding: 5px !important;
+    color: var(--primaryDarkGreen) !important;
+    background-color: transparent !important;
+}
+
 .btn-element {
     padding: 5px !important;
     color: var(--primaryDarkGreen) !important;

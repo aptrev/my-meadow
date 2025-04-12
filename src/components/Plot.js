@@ -1,5 +1,5 @@
 import {
-    Circle, Arc, Ellipse, Line, Path, Rect, RegularPolygon, Ring, Star, Wedge, Image
+    Shape, Circle, Arc, Ellipse, Line, Path, Rect, RegularPolygon, Ring, Star, Wedge, Image
 } from 'react-konva';
 import React, { useRef, useEffect } from 'react';
 import useImage from 'use-image';
@@ -21,17 +21,6 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
         return plantInfo.color;
     };
 
-    const defaultProps = {
-        id,
-        fill: getFill(),
-        stroke: 'black',
-        strokeWidth: 4,
-        onDragEnd: (e) => onDragEnd(e),
-        ref: shapeRef,
-        draggable: true,
-        name: 'plot'
-    };
-
     const generatePlot = () => {
         const defaultProps = {
             id,
@@ -43,7 +32,11 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
                 if (node) {
                     plotRefs.current.set(id, node);
                 }
-            }
+            },
+            shadowColor: 'rgba(0,0,0,0.25)',
+            shadowBlur: 20,
+            shadowOffsetX: 5,
+            shadowOffsetY: 10,
         }
 
         switch (shape) {
@@ -56,8 +49,8 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
             case 'star': return <Star key={id} {...shapeProps} {...defaultProps} />;
             case 'wedge': return <Wedge key={id} {...shapeProps} {...defaultProps} />;
             case 'path': return <Path key={id} {...shapeProps} {...defaultProps} />;
-            case 'circle':
-            default: return <Circle key={id} {...shapeProps} {...defaultProps} />;
+            case 'circle':  return <Circle key={id} {...shapeProps} {...defaultProps} />
+            default: return <Shape key={id} {...shapeProps} {...defaultProps} />;
         }
     };
 
