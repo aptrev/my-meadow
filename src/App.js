@@ -11,6 +11,8 @@ import Login from "./pages/Login"
 import SignUp from "./pages/SignUp"
 import Profile from "./pages/Profile"
 import Header from './components/Header'
+// for now
+import PlantSearch from "./components/PlantSearch"
 import AuthProvider from "./components/AuthProvider";
 import ThemeProvider from './components/ThemeProvider'
 
@@ -89,6 +91,10 @@ const router = createBrowserRouter([
         path: '/calendar/:id',
         element: <MyMeadowCalendar />
       },
+      {
+        path: '/search',
+        element: <PlantSearch />
+      }
     ]
   }
 ])

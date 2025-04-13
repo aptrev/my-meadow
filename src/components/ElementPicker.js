@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-
 import "../style/toolbar.css";
 
 // Bootstrap Imports
@@ -11,10 +10,28 @@ import { TbChevronCompactLeft } from "react-icons/tb";
 import '../style/home.css';
 import '../style/outdooredit.css';
 import GardenSettings from "./GardenSettings";
+import PlantSearch from "./PlantSearch";
 
 export default function ElementPicker({ garden, tool, onHide, plants, plots, onSelect,
     onDrag, onDragEnd, onDragStart, onPlantDrag, onPlantDragStart, onPlantDragEnd, }) {
     const [dragging, setDragging] = useState(null);
+    const [showPlantSearch, setShowPlantSearch] = useState(false);
+
+    useEffect(() => {
+        const handleEsc = (e) => {
+          if (e.key === "Escape") {
+            setShowPlantSearch(false);
+          }
+        };
+      
+        if (showPlantSearch) {
+          window.addEventListener("keydown", handleEsc);
+        }
+      
+        return () => {
+          window.removeEventListener("keydown", handleEsc);
+        };
+      }, [showPlantSearch]);      
 
     function usePrevious(value) {
         const ref = useRef()
@@ -128,7 +145,7 @@ export default function ElementPicker({ garden, tool, onHide, plants, plots, onS
                             <GardenSettings garden={garden} />
                         }
                         {(tool === 'plants') &&
-                            <div className="plant-content">
+                            <div className="plant-content" style={{ overflowY: 'auto', maxHeight: '100%' }}>
                                 <div className='element-grid'>
                                     {plants.options.map((plant) => {
                                         return (
@@ -157,7 +174,8 @@ export default function ElementPicker({ garden, tool, onHide, plants, plots, onS
                                         );
                                     })}
                                     <div
-                                        className='element-container'
+                                        className='element-container' 
+                                        onClick={() => setShowPlantSearch(true)}
                                     >
                                         <div
                                             className='element'
@@ -183,6 +201,62 @@ export default function ElementPicker({ garden, tool, onHide, plants, plots, onS
                     <TbChevronCompactLeft stroke="white" size={24} />
                 </div>
             </Button>
+
+            {showPlantSearch && (
+                <div
+                    className="plant-search-overlay"
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100vw",
+                        height: "100vh",
+                        backgroundColor: "rgba(0, 0, 0, 0.3)",
+                        zIndex: 3000,
+                    }}
+                    onClick={() => setShowPlantSearch(false)}
+                >
+                    <div
+                        className="plant-search-popup"
+                        style={{
+                            position: "fixed",
+                            top: "20%",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            width: "600px",
+                            maxWidth: "90vw",
+                            backgroundColor: "white",
+                            border: "2px solid #ccc",
+                            borderRadius: "12px",
+                            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+                            padding: "1rem",
+                            zIndex: 3001,
+                            overflowY: "auto",
+                            maxHeight: "70vh"
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            className="btn btn-sm btn-outline-secondary"
+                            onClick={() => setShowPlantSearch(false)}
+                            style={{
+                                position: "absolute",
+                                top: "6px",
+                                right: "10px",
+                                zIndex: 1001,
+                            }}
+                        >
+                            ✕
+                        </button>
+                        <PlantSearch
+                            onSearchSelect={(plant) => {
+                                console.log("Selected plant:", plant);
+                                setShowPlantSearch(false);
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
