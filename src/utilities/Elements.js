@@ -41,14 +41,14 @@ const plotOptions = {
             format: 'png',
             shape: newEllipse,
         },
-        {
-            id: 'picker-triangle-element',
-            name: 'Triangle',
-            value: 'triangle',
-            src: triangle,
-            format: 'png',
-            shape: newTriangle,
-        },
+        // {
+        //     id: 'picker-triangle-element',
+        //     name: 'Triangle',
+        //     value: 'triangle',
+        //     src: triangle,
+        //     format: 'png',
+        //     shape: newTriangle,
+        // },
         {
             id: 'picker-polygon-element',
             name: 'Polygon',
@@ -138,4 +138,4 @@ const plantOptions = {
     ],
 }
 
-export {plotOptions}
+export {plotOptions, plantOptions}

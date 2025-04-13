@@ -5,6 +5,7 @@ import React, { useRef, useEffect } from 'react';
 import useImage from 'use-image';
 
 export default function Plot({ id, shape, shapeProps, plant, plant_species, onDragEnd, plotRefs }) {
+    // const [cloversBackground] = useImage(require(clovers));
     const shapeRef = useRef(null);
 
     useEffect(() => {
@@ -24,7 +25,7 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
     const generatePlot = () => {
         const defaultProps = {
             id,
-            fill: getFill(),
+            fill: 'white',
             stroke: 'black',
             strokeWidth: 2,
             onDragEnd: (e) => onDragEnd(e),
@@ -37,6 +38,7 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
             shadowBlur: 20,
             shadowOffsetX: 5,
             shadowOffsetY: 10,
+            // fillPatternImage: <img src={clovers} alt='clovers' />
         }
 
         switch (shape) {
@@ -49,7 +51,7 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
             case 'star': return <Star key={id} {...shapeProps} {...defaultProps} />;
             case 'wedge': return <Wedge key={id} {...shapeProps} {...defaultProps} />;
             case 'path': return <Path key={id} {...shapeProps} {...defaultProps} />;
-            case 'circle':  return <Circle key={id} {...shapeProps} {...defaultProps} />
+            case 'circle': return <Circle key={id} {...shapeProps} {...defaultProps} />
             default: return <Shape key={id} {...shapeProps} {...defaultProps} />;
         }
     };
@@ -60,13 +62,17 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
             {plantImg && (
                 <Image
                     image={plantImg}
-                    x={shapeProps.x}
-                    y={shapeProps.y}
-                    width={30}
-                    height={30}
+                    x={shapeProps.x - 25}
+                    y={shapeProps.y - 25}
+                    width={50}
+                    height={50}
                     listening={false} // prevents interaction interference
                 />
             )}
+            {/* <Image 
+            src={cloversBackground} alt='clovers'
+            width={20}
+            height={20} /> */}
         </>
     );
 }

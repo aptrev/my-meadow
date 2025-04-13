@@ -68,10 +68,10 @@ export default function LeftSidebar({ tool, onChangeTool, garden, options }) {
 
     return (
         <div
-            className='p-0 m-0 z-1 zindex-sticky'
-            style={{ backgroundColor: 'var(--secondaryLightGreen)', height: 'calc(100dvh + 75px)', scrollMarginTop: '75px'}}
+            className='p-2 zindex-sticky'
+            style={{ backgroundColor: 'var(--secondaryLightGreen)', height: 'calc(100dvh - 75px)'}}
         >
-            <div className=' p-2 d-flex flex-column justify-content-center align-items-center position-relative'>
+            <div className='d-flex flex-column justify-content-center align-items-center position-relative'>
                 <div 
                 className='sidebar-label position-absolute top-0 d-flex flex-column justify-content-center align-items-center p-1'
                 style={{zIndex: '0'}}>

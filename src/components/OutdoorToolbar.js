@@ -10,7 +10,7 @@ import { ReactSVG } from 'react-svg'
 import "../style/toolbar.css";
 import "../style/home.css";
 
-export default function OutdoorToolbar({ onUndo, onRedo, onDelete, stageButtons, elementButtons }) {
+export default function OutdoorToolbar({ onUndo, onRedo, onDelete, stageButtons, elementButtons, selectedElement }) {
     const [selected, setSelected] = useState(Array.from({length: stageButtons.length}, () => false));
 
     const handleSelect = (index) => {

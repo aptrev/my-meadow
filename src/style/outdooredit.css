@@ -53,7 +53,7 @@
     border-bottom: 1px solid var(--secondaryGray);
 }
 
-.element-picker {
+.element-picker-wrapper .element-picker {
     width: 0;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
     z-index: 0;
@@ -61,12 +61,8 @@
     transition: width 0.5s ease-out;
 }
 
-.element-picker.expanded {
+.element-picker-wrapper.expanded .element-picker {
     width: 300px;
-}
-
-.element-picker-content {
-    /* height: 2000px; */
 }
 
 .element-grid {
@@ -74,13 +70,40 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-auto-rows: 1fr;
+    grid-gap: 16px;
+}
+
+.element-grid .element-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.element-grid .element-container .label {
+    font-weight: 500;
+    color: var(--primaryDarkGreen);
+    font-size: 0.9em;
+    padding: 0;
+    margin: 0;
 }
 
 .element-grid .element {
+    color: var(--primaryDarkGreen);
     width: 100%;
-    height: 100%;
+    /* height: 100%; */
     position: relative;
     padding: 15px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    background-color: transparent;
+    aspect-ratio: 1/1;
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -88,16 +111,17 @@
 }
 
 .element-grid .element:hover {
-    width: 100%;
-    height: 100%;
+    color: white;
     position: relative;
     background-color: rgba(0, 0, 0, 0.25);
+    cursor: pointer;
 }
 
 .element-grid .element img {
     width: 100%;
     height: 100%;
     aspect-ratio: 1/1;
+    filter: drop-shadow(5px 5px 4px rgba(0,0,0,0.25))
 }
 
 .element .element-overlay {
@@ -131,19 +155,18 @@
     background-color: var(--secondaryLightGreen);
 }
 
-.btn-collapse.expanded {
-    opacity: 1;
-    cursor: pointer;
-    transition: opacity 0.5s;
-}
-
 .btn-collapse {
     width: 15px;
     border-radius: 0 !important;
     z-index: 1000;
-    opacity: 0;
     cursor: pointer;
-    right: -15px;
+}
+
+.btn-collapse.active {
+    width: 15px;
+    border-radius: 0 !important;
+    z-index: 1000;
+    cursor: pointer;
 }
 
 .btn-collapse:focus,
@@ -163,7 +186,68 @@
     border-radius: 0 15px 15px 0;
 }
 
+.btn-collapse.right>div {
+    border-radius: 15px 0 0 15px;
+}
+
+.element-picker-wrapper .btn-collapse {
+    display: none;
+}
+
+.element-picker-wrapper.expanded .btn-collapse {
+    display: block;
+}
+
 .garden-settings-input .input-group-text {
     color: white;
     background-color: var(--primaryDarkGreen);
+}
+
+.plant-info-wrapper .plant-info {
+    width: 0;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
+    z-index: 0;
+    overflow-y: auto;
+    transition: width 0.5s ease-out;
+}
+
+.plant-info-wrapper.expanded .plant-info {
+    width: 250px;
+}
+
+.plant-list {
+    border: 1px solid black;
+    border-radius: 0 !important;
+}
+
+.plant-list-item .icon {
+    visibility: hidden !important;
+}
+
+.plant-list-item.active .icon {
+    visibility: visible !important;
+}
+
+.btn-list {
+    background-color: rgba(0,0,0,0.15) !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    border-radius: 0 !important;
+}
+
+.btn-list .label {
+    text-align: left;
+    font-size: 0.9em;
+    font-weight: 400;
+}
+
+.plant-list-item.active .label {
+    font-weight: 500;
+}
+
+.btn-list:focus,
+.btn-list:active,
+.btn-list.active {
+    background-color: transparent !important;
 }

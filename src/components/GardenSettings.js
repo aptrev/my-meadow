@@ -3,7 +3,7 @@ import Form from "react-bootstrap/Form";
 import ListGroup from "react-bootstrap/ListGroup";
 
 
-export default function GardenSettings({ garden, onUpdateGarden }) {
+export default function GardenSettings({ garden, onUpdateGarden, onPrint }) {
 
     return (
         <div className='w-100'>

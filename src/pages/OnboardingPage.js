@@ -106,15 +106,32 @@ const Onboarding = () => {
 
   const navigate = useNavigate();
 
+  const getDimensions = () => {
+    if (dimensions === '2 × 5 ft') {
+      return {
+        width: 500,
+        height: 200,
+      }
+    } else if (dimensions === '3 × 6 ft') {
+      return {
+        width: 600,
+        height: 300,
+      }
+    } else if (dimensions === '4 × 8 ft') {
+      return {
+        width: 800,
+        height: 400,
+      }
+    }
+  }
+
   const handleSubmit = async () => {
+    const d = getDimensions();
     const gardenProps = {
-      width: 10,
-      height: 10,
+      width: d.width / 100,
+      height: d.height / 100,
       dimensions_units: 'ft',
-      stage: {
-        width: 1000,
-        height: 500
-      },
+      stage: d,
     }
 
     // const plots = templates[0].plots.map((plot, index) => {

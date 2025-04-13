@@ -5,6 +5,7 @@ import "../style/toolbar.css";
 // Bootstrap Imports
 import Button from "react-bootstrap/esm/Button";
 import Stack from "react-bootstrap/Stack";
+import { PlusSquare } from "react-bootstrap-icons";
 import { TbChevronCompactLeft } from "react-icons/tb";
 
 import '../style/home.css';
@@ -25,7 +26,7 @@ export default function ElementPicker({ garden, tool, onHide, plants, plots, onS
 
     const handleMouseMove = useCallback(
         (e) => {
-            if (tool === 'plant') {
+            if (tool === 'plants') {
                 onPlantDrag(e);
             } else if (tool) {
                 onDrag(e);
@@ -37,8 +38,8 @@ export default function ElementPicker({ garden, tool, onHide, plants, plots, onS
     const handleMouseUp = useCallback(
         (e, value) => {
             setDragging(false);
-            if (tool === 'plant') {
-                onPlantDragEnd(e);
+            if (tool === 'plants') {
+                onPlantDragEnd(e, value);
             } else if (tool) {
                 onDragEnd(e, value);
             }
@@ -52,7 +53,7 @@ export default function ElementPicker({ garden, tool, onHide, plants, plots, onS
         (e, value) => {
             setDragging(true);
             onSelect(value);
-            if (tool === 'plant') {
+            if (tool === 'plants') {
                 onPlantDragStart(e);
             } else if (tool) {
                 onDragStart(e);
@@ -86,49 +87,98 @@ export default function ElementPicker({ garden, tool, onHide, plants, plots, onS
     )
 
     return (
-        <div className='element-picker-wrapper position-relative zindex-sticky'>
+        <div className={`${(tool) ? 'expanded' : ''} element-picker-wrapper position-relative zindex-sticky`} style={{ width: 'auto' }}>
             <div
-                className={`${(tool) ? 'expanded' : ''} element-picker p-0 m-0 position-relative`}
-                style={{ backgroundColor: 'var(--secondaryLightGreen)', height: 'calc(100dvh - 75px)', marginBottom: '75px', scrollMarginTop: '75px' }}
+                className={`element-picker p-0 m-0 position-relative`}
+                style={{ backgroundColor: 'var(--secondaryLightGreen)', height: 'calc(100svh - 75px)' }}
             >
-                <div className='element-picker-content p-2 d-flex flex-column justify-content-center align-items-center'>
-                    {(tool === 'plot') &&
-                        <div className='element-grid'>
-                            {plots.options.map((plot) => {
-                                return (
-                                    <div
-                                        className='element'
-                                        id={plot.id}
-                                        key={plot.id}
-                                    >
-                                        <img
-                                            src={plot.src}
-                                            title={plot.name}
-                                            alt={plot.name}
-                                            onDrag={(e) => handleMouseMove(e)}
-                                            onDragEnd={(e) => handleMouseUp(e, plot.shape)}
-                                            onDragStart={(e) => handleMouseDown(e)}
-                                        ></img>
-                                        <div className='element-overlay'>
-                                            <p className='element-overlay-tip ms-1'>Click & Drag</p>
+                {tool &&
+                    <div className='element-picker-content p-2 d-flex flex-column justify-content-center align-items-center'>
+                        {(tool === 'plot') &&
+                            <div className='element-grid'>
+                                {plots.options.map((plot) => {
+                                    return (
+                                        <div
+                                            className='element-container'
+                                            id={'element-container-' + plot.id}
+                                            key={'element-container-' + plot.id}
+                                        >
+                                            <div
+                                                className='element'
+                                            >
+                                                <img
+                                                    src={plot.src}
+                                                    title={plot.name}
+                                                    alt={plot.name}
+                                                    onDrag={(e) => handleMouseMove(e)}
+                                                    onDragEnd={(e) => handleMouseUp(e, plot.shape)}
+                                                    onDragStart={(e) => handleMouseDown(e)}
+                                                ></img>
+                                                <div className='element-overlay'>
+                                                    <p className='element-overlay-tip ms-1'>Click & Drag</p>
+                                                </div>
+                                            </div>
+                                            <p className='label'>{plot.name}</p>
                                         </div>
+                                    );
+                                })}
+                            </div>
+                        }
+                        {(tool === 'garden') &&
+                            <GardenSettings garden={garden} />
+                        }
+                        {(tool === 'plants') &&
+                            <div className="plant-content">
+                                <div className='element-grid'>
+                                    {plants.options.map((plant) => {
+                                        return (
+                                            <div
+                                                className='element-container'
+                                                id={'element-container-' + plant.id}
+                                                key={'element-container-' + plant.id}
+                                            >
+                                                <div
+                                                    className='element'
+                                                >
+                                                    <img
+                                                        src={plant.src}
+                                                        title={plant.name}
+                                                        alt={plant.name}
+                                                        onDrag={(e) => handleMouseMove(e)}
+                                                        onDragEnd={(e) => handleMouseUp(e, plant.id)}
+                                                        onDragStart={(e) => handleMouseDown(e)}
+                                                    ></img>
+                                                    <div className='element-overlay'>
+                                                        <p className='element-overlay-tip ms-1'>Click & Drag</p>
+                                                    </div>
+                                                </div>
+                                                <p className='label'>{plant.name}</p>
+                                            </div>
+                                        );
+                                    })}
+                                    <div
+                                        className='element-container'
+                                    >
+                                        <div
+                                            className='element'
+                                        >
+                                            <PlusSquare fill='currentColor' size={64}/>
+                                        </div>
+                                        <p className='label'>Add Plants</p>
                                     </div>
-                                );
-                            })}
-                        </div>
-                    }
-                    {(tool === 'garden') &&
-                        <GardenSettings garden={garden} />
-                    }
+                                </div>
+                            </div>
+                        }
 
-                </div>
+                    </div>
+                }
             </div>
 
             <Button
-                className={`${(tool) ? 'expanded' : ''} p-0 m-0 position-absolute h-100 top-0 bottom-0`}
+                className={`collapse-element-picker p-0 m-0 position-absolute h-100 top-0 bottom-0`}
                 variant='collapse'
                 onClick={(e) => onHide(null)}
-                style={{ zIndex: 1000 }}>
+                style={{ zIndex: 1000, right: '-15px' }}>
                 <div>
                     <TbChevronCompactLeft stroke="white" size={24} />
                 </div>
