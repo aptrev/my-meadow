@@ -13,7 +13,7 @@ import '../style/outdooredit.css';
 import GardenSettings from "./GardenSettings";
 import { ListGroup, ToggleButton } from "react-bootstrap";
 
-export default function PlantInfo({ garden, plant, onSelect, plots }) {
+export default function PlantInfo({ garden, plants, plant, onSelect, plots }) {
     const [show, setShow] = useState(true);
 
     const handleToggleShow = () => {
@@ -29,7 +29,7 @@ export default function PlantInfo({ garden, plant, onSelect, plots }) {
                 <div className='plant-info-content p-2 d-flex flex-column justify-content-center align-items-center'>
                     <ListGroup
                     className='plant-list w-100'>
-                        {garden && garden.plants.map((plant) => {
+                        {plants && plants.map((plant) => {
                             return <ListGroup.Item
                             className={`${(plant.id === plant) ? 'active' : ''} plant-list-item m-0 p-0`}
                             key={'plant-list-item' + plant.id}
@@ -42,7 +42,7 @@ export default function PlantInfo({ garden, plant, onSelect, plots }) {
                                     checked={plant.id === plant}
                                     onChange={(e) => onSelect(plant.id)}>
                                         <CaretRightFill className='icon' />
-                                        <span className='label'>{plant.name}</span>
+                                        <span className='label'>{plant.id + ' | ' + plant.name}</span>
                                 </ToggleButton>
                             </ListGroup.Item>
                         })}

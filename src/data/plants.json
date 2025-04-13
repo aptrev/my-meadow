@@ -4,7 +4,7 @@
         "name": "Rose",
         "watering": "weekly",
         "details": "Roses are classic flowering plants known for their vibrant colors and fragrant blossoms. They thrive in sunny locations and need regular pruning.",
-        "image": "",
+        "image": "rose.png",
         "cost": "$15",
         "type": "flower",
         "light_requirement": "full sun",

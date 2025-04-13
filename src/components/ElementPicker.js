@@ -12,10 +12,15 @@ import '../style/outdooredit.css';
 import GardenSettings from "./GardenSettings";
 import PlantSearch from "./PlantSearch";
 
-export default function ElementPicker({ garden, tool, onHide, plants, plots, onSelect,
+export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant, plots, onSelect,
     onDrag, onDragEnd, onDragStart, onPlantDrag, onPlantDragStart, onPlantDragEnd, }) {
     const [dragging, setDragging] = useState(null);
     const [showPlantSearch, setShowPlantSearch] = useState(false);
+
+    const handleSelectPlant = (plant) => {
+        onAddPlant(plant);
+        setShowPlantSearch(false);
+    }
 
     useEffect(() => {
         const handleEsc = (e) => {
@@ -144,10 +149,10 @@ export default function ElementPicker({ garden, tool, onHide, plants, plots, onS
                         {(tool === 'garden') &&
                             <GardenSettings garden={garden} />
                         }
-                        {(tool === 'plants') &&
+                        {(tool === 'plants' && plants) &&
                             <div className="plant-content" style={{ overflowY: 'auto', maxHeight: '100%' }}>
                                 <div className='element-grid'>
-                                    {plants.options.map((plant) => {
+                                    {plants.map((plant) => {
                                         return (
                                             <div
                                                 className='element-container'
@@ -158,7 +163,7 @@ export default function ElementPicker({ garden, tool, onHide, plants, plots, onS
                                                     className='element'
                                                 >
                                                     <img
-                                                        src={plant.src}
+                                                        src={require(`../assets/images/plants/${plant.image}`)}
                                                         title={plant.name}
                                                         alt={plant.name}
                                                         onDrag={(e) => handleMouseMove(e)}
@@ -251,7 +256,7 @@ export default function ElementPicker({ garden, tool, onHide, plants, plots, onS
                         <PlantSearch
                             onSearchSelect={(plant) => {
                                 console.log("Selected plant:", plant);
-                                setShowPlantSearch(false);
+                                handleSelectPlant(plant);
                             }}
                         />
                     </div>

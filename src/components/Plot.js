@@ -1,10 +1,10 @@
 import {
-    Shape, Circle, Arc, Ellipse, Line, Path, Rect, RegularPolygon, Ring, Star, Wedge, Image
+    Shape, Circle, Arc, Ellipse, Line, Path, Rect, RegularPolygon, Ring, Star, Wedge, Image, Text
 } from 'react-konva';
 import React, { useRef, useEffect } from 'react';
 import useImage from 'use-image';
 
-export default function Plot({ id, shape, shapeProps, plant, plant_species, onDragEnd, plotRefs }) {
+export default function Plot({ id, shape, shapeProps, plant, plants, onDragEnd, plotRefs }) {
     // const [cloversBackground] = useImage(require(clovers));
     const shapeRef = useRef(null);
 
@@ -14,12 +14,11 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
         }
     }, [id, plotRefs]);
 
-    const plantInfo = plant_species.find(p => p.id === plant);
-    const [plantImg] = useImage(plantInfo?.src || null);
+    // const plantInfo = plant_species.find(p => p.id === plant);
+    // const [plantImg] = useImage(plantInfo?.src || null);
 
     const getFill = () => {
-        if (!plantInfo) return 'white';
-        return plantInfo.color;
+        return 'white';
     };
 
     const generatePlot = () => {
@@ -59,7 +58,7 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
     return (
         <>
             {generatePlot()}
-            {plantImg && (
+            {/* {plantImg && (
                 <Image
                     image={plantImg}
                     x={shapeProps.x - 25}
@@ -68,7 +67,19 @@ export default function Plot({ id, shape, shapeProps, plant, plant_species, onDr
                     height={50}
                     listening={false} // prevents interaction interference
                 />
-            )}
+            )} */}
+            {(plant) &&
+                <Text
+                    text={plant}
+                    x={shapeProps.x - 30}
+                    y={shapeProps.y - 10}
+                    // width={50}
+                    // height={50}
+                    fontSize={30}
+                    fontFamily="Inter"
+                    fill="black"
+                    listening={false} />
+            }
             {/* <Image 
             src={cloversBackground} alt='clovers'
             width={20}

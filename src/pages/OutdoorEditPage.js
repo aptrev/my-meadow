@@ -32,49 +32,49 @@ import 'bootstrap/dist/css/bootstrap.css';
 
 const Konva = window.Konva;
 
-const plant_options = [
-    {
-        id: 1473,
-        name: "Marigold",
-        src: marigold,
-        color: 'orange',
-        format: 'png',
-        value: 1473,
-    },
-    {
-        id: 324,
-        name: "Magnolia",
-        src: magnolia,
-        color: 'beige',
-        format: 'png',
-        value: 324,
-    },
-    {
-        id: 1194,
-        name: 'Begonia',
-        src: begonia,
-        color: 'pink',
-        format: 'png',
-        value: 1194,
-    },
-    {
-        id: 6791,
-        name: 'Rose',
-        src: rose,
-        color: 'red',
-        format: 'png',
-        value: 6791,
-    }
-]
+// const plant_options = [
+//     {
+//         id: 1473,
+//         name: "Marigold",
+//         src: marigold,
+//         color: 'orange',
+//         format: 'png',
+//         value: 1473,
+//     },
+//     {
+//         id: 324,
+//         name: "Magnolia",
+//         src: magnolia,
+//         color: 'beige',
+//         format: 'png',
+//         value: 324,
+//     },
+//     {
+//         id: 1194,
+//         name: 'Begonia',
+//         src: begonia,
+//         color: 'pink',
+//         format: 'png',
+//         value: 1194,
+//     },
+//     {
+//         id: 6791,
+//         name: 'Rose',
+//         src: rose,
+//         color: 'red',
+//         format: 'png',
+//         value: 6791,
+//     }
+// ]
 
 export default function OutdoorEditPage() {
     // Page data
     const { id } = useParams(); // Garden ID
     const [garden, setGarden] = useState(null); // Garden data from Firestore
-    const species = plant_options;
 
     // Konva data
     const [plots, setPlots] = useState(null); // Plots to draw on stage
+    const [plants, setPlants] = useState(null); // Garden plants
     const [history, setHistory] = useState([JSON.stringify(null)]); // History for undo/redo
     const [historyStep, setHistoryStep] = useState(0); // Current step in history
     const [selectedIds, setSelectedIds] = useState([]); // IDs of plots currently selected
@@ -129,12 +129,13 @@ export default function OutdoorEditPage() {
         if (id) {
             retrieveGarden(id)
                 .then((data) => {
+                    console.log(data);
                     setScene({
                         width: data.stage.width,
                         height: data.stage.height,
                     });
-                    data.plants = plant_options;
                     setPlots(data.plots);
+                    setPlants(data.plants);
                     setHistory([JSON.stringify(data.plots)]);
                     setGarden(data);
                 });
@@ -493,21 +494,27 @@ export default function OutdoorEditPage() {
     const saveGarden = useCallback((plots) => {
         const newGarden = { ...garden, plots };
 
-        // Find newly added plants
-        const addedPlantIds = plots.map(p => p.plant).filter(Boolean);
-        const uniqueIds = [...new Set(addedPlantIds)];
+        // // Find newly added plants
+        // const addedPlantIds = plots.map(p => p.plant).filter(Boolean);
+        // const uniqueIds = [...new Set(addedPlantIds)];
 
-        const addedPlants = uniqueIds.map(
-            id => plant_options.find(opt => opt.id === id)?.name
-        ).filter(Boolean);
+        // const addedPlants = uniqueIds.map(
+        //     id => plant_options.find(opt => opt.id === id)?.name
+        // ).filter(Boolean);
 
-        // Save to localStorage only if plants were added
-        if (addedPlants.length > 0) {
-            localStorage.setItem('recentlyAddedPlants', JSON.stringify(addedPlants));
-        } else {
-            localStorage.removeItem('recentlyAddedPlants');
-        }
+        // // Save to localStorage only if plants were added
+        // if (addedPlants.length > 0) {
+        //     localStorage.setItem('recentlyAddedPlants', JSON.stringify(addedPlants));
+        // } else {
+        //     localStorage.removeItem('recentlyAddedPlants');
+        // }
 
+        localStorage.setItem('savedGarden', JSON.stringify(newGarden));
+    }, [garden]);
+
+    const savePlants = useCallback((plants) => {
+        const newGarden = { ...garden, plants };
+        console.log(newGarden);
         localStorage.setItem('savedGarden', JSON.stringify(newGarden));
     }, [garden]);
 
@@ -811,6 +818,16 @@ export default function OutdoorEditPage() {
         setSelectedPlant((plantId === selectedPlant) ? null : plantId);
     }
 
+    const handleAddPlant = (plant) => {
+        const plantExists = plants.find((p) => p.id === plant.id);
+        if (!plantExists) {
+            const newPlants = plants.concat([plant]);
+            console.log(newPlants);
+            setPlants(newPlants);
+            savePlants(newPlants);
+        }
+    }
+
     const exportRef = useRef(null);
 
     function downloadURI(uri, name) {
@@ -865,8 +882,9 @@ export default function OutdoorEditPage() {
                             tool={tool}
                             onHide={onChangeTool}
                             garden={garden}
-                            plants={plantOptions}
+                            plants={plants}
                             plots={plotOptions}
+                            onAddPlant={handleAddPlant}
                             onSelect={handleSelect}
                             onDrag={handleElementDrag}
                             onDragEnd={handleElementDragEnd}
@@ -951,7 +969,7 @@ export default function OutdoorEditPage() {
                                                                 shape={shape}
                                                                 shapeProps={restProps}
                                                                 plant={plant}
-                                                                plant_species={species}
+                                                                plants={plants}
                                                                 onDragEnd={handleDragEnd}
                                                                 plotRefs={plotRefs}
                                                                 style={{ cursor: 'grab' }} />
@@ -1021,6 +1039,7 @@ export default function OutdoorEditPage() {
                 <Col xs='auto'>
                     <PlantInfo
                         garden={garden}
+                        plants={plants}
                         plant={selectedPlant}
                         onSelect={handleSelectPlant} />
                 </Col>
