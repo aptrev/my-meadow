@@ -258,7 +258,7 @@
     gap: 1rem;
   }
 
-  .btn-upcoming {
+.btn-upcoming {
     background-color: transparent;
     color: var(--primaryDarkGreen);
     border: 1px solid var(--primaryDarkGreen);
