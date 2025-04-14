@@ -257,3 +257,24 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
   }
+
+  .btn-upcoming {
+    background-color: transparent;
+    color: var(--primaryDarkGreen);
+    border: 1px solid var(--primaryDarkGreen);
+    border-radius: 5px;
+    font-size: 0.9em;
+    font-weight: 500;
+    padding: 5px 10px;
+    width: 100%;
+    text-align: center;
+    transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.btn-upcoming:hover,
+.btn-upcoming:focus {
+    background-color: var(--primaryDarkGreen);
+    color: white;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25);
+    outline: none;
+}

@@ -813,10 +813,11 @@ export default function OutdoorEditPage() {
     //     const pos = stageRef.current.getPointerPosition();
     // }, []);
 
-    const handleSelectPlant = (plantId) => {
-        console.log(plantId + " " + selectedPlant);
-        setSelectedPlant((plantId === selectedPlant) ? null : plantId);
-    }
+    const handleSelectPlant = (plantObj) => {
+        console.log("Selected plant:", plantObj);
+        setSelectedPlant((selectedPlant && selectedPlant.id === plantObj.id) ? null : plantObj);
+    };
+    
 
     const handleAddPlant = (plant) => {
         const plantExists = plants.find((p) => p.id === plant.id);
