@@ -9,6 +9,7 @@ import '../style/outdooredit.css';
 
 export default function PlantSearch({ onSearchSelect }) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedType, setSelectedType] = useState("");
   const [plants, setPlants] = useState([]);
 
   useEffect(() => {
@@ -41,9 +42,12 @@ export default function PlantSearch({ onSearchSelect }) {
   // }, []);
   
 
-  const filteredPlants = plants.filter((plant) =>
-    plant.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredPlants = plants.filter((plant) => {
+    const matchesSearch = plant.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = selectedType === "" || plant.type === selectedType;
+    return matchesSearch && matchesType;
+  });
+  
 
   return (
     <div className="plant-search px-3 w-100">
@@ -55,6 +59,19 @@ export default function PlantSearch({ onSearchSelect }) {
         className="form-control mb-3"
       />
 
+      {/* Dropdown Filter */}
+      <select
+        className="form-select mb-3"
+        value={selectedType}
+        onChange={(e) => setSelectedType(e.target.value)}
+      >
+        <option value="">All Types</option>
+        <option value="flower">Flower</option>
+        <option value="herb">Herb</option>
+        <option value="vegetable">Vegetable</option>
+        <option value="fruit">Fruit</option>
+      </select>
+
       <div className="element-grid">
         {filteredPlants.map((plant) => (
           <div
@@ -63,7 +80,7 @@ export default function PlantSearch({ onSearchSelect }) {
             onClick={() => onSearchSelect(plant)}
           >
             <div className="element">
-              <img src={plant.src} alt={plant.name} title={plant.name} />
+              <img src={`../assets/images/plants/${plant.image}`} alt={plant.name} title={plant.name} />
               <div className="element-overlay">
                 <p className="element-overlay-tip ms-1">Click to Add</p>
               </div>
