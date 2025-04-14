@@ -4,6 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import '../style/home.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import AppContainer from "../components/AppContainer";
+import logo from '../assets/images/logos/logo-sign-in.PNG';
+
+import "../App.css";
 
 const Login = () => {
   const { loginUser, loading, user } = useContext(AuthContext);
@@ -38,40 +41,34 @@ const Login = () => {
   // Render the login form
   return (
     <AppContainer>
-        <div className="hero-content flex-col">
-          <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-            <div className="card-body">
-              <form onSubmit={handleFormSubmit}>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Email</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="email"
-                    placeholder="Email"
-                    className="input input-bordered"
-                  />
-                </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Password</span>
-                  </label>
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    className="input input-bordered"
-                  />
-                </div>
-                <div className="form-control mt-6">
-                  <button className="btn btn-primary">Login</button>
-                </div>
-              </form>
+      <div className="login-background d-flex justify-content-center align-items-centerh max-h-100vh">
+        <div className="login-box text-center shadow-sm">
+          <img src={logo} alt="MyMeadow Logo" className="logo-img mb-3" />
+          <h5 className="mb-4">Please sign in to continue</h5>
+          <form onSubmit={handleFormSubmit}>
+            <div className="form-group text-start mb-3">
+              <label>Email</label>
+              <input
+                type="text"
+                name="email"
+                className="form-control rounded"
+                placeholder="Enter your email"
+              />
             </div>
-            <Link to='/sign-up'>Don't have a log in, Sign Up</Link>
-          </div>
+            <div className="form-group text-start mb-3">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                className="form-control rounded"
+                placeholder="Enter your password"
+              />
+            </div>
+            <button className="btn btn-dark rounded-pill mt-3 mb-3">Sign In</button>
+            <Link to="/sign-up" className="d-block small">Forgot password?</Link>
+          </form>
         </div>
+      </div>
     </AppContainer>
   );
 };
