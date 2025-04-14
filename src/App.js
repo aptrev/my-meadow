@@ -6,13 +6,12 @@ import Indoor from "./pages/IndoorPage";
 import Outdoor from "./pages/OutdoorPage";
 import OutdoorEditPage from "./pages/OutdoorEditPage";
 import MyMeadowCalendar from "./pages/CalendarPage";
+import CalendarHome from "./pages/CalendarHome";
 import IndoorEdit from "./pages/IndoorEditPage";
 import Login from "./pages/Login"
 import SignUp from "./pages/SignUp"
 import Profile from "./pages/Profile"
 import Header from './components/Header'
-// for now
-import PlantSearch from "./components/PlantSearch"
 import AuthProvider from "./components/AuthProvider";
 import ThemeProvider from './components/ThemeProvider'
 
@@ -92,8 +91,8 @@ const router = createBrowserRouter([
         element: <MyMeadowCalendar />
       },
       {
-        path: '/search',
-        element: <PlantSearch />
+        path: '/calendars',
+        element: <CalendarHome />
       }
     ]
   }
