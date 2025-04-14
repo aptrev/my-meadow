@@ -1,4 +1,4 @@
-import { collection, addDoc, getDoc, updateDoc, doc, query, where, getDocs, deleteDoc, arrayUnion, setDoc } from "firebase/firestore";
+import { collection, addDoc, getDoc, updateDoc, doc, query, where, getDocs, deleteDoc, arrayUnion, setDoc, arrayRemove } from "firebase/firestore";
 import db from '../firebase/FirebaseDB'
 
 async function retrieveGarden(id) {
@@ -134,3 +134,11 @@ async function updateGarden(id, newGarden) {
 }
 
 export { retrieveGarden, retrieveGardens, retrieveUser, clearGardens, createGarden, updateGarden };
+
+export const deleteGarden = async (userId, gardenId) => {
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, {
+      gardens: arrayRemove(gardenId)
+    });
+};
+  
