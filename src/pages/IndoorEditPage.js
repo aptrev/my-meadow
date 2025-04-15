@@ -18,7 +18,7 @@ import trashIcon from '../assets/images/trash.png';
 import LeftSidebarIndoor from '../components/LeftSidebarIndoor';
 import ElementPicker from '../components/ElementPicker';
 import PlantInfo from '../components/PlantInfo';
-import { retrieveGarden, updateGarden } from '../utilities/FirebaseUtils';
+import { retrieveGarden } from '../utilities/FirebaseUtils';
 import '../style/indooredit.css';
 
 
@@ -51,13 +51,22 @@ export default function IndoorEditPage() {
 
   useEffect(() => {
     if (id) {
-      retrieveGarden(id).then(data => {
-        setGarden(data);
-        setPots(data.pots || []);
-        setPlants(data.plants || []);
-      });
+      retrieveGarden(id)
+        .then((data) => {
+          console.log(data);
+          // setScene({
+          //     width: data.stage.width,
+          //     height: data.stage.height,
+          // });
+          setPots(data.pots);
+          setPlants(data.plants);
+          // setHistory([JSON.stringify(data.pots)]);
+          setGarden(data);
+        });
     }
   }, [id]);
+
+  
 
   const handleStageClick = (e) => {
     const pointer = stageRef.current.getPointerPosition();
@@ -72,6 +81,7 @@ export default function IndoorEditPage() {
 
       if (clickedSlot) {
         setPots(prev => [...prev, { id: Date.now(), x: clickedSlot.x, y: clickedSlot.y, flower: null }]);
+        saveGarden(pots);
       }
     } else if (draggedFlower) {
       const clickedPot = pots.find(pot =>
@@ -85,6 +95,7 @@ export default function IndoorEditPage() {
         );
         setPots(updated);
         setDraggedFlower(null);
+        saveGarden(pots);
       }
     }
   };
@@ -101,22 +112,24 @@ export default function IndoorEditPage() {
     if (!plants.some(p => p.id === plant.id)) {
       const newPlants = [...plants, plant];
       setPlants(newPlants);
+      saveGarden(pots);
     }
   };
 
   const deletePot = (id) => {
     setPots(prev => prev.filter(p => p.id !== id));
+    saveGarden(pots);
   };
 
-  const saveGarden = useCallback((pots, plants = null) => {
-    const newGarden = {
-      ...garden,
-      pots: pots,
-      ...(plants ? { plants } : {})
-    };
-    localStorage.setItem('savedIndoorGarden', JSON.stringify(newGarden));
+  /**
+       * Save garden to local on every change.
+       * Used by Save button in Header component to update garden in Firestore.
+       */
+  const saveGarden = useCallback((pots) => {
+    const newGarden = { ...garden, pots };
+    localStorage.setItem('savedGarden', JSON.stringify(newGarden));
   }, [garden]);
-  
+
 
   return (
     <Container fluid className='position-relative flex-grow-1 m-0 px-2 align-items-start' style={{ backgroundColor: 'var(--edit-background-color)' }}>
@@ -166,6 +179,7 @@ export default function IndoorEditPage() {
                             onClick={() => {
                               if (!occupied) {
                                 setPots(prev => [...prev, { id: Date.now(), x: slot.x, y: slot.y, flower: null }]);
+                                saveGarden(pots);
                               }
                             }}
                           >
