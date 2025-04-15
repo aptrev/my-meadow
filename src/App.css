@@ -73,3 +73,25 @@ input.form-control {
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+.home-garden-list .list-group-item:hover {
+  background-color: #f2fdf5;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.animated-grow-btn {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.animated-grow-btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 8px 20px rgba(59, 98, 85, 0.5);
+  background-color: #52796f; /* slightly lighter on hover */
+}
+
+.animated-grow-btn:active {
+  transform: scale(0.97);
+}
+
+
