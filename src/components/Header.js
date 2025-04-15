@@ -127,19 +127,16 @@ const Header = () => {
             });
     };
 
-    const handleGoToProfile = () => {
-        navigate(`/profile/${user.uid}`);
-    }
-
     const handleHideSidebar = () => {
-        setShowSidebar(false);
-    }
+    setShowSidebar(false);
+    };
+
 
     function HomeElements() {
         return (
             <Row className="w-100 container-fluid m-0 p-0">
-                {/* Left Bar Element: Profile */}
-                <Col xs={2} className='d-flex justify-content-start'>
+                {/* Left Bar Element: Sidebar */}
+                {/* <Col xs={2} className='d-flex justify-content-start'>
                     <Button
                         className='mr-auto'
                         variant="bar"
@@ -148,8 +145,18 @@ const Header = () => {
                     >
                         <PersonCircle color='currentColor' size={24} />
                     </Button>
+                </Col> */}
+                {/* Left Bar Element: Sidebar Toggle instead of Profile */}
+                <Col xs={2} className='d-flex justify-content-start'>
+                    <Sidebar show={showSidebar} handleClickLink={handleHideSidebar} onClose={() => setShowSidebar(false)} />
+                    <Button
+                    variant="bar"
+                    onClick={() => setShowSidebar(true)}
+                    aria-label="Show Sidebar"
+                    >
+                    <List color='currentColor' size={24} />
+                    </Button>
                 </Col>
-
 
                 {/* Middle Bar Elemenet: Logo */}
                 <Col xs='auto'>

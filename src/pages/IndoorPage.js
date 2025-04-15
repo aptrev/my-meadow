@@ -67,7 +67,7 @@ const Indoor = () => {
           ))}
         </div>
       </div>
-
+{/* 
       <div className="plant-info">
         <h2>🌺 Begonia</h2>
         <p><strong>Begonia 'Art Hodes'</strong> is a resilient, easy-care flowering plant perfect for indoor gardens.</p>
@@ -75,7 +75,7 @@ const Indoor = () => {
           <span>💧</span>
           <span>☀️</span>
         </div>
-      </div>
+      </div> */}
     </AppContainer>
   );
 };
