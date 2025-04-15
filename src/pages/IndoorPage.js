@@ -14,7 +14,6 @@ const Indoor = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteGardenClose = () => setShowDeleteModal(false);
 
-
   useEffect(() => {
     if (id) {
       retrieveGarden(id)
@@ -56,20 +55,19 @@ const Indoor = () => {
           <Trash />
         </Button>
       </div>
-  
-      {garden.template === "Shelf" && (
-        <div className="shelf-wrapper">
-          <img src={shelf} alt="Shelf" className="shelf-img" />
-          <div className="plant-container">
-            {garden.plants?.map((plant, idx) => (
-              <div key={idx} style={{ position: 'absolute', left: plant.x, top: plant.y }}>
-                🪴
-              </div>
-            ))}
-          </div>
+
+      {/* Always render the shelf */}
+      <div className="shelf-wrapper">
+        <img src={shelf} alt="Shelf" className="shelf-img" />
+        <div className="plant-container">
+          {garden.plants?.map((plant, idx) => (
+            <div key={idx} style={{ position: 'absolute', left: plant.x, top: plant.y }}>
+              🪴
+            </div>
+          ))}
         </div>
-      )}
-  
+      </div>
+
       <div className="plant-info">
         <h2>🌺 Begonia</h2>
         <p><strong>Begonia 'Art Hodes'</strong> is a resilient, easy-care flowering plant perfect for indoor gardens.</p>
@@ -79,7 +77,7 @@ const Indoor = () => {
         </div>
       </div>
     </AppContainer>
-  );  
+  );
 };
 
 export default Indoor;
