@@ -66,6 +66,22 @@ export default function IndoorEditPage() {
     }
   }, [id]);
 
+  /**
+       * Save garden to local on every change.
+       * Used by Save button in Header component to update garden in Firestore.
+       */
+  const saveGarden = useCallback((pots) => {
+    const newGarden = { ...garden, pots };
+    localStorage.setItem('savedGarden', JSON.stringify(newGarden));
+  }, [pots]);
+
+  
+
+  useEffect(() => {
+    if (pots.length > 0) {
+      saveGarden(pots); // Save whenever pots are updated
+    }
+  }, [pots]); // Trigger when `pots` changes
   
 
   const handleStageClick = (e) => {
@@ -120,15 +136,6 @@ export default function IndoorEditPage() {
     setPots(prev => prev.filter(p => p.id !== id));
     saveGarden(pots);
   };
-
-  /**
-       * Save garden to local on every change.
-       * Used by Save button in Header component to update garden in Firestore.
-       */
-  const saveGarden = useCallback((pots) => {
-    const newGarden = { ...garden, pots };
-    localStorage.setItem('savedGarden', JSON.stringify(newGarden));
-  }, [garden]);
 
 
   return (
