@@ -20,6 +20,7 @@ const templates = [
         plant: null,
         x: 100,
         y: 250,
+        rotation: 0,
         radius: 50,
         draggable: true
       },
@@ -30,6 +31,7 @@ const templates = [
         plant: null,
         x: 200,
         y: 250,
+        rotation: 0,
         width: 100,
         height: 100,
         draggable: true
@@ -41,6 +43,7 @@ const templates = [
         plant: null,
         x: 400,
         y: 250,
+        rotation: 0,
         radius: {
           x: 75,
           y: 50,
@@ -54,6 +57,7 @@ const templates = [
         plant: null,
         x: 600,
         y: 250,
+        rotation: 0,
         innerRadius: 25,
         outerRadius: 50,
         angle: 180,
@@ -66,6 +70,7 @@ const templates = [
         plant: null,
         x: 800,
         y: 250,
+        rotation: 0,
         sides: 6,
         radius: 50,
         draggable: true
@@ -89,6 +94,7 @@ const templates = [
         plant: null,
         x: 400,
         y: 100,
+        rotation: 0,
         innerRadius: 25,
         outerRadius: 50,
         draggable: true

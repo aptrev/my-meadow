@@ -94,10 +94,8 @@ export default function OutdoorEditPage() {
     }); // The current size of the stage
     // Toolbar data
     const [showGrid, setShowGrid] = useState(false); // Toggles showing background grid
-    const [position, setPosition] = useState({
-        x: 0,
-        y: 0,
-    }) // Stage pointer position
+    const [position, setPosition] = useState(null) // Stage pointer position
+    const [overCanvas, setOverCanvas] = useState(false);
 
     // Konva references
     const stageRef = useRef(null); // Konva Stage reference (resize, pointer info, etc.)
@@ -129,7 +127,6 @@ export default function OutdoorEditPage() {
         if (id) {
             retrieveGarden(id)
                 .then((data) => {
-                    console.log(data);
                     setScene({
                         width: data.stage.width,
                         height: data.stage.height,
@@ -353,10 +350,13 @@ export default function OutdoorEditPage() {
                 const index = newPlots.findIndex(plot => plot.id === id);
 
                 if (index !== -1) {
-                    newPlots[index] = {
-                        ...newPlots[index],
+                    const newPos = {
                         x: node.x(),
                         y: node.y(),
+                    }
+                    newPlots[index] = {
+                        ...newPlots[index],
+                        ...newPos
                     };
                 }
             })
@@ -409,8 +409,6 @@ export default function OutdoorEditPage() {
             const index = newPlots.findIndex(r => r.id === id);
 
             if (index !== -1) {
-                const scaleX = node.scaleX();
-                const scaleY = node.scaleY();
 
                 var newPlot = newPlots[index];
 
@@ -418,8 +416,14 @@ export default function OutdoorEditPage() {
                 const pathScaleY = node.scaleY();
 
                 if (selectedShapes[index] !== 'path') {
-                    node.scaleX(1);
-                    node.scaleY(1);
+
+                    const shape = node.findOne(`#${id}`);
+
+                    const scaleX = shape.scaleX();
+                    const scaleY = shape.scaleY();
+
+                    shape.scaleX(1);
+                    shape.scaleY(1);
 
                     newPlot = {
                         ...newPlot,
@@ -428,24 +432,29 @@ export default function OutdoorEditPage() {
                         rotation: node.rotation(),
                     }
 
+                    console.log(shape.width());
+                    console.log(shape.height());
+                    console.log(node.width());
+                    console.log(node.height());
+
                     // Different element data dependent on underlying element shape
                     switch (newPlot.shape) {
                         case 'arc': newPlot = {
                             ...newPlot,
-                            innerRadius: node.innerRadius() * scaleX,
-                            outerRadius: node.outerRadius() * scaleX,
-                            angle: node.angle(),
+                            innerRadius: shape.innerRadius() * scaleX,
+                            outerRadius: shape.outerRadius() * scaleX,
+                            angle: shape.angle(),
                         }; break;
                         case 'wedge': newPlot = {
                             ...newPlot,
-                            radius: node.radius() * scaleX,
-                            angle: node.angle(),
+                            radius: shape.radius() * scaleX,
+                            angle: shape.angle(),
                         }; break;
                         case 'ellipse': newPlot = {
                             ...newPlot,
                             radius: {
-                                x: node.radius().x * scaleX,
-                                y: node.radius().y * scaleY,
+                                x: shape.radius().x * scaleX,
+                                y: shape.radius().y * scaleY,
                             }
                         }; break;
                         case 'path': newPlot = {
@@ -455,23 +464,23 @@ export default function OutdoorEditPage() {
                         }; break;
                         case 'polygon': newPlot = {
                             ...newPlot,
-                            sides: node.sides(),
-                            radius: node.radius() * scaleX,
+                            sides: shape.sides(),
+                            radius: shape.radius() * scaleX,
                         }; break;
                         case 'ring':
                         case 'star': newPlot = {
                             ...newPlot,
-                            innerRadius: node.innerRadius() * scaleX,
-                            outerRadius: node.outerRadius() * scaleX,
+                            innerRadius: shape.innerRadius() * scaleX,
+                            outerRadius: shape.outerRadius() * scaleX,
                         }; break;
                         case 'circle': newPlot = {
                             ...newPlot,
-                            radius: Math.max(5, node.radius() * scaleX),
+                            radius: Math.max(5, shape.radius() * scaleX),
                         }; break;
                         default: newPlot = {
                             ...newPlot,
-                            width: Math.max(5, node.width() * scaleX),
-                            height: Math.max(node.height() * scaleY),
+                            width: Math.max(5, shape.width() * scaleX),
+                            height: Math.max(shape.height() * scaleY),
                         };
                     }
 
@@ -492,7 +501,7 @@ export default function OutdoorEditPage() {
      * Used by Save button in Header component to update garden in Firestore.
      */
     const saveGarden = useCallback((plots) => {
-        const newGarden = { ...garden, plots };
+        const newGarden = { ...garden, plots, plants };
 
         // // Find newly added plants
         // const addedPlantIds = plots.map(p => p.plant).filter(Boolean);
@@ -510,13 +519,12 @@ export default function OutdoorEditPage() {
         // }
 
         localStorage.setItem('savedGarden', JSON.stringify(newGarden));
-    }, [garden]);
+    }, [garden, plants]);
 
     const savePlants = useCallback((plants) => {
-        const newGarden = { ...garden, plants };
-        console.log(newGarden);
+        const newGarden = { ...garden, plots, plants  };
         localStorage.setItem('savedGarden', JSON.stringify(newGarden));
-    }, [garden]);
+    }, [garden, plots]);
 
     // Save history for undo/redo. Local save on every edit.
     const saveHistory = useCallback((newPlots) => {
@@ -715,21 +723,24 @@ export default function OutdoorEditPage() {
     // Handles adding new plots
     const addNewPlot = (e, shape) => {
 
-        stageRef.current.setPointersPositions(e);
+        if (overCanvas) {
+            stageRef.current.setPointersPositions(e);
 
-        const pos = stageRef.current.getPointerPosition();
+            const pos = stageRef.current.getPointerPosition();
 
-        pos.x = pos.x * (1 / stageSize.scale);
-        pos.y = pos.y * (1 / stageSize.scale);
+            pos.x = pos.x * (1 / stageSize.scale);
+            pos.y = pos.y * (1 / stageSize.scale);
 
-        const newPlots = plots.concat([{
-            id: `plot-${Date.now()}`,
-            ...shape,
-            ...pos,
-        }])
+            const newPlots = plots.concat([{
+                id: `plot-${Date.now()}`,
+                ...shape,
+                ...pos,
+            }])
 
-        setPlots(newPlots);
-        saveHistory(newPlots);
+            setPlots(newPlots);
+            saveHistory(newPlots);
+        }
+
     }
 
     // Handles element drag start event
@@ -815,16 +826,14 @@ export default function OutdoorEditPage() {
     // }, []);
 
     const handleSelectPlant = (plantObj) => {
-        console.log("Selected plant:", plantObj);
         setSelectedPlant((selectedPlant && selectedPlant.id === plantObj.id) ? null : plantObj);
     };
-    
+
 
     const handleAddPlant = (plant) => {
         const plantExists = plants.find((p) => p.id === plant.id);
         if (!plantExists) {
             const newPlants = plants.concat([plant]);
-            console.log(newPlants);
             setPlants(newPlants);
             savePlants(newPlants);
         }
@@ -903,7 +912,7 @@ export default function OutdoorEditPage() {
                         <p className='position-absolute bottom-0 left-0 ms-1'>
                             {`(${position.x} ${garden.dimensions_units}, ${position.y} ${garden.dimensions_units})`}
                         </p>}
-                    {garden && // Wait for garden data from Firestore
+                    {(garden && plots && plants) && // Wait for garden data from Firestore
                         // Make garden editing playground the height of visible viewport minus the header
                         <div className='p-4' style={{ height: 'calc(100svh - 75px)' }}>
                             {/* <button onClick={onExport}>Export</button> */}
@@ -929,10 +938,21 @@ export default function OutdoorEditPage() {
                                         {/* Adds white background to stage canvas */}
                                         <div
                                             className='white-canvas'
-                                            onMouseLeave={(e) => setPosition(null)}
+                                            onMouseLeave={(e) => {
+                                                setOverCanvas(false);
+                                                setPosition(null);
+                                            }}
+                                            onDragLeave={() => {
+                                                setOverCanvas(false);
+                                                setPosition(null);
+                                            }}
                                             onMouseMove={(e) => handleMouseOver(e)}
                                             // onMouseOver={(e) => handleMouseOver(e)}
-                                            onDragOver={(e) => e.preventDefault()}
+                                            onDragOver={(e) => {
+                                                e.preventDefault();
+                                                handleMouseOver(e);
+                                                setOverCanvas(true);
+                                            }}
                                             style={{ margin: '0 auto', width: 'fit-content', height: 'fit-content' }}>
                                             {/* Konva stage canvas */}
                                             <Stage
@@ -963,12 +983,15 @@ export default function OutdoorEditPage() {
                                                 {/* Layer for elements */}
                                                 <Layer ref={mainLayerRef}>
                                                     {plots.map((plot) => {
-                                                        const { id, shape, plant, draggable, ...restProps } = plot;
+                                                        const { id, shape, x, y, rotation, plant, draggable, ...restProps } = plot;
                                                         return (
                                                             <Plot
                                                                 key={id}
                                                                 id={id}
                                                                 shape={shape}
+                                                                x={x}
+                                                                y={y}
+                                                                rotation={rotation}
                                                                 shapeProps={restProps}
                                                                 plant={plant}
                                                                 plants={plants}

@@ -161,11 +161,13 @@ const Outdoor = () => {
             >
               <Layer>
                 {garden.plots.map((plot) => {
-                  const { id, shape, plant, draggable, ...restProps } = plot;
+                  const { id, shape, x, y, plant, draggable, ...restProps } = plot;
                   return (
                     <Plot
                       key={id}
                       id={id}
+                      x={x}
+                      y={y}
                       shape={shape}
                       shapeProps={restProps}
                       plant={plant}

@@ -15,7 +15,7 @@ const URLImage = ({ src, ...props }) => {
     );
 };
 
-export default function Plot({ id, shape, shapeProps, plant, plants, onDragEnd, plotRefs, draggable }) {
+export default function Plot({ id, shape, x, y, rotation, shapeProps, plant, plants, onDragEnd, plotRefs, draggable }) {
     // const [cloversBackground] = useImage(require(clovers));
     const shapeRef = useRef(null);
     const [image, setImage] = useState(null);
@@ -32,9 +32,6 @@ export default function Plot({ id, shape, shapeProps, plant, plants, onDragEnd, 
     useEffect(() => {
         if (plant && plants) {
             const plantObject = plants.find(p => p.id === plant)
-            console.log(plants);
-            console.log(plant);
-            console.log(plantObject.image);
             setImage(plantObject.image);
         }
     }, [plants, plant]);
@@ -46,20 +43,16 @@ export default function Plot({ id, shape, shapeProps, plant, plants, onDragEnd, 
     const generatePlot = () => {
         const defaultProps = {
             id,
+            x: 0,
+            y: 0,
             fill: 'white',
             stroke: 'black',
             strokeWidth: 2,
-            onDragEnd: (e) => onDragEnd(e),
-            ref: (node) => {
-                if (node) {
-                    plotRefs.current.set(id, node);
-                }
-            },
             shadowColor: 'rgba(0,0,0,0.25)',
             shadowBlur: 20,
             shadowOffsetX: 5,
             shadowOffsetY: 10,
-            draggable: false,
+            
             // fillPatternImage: <img src={clovers} alt='clovers' />
         }
 
@@ -80,7 +73,19 @@ export default function Plot({ id, shape, shapeProps, plant, plants, onDragEnd, 
 
     return (
         <Group
-            draggable={draggable}>
+            id={id}
+            x={x}
+            y={y}
+            rotation={rotation}
+            shape={shape}
+            name={shape}
+            draggable={draggable}
+            onDragEnd={(e) => onDragEnd(e)}
+            ref={(node) => {
+                if (node) {
+                    plotRefs.current.set(id, node);
+                }}}
+            >
             {generatePlot()}
             {/* {plantImg && (
                 <Image
@@ -107,8 +112,8 @@ export default function Plot({ id, shape, shapeProps, plant, plants, onDragEnd, 
             {(plant && image) &&
                 <URLImage
                     src={image}
-                    x={shapeProps.x - 20}
-                    y={shapeProps.y - 20}
+                    x={0}
+                    y={0}
                     width={40}
                     height={40}
                     listening={false} />

@@ -14,7 +14,7 @@ import PlantSearch from "./PlantSearch";
 
 export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant, plots, onSelect,
     onDrag, onDragEnd, onDragStart, onPlantDrag, onPlantDragStart, onPlantDragEnd, }) {
-    const [dragging, setDragging] = useState(null);
+    const [dragging, setDragging] = useState(false);
     const [showPlantSearch, setShowPlantSearch] = useState(false);
 
     const handleSelectPlant = (plant) => {
@@ -48,6 +48,7 @@ export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant
 
     const handleMouseMove = useCallback(
         (e) => {
+            console.log('test');
             if (tool === 'plants') {
                 onPlantDrag(e);
             } else if (tool) {
@@ -59,7 +60,6 @@ export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant
 
     const handleMouseUp = useCallback(
         (e, value) => {
-            setDragging(false);
             if (tool === 'plants') {
                 onPlantDragEnd(e, value);
             } else if (tool) {
@@ -67,6 +67,7 @@ export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant
             }
             document.removeEventListener('mousemove', handleMouseMove);
             onSelect(null);
+            setDragging(false);
         },
         [tool, onSelect, onDragEnd, onPlantDragEnd, handleMouseMove]
     )
@@ -86,11 +87,11 @@ export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant
         [tool, setDragging, onSelect, onDragStart, onPlantDragStart, handleMouseMove]
     )
 
-    const prevMouseMove = usePrevious(handleMouseMove)
+    const prevMouseMove = usePrevious(handleMouseMove);
 
     useEffect(
         () => {
-            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mousemove', prevMouseMove);
             if (dragging) {
                 document.addEventListener('mousemove', handleMouseMove)
             }
