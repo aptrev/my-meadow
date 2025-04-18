@@ -666,6 +666,7 @@ export default function OutdoorEditPage() {
             if (previousShape.current && shape) {
                 if (previousShape.current !== shape) {
                     // prevPlantColor.current = shape.fill()
+                    previousShape.current.fill('white');
                     shape.fill('#cbe9d8');
                     shape.setAttrs({ fillOpacity: 0.25 });
                     previousShape.current = shape;
