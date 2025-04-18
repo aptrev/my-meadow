@@ -72,7 +72,7 @@ export default function PlantInfo({ garden, plants, plant, onSelect, plots }) {
                         <div className="plant-details mt-3 w-100 text-start px-2">
                             <h5>{selectedPlantDetails.name}</h5>
                             <img
-                                src={require(`../assets/images/${selectedPlantDetails.image}`)}
+                                src={require(`../assets/images/plants/${selectedPlantDetails.image}`)}
                                 alt={selectedPlantDetails.name}
                                 className="plant-image mb-2"
                                 style={{ width: '100%', borderRadius: '8px' }}
