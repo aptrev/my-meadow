@@ -935,8 +935,8 @@ export default function OutdoorEditPage() {
                                             style={{ margin: '0 auto', width: 'fit-content', height: 'fit-content' }}>
                                             {/* Konva stage canvas */}
                                             <Stage
-                                                width={stageSize.width}
-                                                height={stageSize.height}
+                                                width={stageSize.width ? stageSize.width : 1}
+                                                height={stageSize.height ? stageSize.height : 1}
                                                 scaleX={stageSize.scale}
                                                 scaleY={stageSize.scale}
                                                 ref={stageRef}
@@ -962,7 +962,7 @@ export default function OutdoorEditPage() {
                                                 {/* Layer for elements */}
                                                 <Layer ref={mainLayerRef}>
                                                     {plots.map((plot) => {
-                                                        const { id, shape, plant, ...restProps } = plot;
+                                                        const { id, shape, plant, draggable, ...restProps } = plot;
                                                         return (
                                                             <Plot
                                                                 key={id}
@@ -973,6 +973,7 @@ export default function OutdoorEditPage() {
                                                                 plants={plants}
                                                                 onDragEnd={handleDragEnd}
                                                                 plotRefs={plotRefs}
+                                                                draggable={draggable}
                                                                 style={{ cursor: 'grab' }} />
                                                         )
                                                     })}

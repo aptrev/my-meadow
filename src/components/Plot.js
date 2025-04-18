@@ -1,12 +1,24 @@
 import {
-    Shape, Circle, Arc, Ellipse, Line, Path, Rect, RegularPolygon, Ring, Star, Wedge, Image, Text
+    Group, Shape, Circle, Arc, Ellipse, Line, Path, Rect, RegularPolygon, Ring, Star, Wedge, Image, Text
 } from 'react-konva';
-import React, { useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import useImage from 'use-image';
 
-export default function Plot({ id, shape, shapeProps, plant, plants, onDragEnd, plotRefs }) {
+const URLImage = ({ src, ...props }) => {
+    const [image, status] = useImage(require(`../assets/images/plants/${src}`));
+
+    return (
+        <Image
+            image={image}
+            {...props}
+        />
+    );
+};
+
+export default function Plot({ id, shape, shapeProps, plant, plants, onDragEnd, plotRefs, draggable }) {
     // const [cloversBackground] = useImage(require(clovers));
     const shapeRef = useRef(null);
+    const [image, setImage] = useState(null);
 
     useEffect(() => {
         if (shapeRef.current) {
@@ -15,7 +27,17 @@ export default function Plot({ id, shape, shapeProps, plant, plants, onDragEnd, 
     }, [id, plotRefs]);
 
     // const plantInfo = plant_species.find(p => p.id === plant);
-    // const [plantImg] = useImage(plantInfo?.src || null);
+    // const [plantImg] = useImage(plants.find(p => p.id === plant).image || null);
+
+    useEffect(() => {
+        if (plant && plants) {
+            const plantObject = plants.find(p => p.id === plant)
+            console.log(plants);
+            console.log(plant);
+            console.log(plantObject.image);
+            setImage(plantObject.image);
+        }
+    }, [plants, plant]);
 
     const getFill = () => {
         return 'white';
@@ -37,6 +59,7 @@ export default function Plot({ id, shape, shapeProps, plant, plants, onDragEnd, 
             shadowBlur: 20,
             shadowOffsetX: 5,
             shadowOffsetY: 10,
+            draggable: false,
             // fillPatternImage: <img src={clovers} alt='clovers' />
         }
 
@@ -56,7 +79,8 @@ export default function Plot({ id, shape, shapeProps, plant, plants, onDragEnd, 
     };
 
     return (
-        <>
+        <Group
+            draggable={draggable}>
             {generatePlot()}
             {/* {plantImg && (
                 <Image
@@ -68,7 +92,7 @@ export default function Plot({ id, shape, shapeProps, plant, plants, onDragEnd, 
                     listening={false} // prevents interaction interference
                 />
             )} */}
-            {(plant) &&
+            {/* {(plant) &&
                 <Text
                     text={plant}
                     x={shapeProps.x - 30}
@@ -79,11 +103,16 @@ export default function Plot({ id, shape, shapeProps, plant, plants, onDragEnd, 
                     fontFamily="Inter"
                     fill="black"
                     listening={false} />
+            } */}
+            {(plant && image) &&
+                <URLImage
+                    src={image}
+                    x={shapeProps.x - 20}
+                    y={shapeProps.y - 20}
+                    width={40}
+                    height={40}
+                    listening={false} />
             }
-            {/* <Image 
-            src={cloversBackground} alt='clovers'
-            width={20}
-            height={20} /> */}
-        </>
+        </Group>
     );
 }
