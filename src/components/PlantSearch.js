@@ -80,7 +80,7 @@ export default function PlantSearch({ onSearchSelect }) {
             onClick={() => onSearchSelect(plant)}
           >
             <div className="element">
-              <img src={`../assets/images/plants/${plant.image}`} alt={plant.name} title={plant.name} />
+              <img src={require(`../assets/images/plants/${plant.image}`)} alt={plant.name} title={plant.name} />
               <div className="element-overlay">
                 <p className="element-overlay-tip ms-1">Click to Add</p>
               </div>
