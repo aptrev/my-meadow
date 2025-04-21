@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/Button';
 import { Trash } from 'react-bootstrap-icons';
 import useImage from "use-image";
 import potImg from "../assets/images/pot1.png";
+import AppModal from "../components/AppModal";
 
 const Indoor = () => {
   const { id } = useParams();
@@ -58,6 +59,24 @@ const Indoor = () => {
           <Trash />
         </Button>
       </div>
+      <AppModal
+        title="Delete this garden?"
+        body="This action cannot be undone."
+        show={showDeleteModal}
+        onHide={handleDeleteGardenClose}
+        options={[
+          {
+            label: 'Delete',
+            variant: 'danger',
+            onClick: handleDeleteGarden,
+          },
+          {
+            label: 'Cancel',
+            variant: 'outline-primary',
+            onClick: handleDeleteGardenClose,
+          }
+        ]}
+      />
       <div className="shelf-wrapper" style={{ position: 'relative', width: '435px', height: '435px', margin: '0 auto' }}>
         <img src={shelf} alt="Shelf" className="shelf-img" style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
         {garden.pots?.map((pot, idx) => (
