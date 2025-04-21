@@ -58,8 +58,8 @@ export default function IndoorEditPage() {
           //     width: data.stage.width,
           //     height: data.stage.height,
           // });
-          setPots(data.pots);
-          setPlants(data.plants);
+          setPots(data.pots || []);
+          setPlants(data.plants || []);
           // setHistory([JSON.stringify(data.pots)]);
           setGarden(data);
         });

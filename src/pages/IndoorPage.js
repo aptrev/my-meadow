@@ -6,6 +6,8 @@ import { retrieveGarden, deleteGarden } from '../utilities/FirebaseUtils';
 import { getAuth } from 'firebase/auth';
 import Button from 'react-bootstrap/Button';
 import { Trash } from 'react-bootstrap-icons';
+import useImage from "use-image";
+import potImg from "../assets/images/pot1.png";
 
 const Indoor = () => {
   const { id } = useParams();
@@ -13,6 +15,7 @@ const Indoor = () => {
   const [garden, setGarden] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteGardenClose = () => setShowDeleteModal(false);
+  const [potImage] = useImage(potImg);
 
   useEffect(() => {
     if (id) {
@@ -55,27 +58,24 @@ const Indoor = () => {
           <Trash />
         </Button>
       </div>
-
-      {/* Always render the shelf */}
-      <div className="shelf-wrapper">
-        <img src={shelf} alt="Shelf" className="shelf-img" />
-        <div className="plant-container">
-          {garden.plants?.map((plant, idx) => (
-            <div key={idx} style={{ position: 'absolute', left: plant.x, top: plant.y }}>
-              🪴
-            </div>
-          ))}
-        </div>
+      <div className="shelf-wrapper" style={{ position: 'relative', width: '435px', height: '435px', margin: '0 auto' }}>
+        <img src={shelf} alt="Shelf" className="shelf-img" style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
+        {garden.pots?.map((pot, idx) => (
+          <img
+            key={idx}
+            src={require('../assets/images/pot1.png')}
+            alt="Pot"
+            style={{
+              position: 'absolute',
+              left: `${pot.x}px`,
+              top: `${pot.y}px`,
+              width: '40px',
+              height: '40px',
+              pointerEvents: 'none',
+            }}
+          />
+        ))}
       </div>
-{/* 
-      <div className="plant-info">
-        <h2>🌺 Begonia</h2>
-        <p><strong>Begonia 'Art Hodes'</strong> is a resilient, easy-care flowering plant perfect for indoor gardens.</p>
-        <div className="icons">
-          <span>💧</span>
-          <span>☀️</span>
-        </div>
-      </div> */}
     </AppContainer>
   );
 };
