@@ -203,3 +203,7 @@ button {
 	padding: 10px;
 	box-shadow: 0 2px 10px var(--black-a7);
 }
+
+.text-center {
+  text-align: center;
+}

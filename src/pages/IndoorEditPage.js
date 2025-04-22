@@ -1,30 +1,25 @@
-// Updated IndoorEditPage with pot tab toggle and interactive pot slot placement
-
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Stage, Layer, Image as KonvaImage, Rect, Group } from 'react-konva';
+import { Stage, Layer, Image as KonvaImage, Rect, Group, Text as KonvaText } from 'react-konva';
 import useImage from "use-image";
 import Container from 'react-bootstrap/Container';
+import Toast from 'react-bootstrap/Toast';
+import ToastContainer from 'react-bootstrap/ToastContainer';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Stack from 'react-bootstrap/Stack';
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import shelf from "../assets/images/shelf.png";
 import potImg from "../assets/images/pot1.png";
+import sproutedImg from "../assets/images/sprouted.png";
 import trashIcon from '../assets/images/trash.png';
-// import marigold from '../assets/images/marigold.png';
-// import magnolia from '../assets/images/magnolia.png';
-// import begonia from '../assets/images/begonia.png';
-// import rose from '../assets/images/rose.png';
 import LeftSidebarIndoor from '../components/LeftSidebarIndoor';
 import ElementPicker from '../components/ElementPicker';
 import PlantInfo from '../components/PlantInfo';
-import { retrieveGarden } from '../utilities/FirebaseUtils';
+import { retrieveGarden } from '../utilities/FirebaseUtils'; 
 import '../style/indooredit.css';
-
 
 export default function IndoorEditPage() {
   const { id } = useParams();
-  // const navigate = useNavigate();
 
   const [garden, setGarden] = useState(null);
   const [pots, setPots] = useState([]);
@@ -33,10 +28,15 @@ export default function IndoorEditPage() {
   const [tool, setTool] = useState(null);
   const [draggedFlower, setDraggedFlower] = useState(null);
   const [hoveredSlotId, setHoveredSlotId] = useState(null);
+  const [selectedPotId, setSelectedPotId] = useState(null);
+  const [justUpdatedPotId, setJustUpdatedPotId] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
 
   const shelfImage = useImage(shelf)[0];
   const potImage = useImage(potImg)[0];
+  const sproutedImage = useImage(sproutedImg)[0];
   const trashImg = useImage(trashIcon)[0];
   const stageRef = useRef();
   const containerRef = useRef();
@@ -50,39 +50,43 @@ export default function IndoorEditPage() {
   ];
 
   useEffect(() => {
+    const font = new FontFace(
+      'Playfair Display',
+      'url(https://fonts.gstatic.com/s/playfairdisplay/v30/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYhZ0.woff2)'
+    );
+  
+    font.load().then((loadedFont) => {
+      document.fonts.add(loadedFont);
+      document.body.style.fontFamily = '"Great Vibes", serif'; // optional DOM fallback
+      setTimeout(() => {
+        stageRef.current?.batchDraw(); // trigger Konva redraw if needed
+      }, 100);
+    }).catch((err) => {
+      console.error("Font load failed", err);
+    });
+  }, []);  
+
+  useEffect(() => {
     if (id) {
       retrieveGarden(id)
         .then((data) => {
-          console.log(data);
-          // setScene({
-          //     width: data.stage.width,
-          //     height: data.stage.height,
-          // });
           setPots(data.pots || []);
           setPlants(data.plants || []);
-          // setHistory([JSON.stringify(data.pots)]);
           setGarden(data);
         });
     }
   }, [id]);
 
-  /**
-       * Save garden to local on every change.
-       * Used by Save button in Header component to update garden in Firestore.
-       */
   const saveGarden = useCallback((pots) => {
     const newGarden = { ...garden, pots };
     localStorage.setItem('savedGarden', JSON.stringify(newGarden));
-  }, [pots]);
-
-  
+  }, [garden]);
 
   useEffect(() => {
     if (pots.length > 0) {
-      saveGarden(pots); // Save whenever pots are updated
+      saveGarden(pots);
     }
-  }, [pots]); // Trigger when `pots` changes
-  
+  }, [pots, saveGarden]);
 
   const handleStageClick = (e) => {
     const pointer = stageRef.current.getPointerPosition();
@@ -97,22 +101,19 @@ export default function IndoorEditPage() {
 
       if (clickedSlot) {
         setPots(prev => [...prev, { id: Date.now(), x: clickedSlot.x, y: clickedSlot.y, flower: null }]);
-        saveGarden(pots);
       }
-    } else if (draggedFlower) {
+    } else {
       const clickedPot = pots.find(pot =>
         pointer.x >= pot.x && pointer.x <= pot.x + 40 &&
         pointer.y >= pot.y && pointer.y <= pot.y + 40
       );
 
       if (clickedPot) {
-        const updated = pots.map((p) =>
-          p.id === clickedPot.id ? { ...p, flower: draggedFlower } : p
-        );
-        setPots(updated);
-        setDraggedFlower(null);
-        saveGarden(pots);
+        setSelectedPotId(clickedPot.id);
+      } else {
+        setSelectedPotId(null);
       }
+      setDraggedFlower(null);
     }
   };
 
@@ -121,7 +122,19 @@ export default function IndoorEditPage() {
   };
 
   const handleSelectPlant = (plantObj) => {
-    setSelectedPlant(selectedPlant?.id === plantObj.id ? null : plantObj);
+    if (selectedPotId !== null) {
+      const updated = pots.map(p =>
+        p.id === selectedPotId ? { ...p, flower: plantObj } : p
+      );
+      setPots(updated);
+      saveGarden(updated);
+      setToastMessage(`${plantObj.name} planted!`);
+      setShowToast(true);
+      setSelectedPotId(null);
+      setSelectedPlant(null);
+    } else {
+      setSelectedPlant(plantObj);
+    }
   };
 
   const handleAddPlant = (plant) => {
@@ -137,7 +150,6 @@ export default function IndoorEditPage() {
     saveGarden(pots);
   };
 
-
   return (
     <Container fluid className='position-relative flex-grow-1 m-0 px-2 align-items-start' style={{ backgroundColor: 'var(--edit-background-color)' }}>
       <Row className='flex-nowrap'>
@@ -150,13 +162,15 @@ export default function IndoorEditPage() {
               garden={garden}
               plants={plants}
               onAddPlant={handleAddPlant}
-              onSelect={() => { }}
+              onSelect={handleSelectPlant}
               onDrag={() => { }}
               onDragEnd={() => { }}
               onDragStart={() => { }}
               onPlantDrag={() => { }}
               onPlantDragEnd={() => { }}
               onPlantDragStart={(e, plant) => setDraggedFlower(plant)}
+              selectedPlant={selectedPlant}
+              view='indoor'
             />)}
           </Stack>
         </Col>
@@ -186,7 +200,6 @@ export default function IndoorEditPage() {
                             onClick={() => {
                               if (!occupied) {
                                 setPots(prev => [...prev, { id: Date.now(), x: slot.x, y: slot.y, flower: null }]);
-                                saveGarden(pots);
                               }
                             }}
                           >
@@ -213,16 +226,47 @@ export default function IndoorEditPage() {
                       })}
 
                       {pots.map(pot => (
-                        <Group key={pot.id}>
-                          <KonvaImage image={potImage} x={pot.x} y={pot.y} width={40} height={40} />
+                        <Group
+                          key={pot.id}
+                          onClick={() => {
+                            setSelectedPotId(pot.id);
+                            setSelectedPlant(pot.flower || null);
+                          }}
+                        >
+                          <Rect
+                            x={pot.x - 2}
+                            y={pot.y - 2}
+                            width={44}
+                            height={44}
+                            stroke={selectedPotId === pot.id ? 'green' : 'transparent'}
+                            strokeWidth={2}
+                          />
+                          <KonvaImage
+                            image={pot.flower ? sproutedImage : potImage}
+                            x={pot.x + (pot.flower ? -15 : 0)}
+                            y={pot.y + (pot.flower ? -31 : 0)}
+                            width={pot.flower ? 69 : 40}
+                            height={pot.flower ? 72 : 40}
+                          />
                           {pot.flower && (
-                            <KonvaImage
-                              image={(() => {
-                                const img = new window.Image();
-                                img.src = pot.flower.src;
-                                return img;
-                              })()}
-                              x={pot.x} y={pot.y} width={40} height={40}
+                            <KonvaText
+                              text={pot.flower?.name || ''}
+                              x={pot.x}
+                              y={pot.y - 45}
+                              fontSize={18}
+                              fontFamily="Great Vibes"
+                              fill="#4C5840"
+                              align="center"
+                            />
+                          )}                          
+                          {justUpdatedPotId === pot.id && (
+                            <KonvaText
+                              text="✓"
+                              x={pot.x + 15}
+                              y={pot.y - 20}
+                              fontSize={20}
+                              fill="green"
+                              fontStyle="bold"
                             />
                           )}
                           {tool === 'pots-edit' && trashImg && (
@@ -236,7 +280,6 @@ export default function IndoorEditPage() {
                               style={{ cursor: 'pointer' }}
                             />
                           )}
-
                         </Group>
                       ))}
                     </Layer>
@@ -250,6 +293,11 @@ export default function IndoorEditPage() {
           <PlantInfo garden={garden} plants={plants} plant={selectedPlant} onSelect={handleSelectPlant} />
         </Col>
       </Row>
+      <ToastContainer position="top-center" className="p-3" style={{ zIndex: 10000 }}>
+        <Toast onClose={() => setShowToast(false)} show={showToast} delay={2000} autohide bg="success">
+          <Toast.Body className="text-white text-center">{toastMessage}</Toast.Body>
+        </Toast>
+      </ToastContainer>
     </Container>
   );
 }

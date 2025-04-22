@@ -8,6 +8,7 @@ import Button from 'react-bootstrap/Button';
 import { Trash } from 'react-bootstrap-icons';
 import useImage from "use-image";
 import potImg from "../assets/images/pot1.png";
+import sproutedImg from "../assets/images/sprouted.png";
 import AppModal from "../components/AppModal";
 
 const Indoor = () => {
@@ -16,7 +17,6 @@ const Indoor = () => {
   const [garden, setGarden] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteGardenClose = () => setShowDeleteModal(false);
-  const [potImage] = useImage(potImg);
 
   useEffect(() => {
     if (id) {
@@ -82,14 +82,14 @@ const Indoor = () => {
         {garden.pots?.map((pot, idx) => (
           <img
             key={idx}
-            src={require('../assets/images/pot1.png')}
-            alt="Pot"
+            src={pot.flower ? sproutedImg : potImg}
+            alt={pot.flower ? "Sprouted Pot" : "Pot"}
             style={{
               position: 'absolute',
-              left: `${pot.x}px`,
-              top: `${pot.y}px`,
-              width: '40px',
-              height: '40px',
+              left: `${pot.x + (pot.flower ? -15 : 0)}px`,
+              top: `${pot.y + (pot.flower ? -31 : 0)}px`,
+              width: pot.flower ? '69px' : '40px',
+              height: pot.flower ? '72px' : '40px',
               pointerEvents: 'none',
             }}
           />

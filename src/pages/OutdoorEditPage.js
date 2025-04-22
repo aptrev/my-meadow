@@ -890,6 +890,7 @@ export default function OutdoorEditPage() {
                             onChangeTool={onChangeTool} />
                         {/* Expanded portion of sidebar */}
                         <ElementPicker
+                            view="outdoor"
                             tool={tool}
                             onHide={onChangeTool}
                             garden={garden}

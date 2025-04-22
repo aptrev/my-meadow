@@ -13,7 +13,7 @@ import GardenSettings from "./GardenSettings";
 import PlantSearch from "./PlantSearch";
 
 export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant, plots, onSelect,
-    onDrag, onDragEnd, onDragStart, onPlantDrag, onPlantDragStart, onPlantDragEnd, }) {
+    onDrag, onDragEnd, onDragStart, onPlantDrag, onPlantDragStart, onPlantDragEnd, selectedPlant, view }) {
     const [dragging, setDragging] = useState(false);
     const [showPlantSearch, setShowPlantSearch] = useState(false);
 
@@ -167,12 +167,21 @@ export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant
                                                         src={require(`../assets/images/plants/${plant.image}`)}
                                                         title={plant.name}
                                                         alt={plant.name}
+                                                        onClick={() => onSelect(plant)}
                                                         onDrag={(e) => handleMouseMove(e)}
                                                         onDragEnd={(e) => handleMouseUp(e, plant.id)}
                                                         onDragStart={(e) => handleMouseDown(e)}
+                                                        selectedPlantId={selectedPlant?.id}
+                                                        style={{
+                                                            border: selectedPlant?.id === plant.id ? '2px solid green' : 'none',
+                                                            borderRadius: '6px',
+                                                            cursor: 'pointer'
+                                                        }}
                                                     ></img>
                                                     <div className='element-overlay'>
-                                                        <p className='element-overlay-tip ms-1'>Click & Drag</p>
+                                                        <p className='element-overlay-tip ms-1 text-center'>
+                                                            {tool === 'plants' && view === 'indoor' ? 'Select Pot, then Click' : 'Click & Drag'}
+                                                        </p>                                                    
                                                     </div>
                                                 </div>
                                                 <p className='label'>{plant.name}</p>
