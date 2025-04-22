@@ -10,20 +10,23 @@ import useImage from "use-image";
 import potImg from "../assets/images/pot1.png";
 import sproutedImg from "../assets/images/sprouted.png";
 import AppModal from "../components/AppModal";
+import PlantInfo from "../components/PlantInfo";
 
 const Indoor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [garden, setGarden] = useState(null);
+  const [selectedPlant, setSelectedPlant] = useState(null);
+  const [hoveredPotIndex, setHoveredPotIndex] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const handleDeleteGardenClose = () => setShowDeleteModal(false);
 
   useEffect(() => {
     if (id) {
-      retrieveGarden(id)
-        .then((data) => {
-          setGarden(data);
-        });
+      retrieveGarden(id).then((data) => {
+        setGarden(data);
+      });
     }
   }, [id]);
 
@@ -77,23 +80,82 @@ const Indoor = () => {
           }
         ]}
       />
-      <div className="shelf-wrapper" style={{ position: 'relative', width: '435px', height: '435px', margin: '0 auto' }}>
-        <img src={shelf} alt="Shelf" className="shelf-img" style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
-        {garden.pots?.map((pot, idx) => (
-          <img
-            key={idx}
-            src={pot.flower ? sproutedImg : potImg}
-            alt={pot.flower ? "Sprouted Pot" : "Pot"}
-            style={{
-              position: 'absolute',
-              left: `${pot.x + (pot.flower ? -15 : 0)}px`,
-              top: `${pot.y + (pot.flower ? -31 : 0)}px`,
-              width: pot.flower ? '69px' : '40px',
-              height: pot.flower ? '72px' : '40px',
-              pointerEvents: 'none',
-            }}
-          />
-        ))}
+      <div className="container-fluid px-4 d-flex justify-content-center" style={{ maxWidth: '1400px' }}>
+        <div className="d-flex flex-grow-1 justify-content-between align-items-start">
+          <div className="shelf-wrapper" style={{ position: 'relative', width: '435px', height: '435px', margin: '0 auto' }}>
+            <img src={shelf} alt="Shelf" className="shelf-img" style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
+            {garden.pots?.map((pot, idx) => (
+              <div
+                key={idx}
+                style={{
+                  position: 'absolute',
+                  left: `${pot.x + (pot.flower ? -15 : 0)}px`,
+                  top: `${pot.y + (pot.flower ? -31 : 0)}px`,
+                  width: pot.flower ? '69px' : '40px',
+                  height: pot.flower ? '72px' : '40px',
+                  cursor: pot.flower ? 'pointer' : 'default',
+                }}
+                onMouseEnter={() => setHoveredPotIndex(idx)}
+                onMouseLeave={() => setHoveredPotIndex(null)}
+                onClick={() => {
+                  if (pot.flower) {
+                    setSelectedPlant(pot.flower);
+                    setIsSidebarOpen(true);
+                  }
+                }}
+              >
+                <img
+                  src={pot.flower ? sproutedImg : potImg}
+                  alt={pot.flower ? "Sprouted Pot" : "Pot"}
+                  style={{ width: '100%', height: '100%' }}
+                />
+                {hoveredPotIndex === idx && pot.flower && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '-20px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      fontSize: '15px',
+                      fontFamily: '"Great Vibes", serif',
+                      color: '#4C5840',
+                      whiteSpace: 'nowrap',
+                      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
+                      pointerEvents: 'none'
+                    }}
+                  >
+                    {pot.flower.name}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {isSidebarOpen && (
+            <div
+              className="d-flex flex-column"
+              style={{
+                width: '360px',
+                marginLeft: '2rem',
+                transition: 'transform 0.3s ease-in-out',
+              }}
+            >
+              <PlantInfo
+                garden={garden}
+                plants={garden.plants}
+                plant={selectedPlant}
+                onSelect={(plant) => {
+                  setSelectedPlant(plant);
+                  setIsSidebarOpen(true);
+                }}
+                onCloseSidebar={() => setIsSidebarOpen(false)}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </AppContainer>
   );
