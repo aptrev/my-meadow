@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import shelf from '../assets/images/shelf.png';
-import AppContainer from '../components/AppContainer';
+import AppContainer from '../components/AppContainer/AppContainer';
 import { useParams, useNavigate } from 'react-router-dom';
 import { retrieveGarden, deleteGarden } from '../utilities/FirebaseUtils';
 import { getAuth } from 'firebase/auth';
@@ -11,6 +11,7 @@ import potImg from "../assets/images/pot1.png";
 import sproutedImg from "../assets/images/sprouted.png";
 import AppModal from "../components/AppModal";
 import PlantInfo from "../components/PlantInfo";
+import { Col, Container, Row } from 'react-bootstrap';
 
 const Indoor = () => {
   const { id } = useParams();
@@ -51,17 +52,7 @@ const Indoor = () => {
   if (!garden) return <p>Loading garden...</p>;
 
   return (
-    <AppContainer>
-      <div style={{ position: 'absolute', top: '20px', right: '50px', zIndex: 10 }}>
-        <Button
-          variant="outline-danger"
-          size="sm"
-          onClick={() => setShowDeleteModal(true)}
-          aria-label="Delete Garden"
-        >
-          <Trash />
-        </Button>
-      </div>
+    <>
       <AppModal
         title="Delete this garden?"
         body="This action cannot be undone."
@@ -80,84 +71,102 @@ const Indoor = () => {
           }
         ]}
       />
-      <div className="container-fluid px-4 d-flex justify-content-center" style={{ maxWidth: '1400px' }}>
-        <div className="d-flex flex-grow-1 justify-content-between align-items-start">
-          <div className="shelf-wrapper" style={{ position: 'relative', width: '435px', height: '435px', margin: '0 auto' }}>
-            <img src={shelf} alt="Shelf" className="shelf-img" style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
-            {garden.pots?.map((pot, idx) => (
-              <div
-                key={idx}
-                style={{
-                  position: 'absolute',
-                  left: `${pot.x + (pot.flower ? -15 : 0)}px`,
-                  top: `${pot.y + (pot.flower ? -31 : 0)}px`,
-                  width: pot.flower ? '69px' : '40px',
-                  height: pot.flower ? '72px' : '40px',
-                  cursor: pot.flower ? 'pointer' : 'default',
-                }}
-                onMouseEnter={() => setHoveredPotIndex(idx)}
-                onMouseLeave={() => setHoveredPotIndex(null)}
-                onClick={() => {
-                  if (pot.flower) {
-                    setSelectedPlant(pot.flower);
-                    setIsSidebarOpen(true);
-                  }
-                }}
-              >
-                <img
-                  src={pot.flower ? sproutedImg : potImg}
-                  alt={pot.flower ? "Sprouted Pot" : "Pot"}
-                  style={{ width: '100%', height: '100%' }}
-                />
-                {hoveredPotIndex === idx && pot.flower && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '-20px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
-                      fontSize: '15px',
-                      fontFamily: '"Great Vibes", serif',
-                      color: '#4C5840',
-                      whiteSpace: 'nowrap',
-                      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
-                      pointerEvents: 'none'
-                    }}
-                  >
-                    {pot.flower.name}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {isSidebarOpen && (
-            <div
-              className="d-flex flex-column"
-              style={{
-                width: '360px',
-                marginLeft: '2rem',
-                transition: 'transform 0.3s ease-in-out',
-              }}
+      <Container fluid className='position-relative flex-grow-1 m-0 px-2 align-items-start'>
+        <Row className='flex-nowrap'>
+          <Col className='p-0 position-relative' style={{ minWidth: '0' }}>
+            <Button
+              className='position-absolute'
+              variant="outline-danger"
+              size="sm"
+              onClick={() => setShowDeleteModal(true)}
+              aria-label="Delete Garden"
+              style={{ top: '15px', right: '15px' }}
             >
-              <PlantInfo
-                garden={garden}
-                plants={garden.plants}
-                plant={selectedPlant}
-                onSelect={(plant) => {
-                  setSelectedPlant(plant);
-                  setIsSidebarOpen(true);
-                }}
-                onCloseSidebar={() => setIsSidebarOpen(false)}
-              />
+              <Trash />
+            </Button>
+            <div className="container-fluid p-4 d-flex justify-content-center" style={{ maxWidth: '1400px' }}>
+              <div className="d-flex flex-grow-1 justify-content-between align-items-start">
+                <div className="shelf-wrapper" style={{ position: 'relative', width: '435px', height: '435px', margin: '0 auto' }}>
+                  <img src={shelf} alt="Shelf" className="shelf-img" style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }} />
+                  {garden.pots?.map((pot, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        position: 'absolute',
+                        left: `${pot.x + (pot.flower ? -15 : 0)}px`,
+                        top: `${pot.y + (pot.flower ? -31 : 0)}px`,
+                        width: pot.flower ? '69px' : '40px',
+                        height: pot.flower ? '72px' : '40px',
+                        cursor: pot.flower ? 'pointer' : 'default',
+                      }}
+                      onMouseEnter={() => setHoveredPotIndex(idx)}
+                      onMouseLeave={() => setHoveredPotIndex(null)}
+                      onClick={() => {
+                        if (pot.flower) {
+                          setSelectedPlant(pot.flower);
+                          setIsSidebarOpen(true);
+                        }
+                      }}
+                    >
+                      <img
+                        src={pot.flower ? sproutedImg : potImg}
+                        alt={pot.flower ? "Sprouted Pot" : "Pot"}
+                        style={{ width: '100%', height: '100%' }}
+                      />
+                      {hoveredPotIndex === idx && pot.flower && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: '-20px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '15px',
+                            fontFamily: '"Great Vibes", serif',
+                            color: '#4C5840',
+                            whiteSpace: 'nowrap',
+                            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
+                            pointerEvents: 'none'
+                          }}
+                        >
+                          {pot.flower.name}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-          )}
-        </div>
-      </div>
-    </AppContainer>
+          </Col>
+
+          <Col xs='auto'>
+            {/* {isSidebarOpen && ( */}
+            {/* <div
+                className="d-flex flex-column"
+                style={{
+                  width: '360px',
+                  marginLeft: '2rem',
+                  transition: 'transform 0.3s ease-in-out',
+                }}
+              > */}
+            <PlantInfo
+              garden={garden}
+              plants={garden.plants}
+              plant={selectedPlant}
+              onSelect={(plant) => {
+                setSelectedPlant(plant);
+                setIsSidebarOpen(true);
+              }}
+              onCloseSidebar={() => setIsSidebarOpen(false)}
+            />
+            {/* </div> */}
+            {/* )} */}
+          </Col>
+        </Row >
+      </Container >
+    </>
   );
 };
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../components/AuthProvider";
-import AppContainer from "../components/AppContainer";
+import AppContainer from "../components/AppContainer/AppContainer";
 import AppModal from '../components/AppModal';
 import { retrieveUser, clearGardens } from '../utilities/FirebaseUtils';
 

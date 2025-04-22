@@ -9,6 +9,8 @@ import ellipse from '../assets/images/plots/ellipse.png'
 import triangle from '../assets/images/plots/triangle.png'
 import polygon from '../assets/images/plots/polygon.png'
 import longhorn from '../assets/images/plots/paths/longhorn.png'
+import { GiStonePile } from "react-icons/gi"
+import { LuFence } from "react-icons/lu";
 
 const plotOptions = {
     tool: 'plot',
@@ -96,4 +98,23 @@ const plotOptions = {
     ],
 }
 
-export {plotOptions}
+const pathOptions = []
+
+const objectOptions = [
+    {
+        id: 'picker-rock-element',
+        name: 'Rock',
+        value: 'rock',
+        icon: <GiStonePile />,
+    },
+    {
+        id: 'picker-fence-element',
+        name: 'Fence',
+        value: 'fence',
+        icon: <LuFence />,
+    },
+]
+
+const textOptions = []
+
+export {plotOptions, pathOptions, objectOptions, textOptions}

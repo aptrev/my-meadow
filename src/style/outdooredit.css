@@ -8,11 +8,11 @@
     box-shadow: 0px 1px grey;
 }
 
-.white-canvas {
+.background-canvas {
     /* width: auto;
     height: auto;
     overflow: 'auto'; */
-    background-color: white;
+    /* background-color: white; */
     /* background-size: 10px 10px;
     background-image:
         linear-gradient(to right, lightBlue 1px, white 1px),
@@ -53,8 +53,19 @@
     border-bottom: 1px solid var(--secondaryGray);
 }
 
+.element-picker-wrapper {
+    width: 100%;
+    max-width: 0;
+    transition: max-width 0.5s ease-out;
+}
+
+.element-picker-wrapper.expanded {
+    max-width: 1000px;
+}
+
 .element-picker-wrapper .element-picker {
-    width: 0;
+    width: auto;
+    max-width: 0;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
     z-index: 0;
     overflow-y: auto;
@@ -62,11 +73,13 @@
 }
 
 .element-picker-wrapper.expanded .element-picker {
-    width: 300px;
+    width: auto;
+    max-width: 1000px;
 }
 
 .element-grid {
-    width: 100%;
+    padding: 5px;
+    width: 250px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-auto-rows: 1fr;
@@ -160,6 +173,8 @@
     border-radius: 0 !important;
     z-index: 1000;
     cursor: pointer;
+    outline: 0 !important;
+    border: 0 !important;
 }
 
 .btn-collapse.active {
@@ -203,11 +218,20 @@
     background-color: var(--primaryDarkGreen);
 }
 
+.element-picker-content {
+    width: 100%;
+    padding: 5px;
+}
+
+.plant-info-content {
+    overflow-y: auto;
+}
+
 .plant-info-wrapper .plant-info {
     width: 0;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
     z-index: 0;
-    overflow-y: auto;
+    /* overflow-y: auto; */
     transition: width 0.5s ease-out;
 }
 
@@ -266,7 +290,7 @@
     font-size: 0.9em !important;
     font-weight: 500 !important;
     padding: 5px 10px !important;
-    width: 100% !important;
+    /* width: 100% !important; */
     text-align: center !important;
     transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
 }
@@ -277,4 +301,37 @@
     color: white !important;
     box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.25) !important;
     outline: none !important;
+}
+
+.garden-settings {
+    padding: 5px;
+    width: 250px;
+}
+
+.side-toolbar {
+    width: 25px;
+}
+
+.side-toolbar-content {
+    padding: 0;
+}
+
+.btn-sidebar {
+    width: 100%;
+    border-radius: 5px !important;
+    border: 1px solid var(--primaryDarkGreen) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    color: var(--primaryDarkGreen) !important;
+    background-color: transparent !important;
+}
+
+.btn-sidebar:focus,
+.btn-sidebar:active,
+.btn-sidebar:hover,
+.btn-sidebar.active {
+    border-radius: 5px !important;
+    border: 1px solid var(--primaryDarkGreen) !important;
+    color: white !important;
+    background-color: var(--primaryDarkGreen) !important;
 }

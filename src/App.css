@@ -37,34 +37,59 @@
   }
 }
 
+.sign-up-cta {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.sign-up-cta a {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .login-background {
-  height: 100vh;
+  /* height: 100vh; */
   background-color: #d0e3d0; /* soft mint green */
   padding: 2rem;
+  width: 100%;
 }
 
 .login-box {
+  position: relative;
   background: rgba(255, 255, 255, 0.5); /* semi-transparent */
   padding: 1rem;
   border-radius: 20px;
-  /* width: 100%; */
-  width: 500px;
-  height: 600px;
+  width: 100%;
+  max-width: 500px;
+  padding-bottom: 75px;
+  /* height: 600px; */
+}
+
+.login-box a {
+  cursor: pointer;
+}
+
+.login-box a:hover {
+  text-decoration: underline;
 }
 
 .logo-img {
-  width: 300px;
+  width: 100%;
+  max-width: 300px;
   height: auto;
 }
 
 .btn-dark {
-  background-color: #3c6655;
-  border: none;
+  background-color: #3c6655 !important;
+  border: none !important;
   width: 90%;
+  cursor: pointer;
 }
 
 .btn-dark:hover {
-  background-color: #2c4e41;
+  background-color: #2c4e41 !important;
 }
 
 input.form-control {

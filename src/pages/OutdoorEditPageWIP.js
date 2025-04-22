@@ -9,7 +9,7 @@ import { PlusCircle, Flower2, XLg, CircleSquare } from 'react-bootstrap-icons';
 import Container from 'react-bootstrap/Container'
 import Stack from 'react-bootstrap/Stack'
 
-import Plot from '../components/Plot'
+import Plot from '../components/Elements/Plot'
 import AppContainer from "../components/AppContainer";
 import OutdoorToolbar from "../components/OutdoorToolbar";
 import marigold from '../assets/images/marigold.png'

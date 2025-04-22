@@ -12,14 +12,12 @@ import Spinner from 'react-bootstrap/Spinner';
 import Container from 'react-bootstrap/Container';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
-import Placeholder from 'react-bootstrap/Placeholder';
-import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import 'bootstrap/dist/css/bootstrap.css';
 
 // Component Imports
 import { AuthContext } from "../components/AuthProvider";
-import AppContainer from '../components/AppContainer';
+import AppContainer from '../components/AppContainer/AppContainer';
 
 export default function Home() {
     const { user, logOut } = useContext(AuthContext);
@@ -69,6 +67,7 @@ export default function Home() {
               {/* Logo Image */}
               <img 
                 src={logo} 
+                // className='d-none d-sm-block'
                 alt="Plant Pot Logo" 
                 style={{ 
                   maxWidth: '500px', 
@@ -107,8 +106,6 @@ export default function Home() {
               >
                 🪴 Grow a New Garden 🪴
               </Button>
-
-
               </div>
             </div>
 
@@ -128,28 +125,22 @@ export default function Home() {
                 <Spinner animation="border" variant="success" />
               </div>
             ) : gardens && gardens.length > 0 ? (
-              <ListGroup className="home-garden-list mx-auto shadow-sm" style={{ maxWidth: "600px", borderRadius: "12px" }}>
+              <ListGroup className="home-garden-list mx-auto">
                 {gardens.map((garden) => (
                   <ListGroup.Item
                     key={garden.id}
                     action
                     onClick={() => handleGoToGarden(garden)}
-                    className="d-flex align-items-center garden-list-item"
-                    style={{
-                      borderRadius: "10px",
-                      marginBottom: "4px",
-                      backgroundColor: "#f0fdf4",
-                      border: "1px solid #d6e9c6",
-                    }}
+                    className="row garden-list-item d-flex align-items-center px-1 me-1"
                   >
-                    <Col xs="auto" className="me-3">
+                    <Col xs="auto">
                       {garden.location === 'indoor' ? (
                         <House size={22} color="#6a994e" />
                       ) : (
                         <Flower1 size={22} color="#f3722c" />
                       )}
                     </Col>
-                    <Col className="text-capitalize fw-semibold" style={{ color: '#386641' }}>{garden.name}</Col>
+                    <Col className="text-capitalize fw-semibold px-2" style={{ color: '#386641' }}>{garden.name}</Col>
                   </ListGroup.Item>
                 ))}
               </ListGroup>

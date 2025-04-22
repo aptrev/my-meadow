@@ -7,7 +7,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { ListGroup, Row, Col, Spinner, Placeholder } from 'react-bootstrap';
 import { House, Flower1 } from 'react-bootstrap-icons';
 
-import AppContainer from '../components/AppContainer';
+import AppContainer from '../components/AppContainer/AppContainer';
 import { AuthContext } from '../components/AuthProvider';
 import { retrieveGardens } from '../utilities/FirebaseUtils';
 

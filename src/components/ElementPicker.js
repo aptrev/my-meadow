@@ -6,16 +6,22 @@ import Button from "react-bootstrap/esm/Button";
 import Stack from "react-bootstrap/Stack";
 import { PlusSquare } from "react-bootstrap-icons";
 import { TbChevronCompactLeft } from "react-icons/tb";
+import { GiStonePile, GiStonePath } from "react-icons/gi";
 
 import '../style/home.css';
 import '../style/outdooredit.css';
 import GardenSettings from "./GardenSettings";
 import PlantSearch from "./PlantSearch";
+import { ToggleButton } from "react-bootstrap";
 
-export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant, plots, onSelect,
-    onDrag, onDragEnd, onDragStart, onPlantDrag, onPlantDragStart, onPlantDragEnd, selectedPlant, view }) {
+export default function ElementPicker({ garden, tool, onHide, onUpdateGarden, plants, onAddPlant, plots, paths, objects, text, selected, onSelect,
+    onDrag, onDragEnd, onDragStart, onPlantDrag, onPlantDragStart, onPlantDragEnd, }) {
     const [dragging, setDragging] = useState(false);
     const [showPlantSearch, setShowPlantSearch] = useState(false);
+
+    const handleSelect = (e, value) => {
+        onSelect(e, value);
+    }
 
     const handleSelectPlant = (plant) => {
         onAddPlant(plant);
@@ -24,19 +30,19 @@ export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant
 
     useEffect(() => {
         const handleEsc = (e) => {
-          if (e.key === "Escape") {
-            setShowPlantSearch(false);
-          }
+            if (e.key === "Escape") {
+                setShowPlantSearch(false);
+            }
         };
-      
+
         if (showPlantSearch) {
-          window.addEventListener("keydown", handleEsc);
+            window.addEventListener("keydown", handleEsc);
         }
-      
+
         return () => {
-          window.removeEventListener("keydown", handleEsc);
+            window.removeEventListener("keydown", handleEsc);
         };
-      }, [showPlantSearch]);      
+    }, [showPlantSearch]);
 
     function usePrevious(value) {
         const ref = useRef()
@@ -66,16 +72,14 @@ export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant
                 onDragEnd(e, value);
             }
             document.removeEventListener('mousemove', handleMouseMove);
-            onSelect(null);
             setDragging(false);
         },
-        [tool, onSelect, onDragEnd, onPlantDragEnd, handleMouseMove]
+        [tool, onDragEnd, onPlantDragEnd, handleMouseMove]
     )
 
     const handleMouseDown = useCallback(
         (e, value) => {
             setDragging(true);
-            onSelect(value);
             if (tool === 'plants') {
                 onPlantDragStart(e);
             } else if (tool) {
@@ -84,7 +88,7 @@ export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant
 
             document.addEventListener('mousemove', handleMouseMove)
         },
-        [tool, setDragging, onSelect, onDragStart, onPlantDragStart, handleMouseMove]
+        [tool, setDragging, onDragStart, onPlantDragStart, handleMouseMove]
     )
 
     const prevMouseMove = usePrevious(handleMouseMove);
@@ -116,7 +120,7 @@ export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant
                 style={{ backgroundColor: 'var(--secondaryLightGreen)', height: 'calc(100svh - 75px)' }}
             >
                 {tool &&
-                    <div className='element-picker-content p-2 d-flex flex-column justify-content-center align-items-center'>
+                    <div className='element-picker-content' style={{ overflowY: 'auto', maxHeight: '100%' }}>
                         {(tool === 'plot') &&
                             <div className='element-grid'>
                                 {plots.options.map((plot) => {
@@ -148,10 +152,12 @@ export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant
                             </div>
                         }
                         {(tool === 'garden') &&
-                            <GardenSettings garden={garden} />
+                            <div class="garden-settings">
+                                <GardenSettings garden={garden} onUpdateGarden={onUpdateGarden} />
+                            </div>
                         }
                         {(tool === 'plants' && plants) &&
-                            <div className="plant-content" style={{ overflowY: 'auto', maxHeight: '100%' }}>
+                            <div className="plant-content">
                                 <div className='element-grid'>
                                     {plants.map((plant) => {
                                         return (
@@ -189,20 +195,40 @@ export default function ElementPicker({ garden, tool, onHide, plants, onAddPlant
                                         );
                                     })}
                                     <div
-                                        className='element-container' 
+                                        className='element-container'
                                         onClick={() => setShowPlantSearch(true)}
                                     >
                                         <div
                                             className='element'
                                         >
-                                            <PlusSquare fill='currentColor' size={64}/>
+                                            <PlusSquare fill='currentColor' size={64} />
                                         </div>
                                         <p className='label'>Add Plants</p>
                                     </div>
                                 </div>
                             </div>
                         }
-
+                        {(tool === 'objects' && objects) &&
+                            <div className='side-toolbar'>
+                                <div className='side-toolbar-content d-flex flex-column gap-2'>
+                                    {objects.map((object) => {
+                                        return <ToggleButton
+                                            className={`${selected === object.value ? 'active' : ''}`}
+                                            key={`toolbar-object-${object.value}`}
+                                            type="radio"
+                                            id={`toolbar-object-${object.value}`}
+                                            alt={object.name}
+                                            title={object.name}
+                                            variant='sidebar'
+                                            value={object.value}
+                                            checked={selected === object.value}
+                                            onChange={(e) => handleSelect(e, object.value)}>
+                                            {object.icon}
+                                        </ToggleButton>
+                                    })}
+                                </div>
+                            </div>
+                        }
                     </div>
                 }
             </div>

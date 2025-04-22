@@ -3,8 +3,8 @@ import { AuthContext } from "../components/AuthProvider";
 import { updateProfile } from "firebase/auth";
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import db from '../firebase/FirebaseDB'
-import { useNavigate } from "react-router-dom";
-import AppContainer from "../components/AppContainer";
+import { Link, useNavigate } from "react-router-dom";
+import AppContainer from "../components/AppContainer/AppContainer";
 import logo from '../assets/images/logos/logo-sign-in.PNG';
 
 const init_garden = {
@@ -15,8 +15,8 @@ const init_garden = {
   height: 10,
   dimensions_units: 'ft',
   stage: {
-      width: 700,
-      height: 700
+    width: 700,
+    height: 700
   },
   plots: [],
   plants: []
@@ -43,7 +43,7 @@ const SignUp = () => {
   const createProfile = async (name, email, password, result) => {
     try {
       const gardensRef = await addDoc(collection(db, 'gardens'), init_garden)
-      await setDoc(gardensRef, {id: gardensRef.id})
+      await setDoc(gardensRef, { id: gardensRef.id })
 
       const userRef = doc(db, 'users', result.user.uid);
 
@@ -90,7 +90,7 @@ const SignUp = () => {
   // Render the sign-up form
   return (
     <AppContainer>
-      <div className="login-background d-flex justify-content-center align-items-center max-h-100vh">
+      <div className="login-background d-flex justify-content-center align-items-center">
         <div className="login-box text-center shadow-sm">
           <img src={logo} alt="MyMeadow Logo" className="logo-img mb-3" />
           <h5 className="mb-4">Create your account</h5>
@@ -123,6 +123,7 @@ const SignUp = () => {
               />
             </div>
             <button className="btn btn-dark rounded-pill mt-3 mb-3">Sign Up</button>
+            <p className='sign-up-cta'>Have have an account? <Link to='/login'>Login Here</Link>.</p>
           </form>
         </div>
       </div>

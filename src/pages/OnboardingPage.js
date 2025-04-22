@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import shelfImage from '../assets/images/shelf.png';
 import cobblestoneImage from '../assets/images/cobblestone.png';
 import '../style/home.css';
-import AppContainer from "../components/AppContainer";
+import AppContainer from "../components/AppContainer/AppContainer";
 import { collection, addDoc, updateDoc, doc, getDoc, arrayUnion } from "firebase/firestore";
 import db from '../firebase/FirebaseDB'
 import { AuthContext } from "../components/AuthProvider";
@@ -152,10 +152,14 @@ const Onboarding = () => {
     const newGarden = {
       ...gardenProps,
       id: null,
+      background: '#ffffff',
       name: gardenName,
       location,
       plots,
       plants: [], // start empty
+      paths: [],
+      objects: [],
+      text: [],
     };
 
     localStorage.setItem("selectedTemplate", template);
@@ -164,6 +168,10 @@ const Onboarding = () => {
     createGarden(user.uid, newGarden)
       .then((gardenId) => {
         if (gardenId) {
+          localStorage.setItem('savedGarden', JSON.stringify({
+            ...newGarden,
+            id: gardenId,
+        }));
           navigate(`/${location}/${gardenId}`);
         }
       });

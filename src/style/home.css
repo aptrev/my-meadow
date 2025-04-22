@@ -1,7 +1,10 @@
 :root {
   --primaryDarkGreen: #3B6255;
   --primaryLightGreen: #D3E3D2;
+  --primaryLightGreenHover: #CFDECE;
+  --secondaryDarkGreen: #8ba49b;
   --secondaryLightGreen: #cbe9d8;
+  --accentWhite: #e3dfdb;
   --secondaryGray: #757575;
   --edit-background-color: #F0F8FF;
 }
@@ -33,35 +36,13 @@ body {
   height: 75px;
 }
 
-.app {
-  position: relative;
-  padding: 0;
-  width: 100%;
-  margin: 0 auto;
-  /* display: flex;
-  flex-direction: column; */
-  box-sizing: border-box;
-  background-color: var(--primaryLightGreen);
+.dropdown-menu {
+  overflow: hidden;
+  /* min-width: 0 !important; */
 }
 
-.svg-header-logo {
-  cursor: pointer;
-  max-height: 50px;
-  width: 100%;
-}
-
-.btn-bar {
-  outline: none !important;
-  ;
-  color: white !important;
-  background-color: transparent !important;
-}
-
-.btn-bar:hover,
-.btn-bar:active,
-.btn-bar:focus {
-  color: var(--primaryDarkGreen) !important;
-  background-color: white !important;
+.dropdown-item {
+  /* padding: 10px 5px !important; */
 }
 
 .btn-main {
@@ -105,13 +86,23 @@ body {
 }
 
 .home-garden-list {
-  max-width: 300px;
+  width: 100%;
+  max-width: 600px;
 }
 
-.home-garden-list .list-group-item:hover {
+.garden-list-item {
+  padding: 7.5px 20px;
+  width: 100%;
+  /* max-width: 600px; */
+  border-radius: 10px;
+  margin-bottom: 5px;
+  background-color: #f0fdf4;
+  border: 1px solid #d6e9c6;
+}
+
+.garden-list-item:hover {
   cursor: pointer;
-  color: white;
-  background-color: #295f3d;
+  background-color: #E6F2EA !important;
 }
 
 .subtitle {

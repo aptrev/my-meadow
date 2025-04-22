@@ -8,6 +8,7 @@ import plantsData from '../data/plants.json';
 import "../style/toolbar.css";
 import '../style/home.css';
 import '../style/outdooredit.css';
+import { CollapseButton } from "./Buttons/Buttons";
 
 export default function PlantInfo({ garden, plants, plant, onSelect, plots }) {
     const [show, setShow] = useState(true);
@@ -23,14 +24,11 @@ export default function PlantInfo({ garden, plants, plant, onSelect, plots }) {
     }
 
     useEffect(() => {
-        console.log("Selected plant:", plant);
         if (plant) {
             // Match by plant name or ID from your props
             const matchedPlant = plantsData.find(p => p.name === plant.name);
-            console.log("Matched plant from JSON:", matchedPlant);
             setSelectedPlantDetails(matchedPlant);
         } else {
-            console.log("Matched BAD");
             setSelectedPlantDetails(null);
         }
     }, [plant]);
@@ -41,7 +39,7 @@ export default function PlantInfo({ garden, plants, plant, onSelect, plots }) {
                 className="plant-info p-0 m-0 position-relative"
                 style={{ backgroundColor: 'var(--secondaryLightGreen)', height: 'calc(100svh - 75px)' }}
             >
-                <div className='plant-info-content p-2 d-flex flex-column justify-content-center align-items-center'>
+                <div className='plant-info-content p-4' style={{ overflowY: 'auto', maxHeight: '100%' }}>
                     <ListGroup className='plant-list w-100'>
                         {plants && plants.map((p) => (
                             <ListGroup.Item
@@ -90,7 +88,8 @@ export default function PlantInfo({ garden, plants, plant, onSelect, plots }) {
                     )}
 
                     <Button
-                        className="btn-upcoming mt-3"
+                        className="mt-3"
+                        variant="upcoming"
                         onClick={goToCalendars}
                     >
                         Upcoming Tasks
@@ -102,7 +101,7 @@ export default function PlantInfo({ garden, plants, plant, onSelect, plots }) {
                 className={`${show ? 'active' : ''} right collapse-plant-info p-0 m-0 position-absolute top-0 bottom-0`}
                 variant='collapse'
                 onClick={handleToggleShow}
-                style={{ zIndex: 1000, left: '-14px' }}
+                style={{ zIndex: 1000, left: '-20px' }}
             >
                 <div>
                     {show

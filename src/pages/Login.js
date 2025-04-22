@@ -3,7 +3,7 @@ import { AuthContext } from "../components/AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
 import '../style/home.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import AppContainer from "../components/AppContainer";
+import AppContainer from "../components/AppContainer/AppContainer";
 import logo from '../assets/images/logos/logo-sign-in.PNG';
 
 import "../App.css";
@@ -41,7 +41,7 @@ const Login = () => {
   // Render the login form
   return (
     <AppContainer>
-      <div className="login-background d-flex justify-content-center align-items-centerh max-h-100vh">
+      <div className="login-background d-flex justify-content-center align-items-center">
         <div className="login-box text-center shadow-sm">
           <img src={logo} alt="MyMeadow Logo" className="logo-img mb-3" />
           <h5 className="mb-4">Please sign in to continue</h5>
@@ -66,6 +66,7 @@ const Login = () => {
             </div>
             <button className="btn btn-dark rounded-pill mt-3 mb-3">Sign In</button>
             <Link to="/sign-up" className="d-block small">Forgot password?</Link>
+            <p className='sign-up-cta'>Don't have an account? <Link to='/sign-up'>Sign Up Now!</Link></p>
           </form>
         </div>
       </div>

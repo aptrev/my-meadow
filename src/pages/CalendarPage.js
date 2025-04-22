@@ -7,7 +7,7 @@ import { Button } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 
 import GardenNavbar from "../components/GardenNavbar";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/Sidebar/Sidebar";
 import { retrieveGarden } from '../utilities/FirebaseUtils';
 
 const plant_species = [
