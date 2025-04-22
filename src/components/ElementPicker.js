@@ -3,10 +3,8 @@ import "../style/toolbar.css";
 
 // Bootstrap Imports
 import Button from "react-bootstrap/esm/Button";
-import Stack from "react-bootstrap/Stack";
 import { PlusSquare } from "react-bootstrap-icons";
 import { TbChevronCompactLeft } from "react-icons/tb";
-import { GiStonePile, GiStonePath } from "react-icons/gi";
 
 import '../style/home.css';
 import '../style/outdooredit.css';
@@ -15,7 +13,7 @@ import PlantSearch from "./PlantSearch";
 import { ToggleButton } from "react-bootstrap";
 
 export default function ElementPicker({ garden, tool, onHide, onUpdateGarden, plants, onAddPlant, plots, paths, objects, text, selected, onSelect,
-    onDrag, onDragEnd, onDragStart, onPlantDrag, onPlantDragStart, onPlantDragEnd, }) {
+    onDrag, onDragEnd, onDragStart, onPlantDrag, onPlantDragStart, onPlantDragEnd , selectedPlant, view }) {
     const [dragging, setDragging] = useState(false);
     const [showPlantSearch, setShowPlantSearch] = useState(false);
 
@@ -54,7 +52,6 @@ export default function ElementPicker({ garden, tool, onHide, onUpdateGarden, pl
 
     const handleMouseMove = useCallback(
         (e) => {
-            console.log('test');
             if (tool === 'plants') {
                 onPlantDrag(e);
             } else if (tool) {

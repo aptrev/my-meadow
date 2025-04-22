@@ -1,17 +1,12 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React from "react";
 import { PiPlantFill } from "react-icons/pi";
 
-import Button from 'react-bootstrap/Button'
-import Overlay from 'react-bootstrap/Overlay';
-import { ReactSVG } from 'react-svg'
 import "../style/toolbar.css";
 
 // Bootstrap Imports
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 import ToggleButton from "react-bootstrap/esm/ToggleButton";
 import Stack from "react-bootstrap/Stack";
-import { CircleSquare, Flower2, CaretDownFill, LayoutTextSidebarReverse, Question } from 'react-bootstrap-icons'
+import { CircleSquare, CaretDownFill, LayoutTextSidebarReverse, Question } from 'react-bootstrap-icons'
 import { GiStonePath } from "react-icons/gi";
 import { LuFence } from "react-icons/lu";
 import { RxText } from "react-icons/rx";
@@ -82,6 +77,7 @@ export default function LeftSidebar({ tool, onChangeTool, garden, options }) {
                 style={{marginTop: '50px', scrollMarginTop: '0px', zIndex: 1}}>
                     {
                         sidebar.map((item) => {
+                            const disabled = item.value === 'paths' || item.value === 'text' || item.value === 'help';
                             return (
                                 <ToggleButton
                                     key={item.id}
@@ -92,6 +88,9 @@ export default function LeftSidebar({ tool, onChangeTool, garden, options }) {
                                     variant='tool'
                                     value={item.value}
                                     onChange={(e) => onChangeTool(e.currentTarget.value)}
+                                    disabled={disabled}
+                                    aria-label={!disabled ? item.label : 'Tool Disabled'}
+                                    title={!disabled ? item.label : 'Under Construction'}
                                 >
                                     <div className='d-flex flex-column justify-content-center align-items-center'>
                                         <CaretDownFill size={12} opacity={(item.value === tool ? 1 : 0)} />

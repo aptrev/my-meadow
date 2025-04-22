@@ -67,24 +67,28 @@ const CalendarHome = () => {
   }, [user]);
 
   const generateAllGardenEvents = (gardens) => {
+    console.log("ALL GARDENS: ", gardens);
     const now = new Date();
     let allEvents = [];
-
+  
     gardens.forEach((garden) => {
-      if (!garden.plots) return;
-
-      const plantIds = garden.plots.map((p) => p.plant).filter(Boolean);
-      const uniquePlantIds = [...new Set(plantIds)];
-
-      uniquePlantIds.forEach((id) => {
-        const plant = plant_species.find((p) => p.id === id);
-        if (!plant || !plant.waterFrequency) return;
-
-        const interval = frequencyMap[plant.waterFrequency];
-        if (!interval) return;
-
+      if (!garden) return;
+  
+      // Normalize plant access
+      let plants = [];
+  
+      if (garden.location === "outdoor") {
+        plants = garden.plants || [];
+      } else if (garden.location === "indoor") {
+        plants = (garden.pots || [])
+          .map(pot => pot.flower)
+          .filter(Boolean);
+      }
+  
+      plants.forEach((plant) => {
+        const interval = frequencyMap[plant.waterFrequency] || 7; // Default to 7 days if undefined
         let current = new Date(now);
-
+  
         for (let i = 0; i < 10; i++) {
           const date = new Date(current);
           date.setHours(8, 0, 0, 0); // 8am
@@ -99,10 +103,10 @@ const CalendarHome = () => {
         }
       });
     });
-
+  
     return allEvents;
   };
-
+  
   const handleGoToGardenCalendar = (garden) => {
     const path = garden.location;
     const id = garden.id;

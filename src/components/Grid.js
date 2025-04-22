@@ -1,10 +1,10 @@
 import { Group, Line } from "react-konva";
 
-export default function Grid({width, height, cellWidth, cellHeight}) {
+export default function Grid({ width, height, cellWidth, cellHeight }) {
 
-    const verticalLines = [];
-    for (let i = 0; i <= width; i += cellWidth) {
-        verticalLines.push(
+    const vertical = [];
+    for (let i = cellWidth; i <= width; i += cellWidth) {
+        vertical.push(
             <Line
                 key={`v-${i}`}
                 points={[i, 0, i, height]}
@@ -14,9 +14,9 @@ export default function Grid({width, height, cellWidth, cellHeight}) {
         );
     }
 
-    const horizontalLines = [];
-    for (let i = 0; i <= height; i += cellHeight) {
-        horizontalLines.push(
+    const horizontal = [];
+    for (let i = cellHeight; i <= height; i += cellHeight) {
+        horizontal.push(
             <Line
                 key={`h-${i}`}
                 points={[0, i, width, i]}
@@ -26,5 +26,8 @@ export default function Grid({width, height, cellWidth, cellHeight}) {
         );
     }
 
-    return <Group>{verticalLines}{horizontalLines}</Group>;
+    return <Group>
+        {vertical}
+        {horizontal}
+    </Group>;
 };

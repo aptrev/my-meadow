@@ -4,8 +4,7 @@ import { Stage, Layer } from 'react-konva';
 import Plot from '../components/Elements/Plot';
 import Object from '../components/Elements/Object'
 import { retrieveGarden, deleteGarden } from '../utilities/FirebaseUtils';
-import AppContainer from '../components/AppContainer/AppContainer';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Button from 'react-bootstrap/Button';
 import { Trash } from 'react-bootstrap-icons';
@@ -302,7 +301,7 @@ export default function Outdoor() {
                         {/* Layer for elements */}
                         <Layer>
                           {elements.plots.map((plot) => {
-                            const { id, shape, x, y, rotation, plant, draggable, ...restProps } = plot;
+                            const { id, shape, x, y, rotation, plant, draggable, scaleX, scaleY, ...restProps } = plot;
                             return (
                               <Plot
                                 key={id}
@@ -313,12 +312,15 @@ export default function Outdoor() {
                                 rotation={rotation}
                                 shapeProps={restProps}
                                 plant={plant}
+                                plants={plants}
+                                scaleX={scaleX}
+                                scaleY={scaleY}
                                 elementRefs={elementRefs}
                                 draggable={false} />
                             )
                           })}
                           {elements.objects.map((object) => {
-                            const { id, shape, x, y, rotation, draggable, ...restProps } = object;
+                            const { id, shape, x, y, rotation, draggable, scaleX, scaleY, ...restProps } = object;
                             return (
                               <Object
                                 key={id}
@@ -327,10 +329,11 @@ export default function Outdoor() {
                                 x={x}
                                 y={y}
                                 rotation={rotation}
+                                scaleX={scaleX}
+                                scaleY={scaleY}
                                 shapeProps={restProps}
-                                elementRefs={elementRefs}
                                 draggable={false}
-                                stageRef={stageRef} />
+                                elementRefs={elementRefs} />
                             )
                           })}
                         </Layer>

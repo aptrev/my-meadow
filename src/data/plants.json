@@ -352,7 +352,7 @@
     {
         "id": 11,
         "name": "Thyme",
-        "watering": "once a week",
+        "watering": "weekly",
         "details": "Thyme is a fragrant, drought-tolerant herb commonly used in Mediterranean cooking. It thrives in sunny spots with well-drained soil and is ideal for garden beds or containers.",
         "image": "thyme.webp",
         "cost": "$4",
@@ -527,7 +527,7 @@
     {
         "id": 16,
         "name": "Spinach",
-        "watering": "1-1.5 inches per week",
+        "watering": "weekly",
         "details": "Spinach is a nutrient-rich leafy green that thrives in cool weather. It grows quickly and is ideal for early spring and fall planting.",
         "image": "default.png",
         "cost": "$3",
@@ -563,7 +563,7 @@
     {
         "id": 17,
         "name": "Arugula",
-        "watering": "regular, keep soil evenly moist",
+        "watering": "twice a week",
         "details": "Arugula is a fast-growing, peppery-flavored leafy green, ideal for salads. It thrives in cooler temperatures and can be harvested multiple times.",
         "image": "default.png",
         "cost": "$3",
@@ -599,7 +599,7 @@
     {
         "id": 18,
         "name": "Swiss Chard",
-        "watering": "1-1.5 inches per week",
+        "watering": "weekly",
         "details": "Swiss Chard is a colorful leafy vegetable known for its bright stems and nutritious leaves. It grows well in both cool and warm conditions.",
         "image": "default.png",
         "cost": "$4",
@@ -635,7 +635,7 @@
     {
         "id": 19,
         "name": "Kale",
-        "watering": "1-1.5 inches per week",
+        "watering": "weekly",
         "details": "Kale is a hardy leafy green packed with nutrients. It thrives in cooler temperatures and can withstand light frosts, which enhance its flavor.",
         "image": "default.png",
         "cost": "$3",
@@ -671,7 +671,7 @@
     {
         "id": 20,
         "name": "Mustard Greens",
-        "watering": "1-1.5 inches per week",
+        "watering": "weekly",
         "details": "Mustard Greens are fast-growing, peppery-tasting leaves that thrive in cool weather. They are rich in vitamins and add a spicy kick to dishes.",
         "image": "default.png",
         "cost": "$3",
@@ -707,7 +707,7 @@
     {
         "id": 21,
         "name": "Potato",
-        "watering": "1-2 inches per week",
+        "watering": "weekly",
         "details": "Potatoes are starchy tubers that grow underground. They prefer cool weather and well-drained soil with consistent moisture.",
         "image": "potato.png",
         "cost": "$5",
@@ -777,7 +777,7 @@
     {
         "id": 23,
         "name": "Radicchio",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Radicchio is a bitter red leafy vegetable often used in salads. It thrives in cooler seasons and develops deeper color in cold weather.",
         "image": "default.png",
         "cost": "$4",
@@ -812,7 +812,7 @@
     {
         "id": 24,
         "name": "Carrots",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Carrots are root vegetables known for their crisp texture and sweet flavor. They grow best in loose, sandy soil and cool temperatures.",
         "image": "carrot.webp",
         "cost": "$3",
@@ -847,7 +847,7 @@
     {
         "id": 25,
         "name": "Beets",
-        "watering": "once a week",
+        "watering": "weekly",
         "details": "Beets are root vegetables grown for both their roots and leafy greens. They thrive in cooler temperatures and nutrient-rich soil.",
         "image": "default.png",
         "cost": "$3",
@@ -1022,7 +1022,7 @@
     {
         "id": 30,
         "name": "Broccoli",
-        "watering": "1-1.5 inches per week",
+        "watering": "weekly",
         "details": "Broccoli is a cool-season vegetable grown for its edible flower heads. It prefers full sun and rich, moist soil.",
         "image": "broccoli.png",
         "cost": "$4",
@@ -1057,7 +1057,7 @@
     {
         "id": 31,
         "name": "Cauliflower",
-        "watering": "1-1.5 inches per week",
+        "watering": "weekly",
         "details": "Cauliflower is a cool-season crop grown for its edible head. It requires consistent moisture and prefers cooler temperatures.",
         "image": "default.png",
         "cost": "$4",
@@ -1092,7 +1092,7 @@
     {
         "id": 32,
         "name": "Petunia",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Petunias are vibrant annual flowers known for their trumpet-shaped blooms. They thrive in sunny locations and well-drained soil.",
         "image": "default.png",
         "cost": "$3",
@@ -1127,7 +1127,7 @@
     {
         "id": 33,
         "name": "Geranium",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Geraniums are hardy annuals known for their colorful blooms and distinct scent. They prefer sunny spots and well-drained soil.",
         "image": "default.png",
         "cost": "$4",
@@ -1162,7 +1162,7 @@
     {
         "id": 34,
         "name": "Zinnia",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Zinnias are colorful, fast-growing flowers ideal for sunny gardens. They attract pollinators and bloom throughout the summer.",
         "image": "default.png",
         "cost": "$3",
@@ -1197,7 +1197,7 @@
     {
         "id": 35,
         "name": "Dahlia",
-        "watering": "1-2 inches per week",
+        "watering": "weekly",
         "details": "Dahlias are tuberous perennials with dramatic blooms in many shapes and colors. They bloom from midsummer to frost.",
         "image": "default.png",
         "cost": "$5",
@@ -1232,7 +1232,7 @@
     {
         "id": 36,
         "name": "Begonia",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Begonias are versatile flowering plants that thrive in shade and provide colorful blooms and attractive foliage.",
         "image": "begonia.png",
         "cost": "$4",
@@ -1267,7 +1267,7 @@
     {
         "id": 37,
         "name": "Cosmos",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Cosmos are daisy-like flowers with delicate foliage, loved for their easy growth and attractiveness to pollinators.",
         "image": "default.png",
         "cost": "$3",
@@ -1302,7 +1302,7 @@
     {
         "id": 38,
         "name": "Pansy",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Pansies are cheerful cool-season flowers known for their colorful, face-like blooms and cold tolerance.",
         "image": "default.png",
         "cost": "$3",
@@ -1337,7 +1337,7 @@
     {
         "id": 39,
         "name": "Snapdragon",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Snapdragons are tall, spiky flowers that thrive in cooler weather and attract bees and hummingbirds.",
         "image": "default.png",
         "cost": "$4",
@@ -1372,7 +1372,7 @@
     {
         "id": 40,
         "name": "Impatiens",
-        "watering": "1-2 inches per week",
+        "watering": "weekly",
         "details": "Impatiens are popular shade-loving annuals with bright, cheerful blooms that thrive in moist environments.",
         "image": "default.png",
         "cost": "$3",
@@ -1407,7 +1407,7 @@
     {
         "id": 41,
         "name": "Alyssum",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Alyssum is a low-growing, fragrant flower that forms a carpet of tiny blooms and attracts beneficial insects.",
         "image": "default.png",
         "cost": "$2",
@@ -1442,7 +1442,7 @@
     {
         "id": 42,
         "name": "Parsley",
-        "watering": "1-2 times per week",
+        "watering": "twice a week",
         "details": "Parsley is a versatile herb used in a variety of cuisines. It grows well in containers or garden beds and prefers consistent moisture.",
         "image": "parsley.webp",
         "cost": "$3",
@@ -1477,7 +1477,7 @@
     {
         "id": 43,
         "name": "Sage",
-        "watering": "Every 1-2 weeks",
+        "watering": "biweekly",
         "details": "Sage is a perennial herb with fragrant, gray-green leaves used in cooking and medicine. It prefers drier conditions and good air circulation.",
         "image": "default.png",
         "cost": "$3",
@@ -1512,7 +1512,7 @@
     {
         "id": 44,
         "name": "Dill",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Dill is an annual herb known for its feathery leaves and use in pickling and cooking. It bolts quickly in heat.",
         "image": "default.png",
         "cost": "$2",
@@ -1547,7 +1547,7 @@
     {
         "id": 45,
         "name": "Tarragon",
-        "watering": "Once a week or when soil is dry",
+        "watering": "weekly",
         "details": "Tarragon is a perennial herb with a slightly sweet, anise-like flavor. It prefers dry, well-drained soil and doesn't like wet roots.",
         "image": "default.png",
         "cost": "$4",
@@ -1617,7 +1617,7 @@
     {
         "id": 47,
         "name": "Bay Laurel (Bay Leaf)",
-        "watering": "Once a week",
+        "watering": "weekly",
         "details": "Bay Laurel is an evergreen shrub known for its aromatic leaves used in cooking. It prefers drier soil and good drainage.",
         "image": "default.png",
         "cost": "$6",
@@ -1652,7 +1652,7 @@
     {
         "id": 48,
         "name": "Fennel",
-        "watering": "1-1.5 inches per week",
+        "watering": "weekly",
         "details": "Fennel is a flavorful herb and vegetable with a licorice-like taste. Both the bulb and fronds are edible.",
         "image": "default.png",
         "cost": "$3",
@@ -1684,7 +1684,7 @@
     {
         "id": 49,
         "name": "Stevia",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Stevia is a natural sweetener with leaves that are much sweeter than sugar. It prefers warm climates and well-drained soil.",
         "image": "default.png",
         "cost": "$5",
@@ -1719,7 +1719,7 @@
     {
         "id": 50,
         "name": "Lovage",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Lovage is a tall perennial herb with a flavor similar to celery. It is used in soups and stews and grows well in cooler climates.",
         "image": "default.png",
         "cost": "$4",
@@ -1754,7 +1754,7 @@
     {
         "id": 51,
         "name": "Magnolia",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Magnolias are known for their large, fragrant flowers and glossy green leaves. They are commonly used as ornamental trees and shrubs.",
         "image": "magnolia.png",
         "cost": "$35",
@@ -1789,7 +1789,7 @@
     {
         "id": 52,
         "name": "Geranium",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Geraniums are hardy flowering plants with vibrant blooms and scented foliage, ideal for pots and borders.",
         "image": "default.png",
         "cost": "$4",
@@ -1824,7 +1824,7 @@
     {
         "id": 53,
         "name": "Zinnia",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Zinnias are colorful, fast-growing annuals that add brightness to any garden and are great for attracting pollinators.",
         "image": "default.png",
         "cost": "$2",
@@ -1859,7 +1859,7 @@
     {
         "id": 54,
         "name": "Dahlia",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Dahlias are tuberous plants known for their stunning, intricate blooms in various colors and sizes.",
         "image": "default.png",
         "cost": "$5",
@@ -1894,7 +1894,7 @@
     {
         "id": 55,
         "name": "Begonia",
-        "watering": "keep soil evenly moist",
+        "watering": "twice a week",
         "details": "Begonias are versatile plants with waxy foliage and colorful blooms, perfect for shade gardens and hanging baskets.",
         "image": "begonia.png",
         "cost": "$3",
@@ -1929,7 +1929,7 @@
     {
         "id": 56,
         "name": "Cosmos",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Cosmos are delicate-looking, daisy-like flowers that bloom profusely and thrive in poor soil.",
         "image": "default.png",
         "cost": "$2",
@@ -1964,7 +1964,7 @@
     {
         "id": 57,
         "name": "Pansy",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Pansies are cool-weather annuals known for their cheerful, face-like flowers in a variety of colors.",
         "image": "default.png",
         "cost": "$3",
@@ -1999,7 +1999,7 @@
     {
         "id": 58,
         "name": "Snapdragon",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Snapdragons produce tall spikes of flowers in a variety of colors and thrive in cool weather.",
         "image": "default.png",
         "cost": "$3",
@@ -2034,7 +2034,7 @@
     {
         "id": 59,
         "name": "Impatiens",
-        "watering": "keep soil consistently moist",
+        "watering": "weekly",
         "details": "Impatiens are shade-loving annuals with bright blooms and are ideal for flower beds and containers.",
         "image": "default.png",
         "cost": "$3",
@@ -2069,7 +2069,7 @@
     {
         "id": 60,
         "name": "Alyssum",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Alyssum is a low-growing, fragrant flower often used as ground cover or edging in gardens.",
         "image": "default.png",
         "cost": "$2",
@@ -2104,7 +2104,7 @@
     {
         "id": 61,
         "name": "Eggplant",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Eggplant is a warm-season vegetable known for its glossy purple skin and meaty texture.",
         "image": "default.png",
         "cost": "$4",
@@ -2139,7 +2139,7 @@
     {
         "id": 62,
         "name": "Green beans",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Green beans are tender annual vegetables that grow quickly and are easy to cultivate in warm weather.",
         "image": "default.png",
         "cost": "$3",
@@ -2174,7 +2174,7 @@
     {
         "id": 63,
         "name": "Pole beans",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Pole beans are climbing varieties that require support but yield more over time than bush beans.",
         "image": "default.png",
         "cost": "$3",
@@ -2209,7 +2209,7 @@
     {
         "id": 64,
         "name": "Lima beans",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Lima beans, also known as butter beans, grow best in warm weather and produce edible pods filled with starchy seeds.",
         "image": "default.png",
         "cost": "$3",
@@ -2244,7 +2244,7 @@
     {
         "id": 65,
         "name": "Brussels sprouts",
-        "watering": "1-1.5 inches per week",
+        "watering": "weekly",
         "details": "Brussels sprouts are a cool-season crop that produces edible buds along a tall stalk.",
         "image": "default.png",
         "cost": "$4",
@@ -2279,7 +2279,7 @@
     {
         "id": 66,
         "name": "Okra",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Okra is a warm-season vegetable known for its edible seed pods and tall, hibiscus-like plants.",
         "image": "default.png",
         "cost": "$3",
@@ -2314,7 +2314,7 @@
     {
         "id": 67,
         "name": "Artichoke",
-        "watering": "1-1.5 inches per week",
+        "watering": "weekly",
         "details": "Artichokes are perennial plants grown for their edible flower buds. They prefer mild climates and well-drained soil.",
         "image": "default.png",
         "cost": "$5",
@@ -2349,7 +2349,7 @@
     {
         "id": 68,
         "name": "Snow peas",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Snow peas are flat, edible-podded peas that are harvested early. They grow best in cool weather.",
         "image": "default.png",
         "cost": "$3",
@@ -2384,7 +2384,7 @@
     {
         "id": 69,
         "name": "Sugar snap peas",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Sugar snap peas are sweet, crisp peas that can be eaten pod and all. They thrive in cool weather.",
         "image": "default.png",
         "cost": "$3",
@@ -2419,7 +2419,7 @@
     {
         "id": 70,
         "name": "Edamame (soybeans)",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Edamame are young, green soybeans often eaten as a snack or in salads. They grow well in warm weather.",
         "image": "default.png",
         "cost": "$4",
@@ -2454,7 +2454,7 @@
     {
         "id": 71,
         "name": "Corn",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Corn is a tall, warm-season plant that produces large ears of edible kernels. It requires full sun and well-drained soil.",
         "image": "default.png",
         "cost": "$3",
@@ -2489,7 +2489,7 @@
     {
         "id": 72,
         "name": "Rhubarb",
-        "watering": "1-1.5 inches per week",
+        "watering": "weekly",
         "details": "Rhubarb is a perennial vegetable known for its tart, edible stalks. Only the stalks are edible; the leaves are toxic.",
         "image": "default.png",
         "cost": "$5",
@@ -2524,7 +2524,7 @@
     {
         "id": 73,
         "name": "Bok choy",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Bok choy, also known as Chinese cabbage, is a cool-season vegetable with a mild, sweet flavor. It grows quickly in cool weather.",
         "image": "default.png",
         "cost": "$4",
@@ -2559,7 +2559,7 @@
     {
         "id": 74,
         "name": "Napa cabbage",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Napa cabbage is a type of Chinese cabbage with soft, crinkly leaves. It prefers cool temperatures and moist, fertile soil.",
         "image": "default.png",
         "cost": "$3",
@@ -2594,7 +2594,7 @@
     {
         "id": 75,
         "name": "Chinese broccoli (Gai Lan)",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Chinese broccoli, or Gai Lan, is a leafy vegetable with thick, crunchy stems. It thrives in cooler weather and is used in Asian cuisine.",
         "image": "default.png",
         "cost": "$4",
@@ -2629,7 +2629,7 @@
     {
         "id": 76,
         "name": "Malabar spinach",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Malabar spinach is a heat-tolerant, fast-growing vine with thick, succulent leaves. It thrives in warm climates and is often used in salads.",
         "image": "default.png",
         "cost": "$4",
@@ -2664,7 +2664,7 @@
     {
         "id": 77,
         "name": "Tatsoi",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Tatsoi is a mild, tender leafy green often used in salads and stir-fries. It grows best in cool weather and can tolerate light frost.",
         "image": "default.png",
         "cost": "$3",
@@ -2699,7 +2699,7 @@
     {
         "id": 78,
         "name": "Mizuna",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Mizuna is a mild, peppery leafy green used in salads or cooked dishes. It grows quickly in cool weather and is frost-tolerant.",
         "image": "default.png",
         "cost": "$3",
@@ -2734,7 +2734,7 @@
     {
         "id": 79,
         "name": "Celeriac",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Celeriac, also known as celery root, is grown for its edible, knobby root. It prefers cool weather and well-drained soil.",
         "image": "default.png",
         "cost": "$4",
@@ -2769,7 +2769,7 @@
     {
         "id": 80,
         "name": "Celery",
-        "watering": "1-1.5 inches per week",
+        "watering": "weekly",
         "details": "Celery is a cool-season vegetable grown for its crisp, edible stalks. It requires regular watering and rich, moist soil.",
         "image": "default.png",
         "cost": "$4",
@@ -2804,7 +2804,7 @@
     {
         "id": 81,
         "name": "Turnip",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Turnips are cool-season root vegetables that grow quickly in well-drained soil. The root is eaten while the leaves can be used in salads or cooked.",
         "image": "default.png",
         "cost": "$3",
@@ -2839,7 +2839,7 @@
     {
         "id": 82,
         "name": "Rutabaga",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Rutabagas are root vegetables that have a mild, sweet flavor. They grow best in cooler temperatures and well-drained soil.",
         "image": "default.png",
         "cost": "$3",
@@ -2874,7 +2874,7 @@
     {
         "id": 83,
         "name": "Horseradish",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Horseradish is a pungent root vegetable known for its spicy flavor. It thrives in well-drained, fertile soil and prefers cool climates.",
         "image": "default.png",
         "cost": "$4",
@@ -2909,7 +2909,7 @@
     {
         "id": 84,
         "name": "Jerusalem artichoke (Sunchoke)",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Jerusalem artichokes, also known as sunchokes, are tubers with a nutty, sweet flavor. They are easy to grow and are tolerant of a variety of soil conditions.",
         "image": "default.png",
         "cost": "$5",
@@ -2944,7 +2944,7 @@
     {
         "id": 85,
         "name": "Ginger",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Ginger is a tropical plant grown for its spicy, aromatic root. It prefers warm, humid environments and rich, well-drained soil.",
         "image": "default.png",
         "cost": "$6",
@@ -2979,7 +2979,7 @@
     {
         "id": 86,
         "name": "Turmeric",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Turmeric is a tropical plant known for its aromatic and spicy root. It requires a warm climate and well-drained soil to thrive.",
         "image": "default.png",
         "cost": "$7",
@@ -3014,7 +3014,7 @@
     {
         "id": 87,
         "name": "Wasabi",
-        "watering": "1-2 inches per week",
+        "watering": "weekly",
         "details": "Wasabi is a spicy root vegetable often used in Japanese cuisine. It grows best in cool, shaded areas with well-drained, slightly acidic soil.",
         "image": "default.png",
         "cost": "$8",
@@ -3084,7 +3084,7 @@
     {
         "id": 89,
         "name": "Jicama",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Jicama is a root vegetable known for its crisp texture and mildly sweet flavor. It thrives in full sun and well-drained soil.",
         "image": "default.png",
         "cost": "$4",
@@ -3119,7 +3119,7 @@
     {
         "id": 90,
         "name": "Daikon radish",
-        "watering": "1 inch per week",
+        "watering": "weekly",
         "details": "Daikon radish is a mild-flavored root vegetable used in Asian cuisine. It grows best in cool, well-drained soil and full sunlight.",
         "image": "default.png",
         "cost": "$3",
@@ -3909,7 +3909,7 @@
             "Beans"
         ],
         "maintenance_level": "medium",
-        "watering_reminder": "Water deeply once a week, ensuring the soil remains moist but not soggy.",
+        "watering_reminder": "Water deeply weekly, ensuring the soil remains moist but not soggy.",
         "harvest_time": "late summer to fall",
         "toxicity": "non-toxic",
         "care_tips": "Train the vines on a trellis to maximize fruit production and ensure proper air circulation.",
@@ -3944,7 +3944,7 @@
             "Beans"
         ],
         "maintenance_level": "medium",
-        "watering_reminder": "Water deeply once a week, ensuring the soil stays moist but not waterlogged.",
+        "watering_reminder": "Water deeply weekly, ensuring the soil stays moist but not waterlogged.",
         "harvest_time": "summer",
         "toxicity": "non-toxic",
         "care_tips": "Ensure proper air circulation to avoid mold. Harvest when the melon develops a sweet aroma.",
@@ -3979,7 +3979,7 @@
             "Beans"
         ],
         "maintenance_level": "medium",
-        "watering_reminder": "Water deeply once a week, especially during dry periods.",
+        "watering_reminder": "Water deeply weekly, especially during dry periods.",
         "harvest_time": "summer",
         "toxicity": "non-toxic",
         "care_tips": "Harvest when the watermelon produces a deep hollow sound when tapped and the skin is firm.",
@@ -4014,7 +4014,7 @@
             "Beans"
         ],
         "maintenance_level": "medium",
-        "watering_reminder": "Water deeply once a week, ensuring consistent moisture.",
+        "watering_reminder": "Water deeply weekly, ensuring consistent moisture.",
         "harvest_time": "summer",
         "toxicity": "non-toxic",
         "care_tips": "Harvest when the melon is slightly soft to the touch and has a sweet fragrance.",
@@ -4084,7 +4084,7 @@
             "Beans"
         ],
         "maintenance_level": "medium",
-        "watering_reminder": "Water deeply once a week, ensuring the soil is consistently moist but not soggy.",
+        "watering_reminder": "Water deeply weekly, ensuring the soil is consistently moist but not soggy.",
         "harvest_time": "fall",
         "toxicity": "non-toxic",
         "care_tips": "Prune back hard to encourage new growth and ensure better fruit yield.",
@@ -4119,7 +4119,7 @@
             "Cherries"
         ],
         "maintenance_level": "medium",
-        "watering_reminder": "Water deeply once a week, allowing the soil to dry out between waterings.",
+        "watering_reminder": "Water deeply weekly, allowing the soil to dry out between waterings.",
         "harvest_time": "late winter to early spring",
         "toxicity": "non-toxic",
         "care_tips": "Prune to shape the tree and remove any dead or diseased wood.",
@@ -4154,7 +4154,7 @@
             "Olives"
         ],
         "maintenance_level": "medium",
-        "watering_reminder": "Water deeply once a week, but allow the soil to dry out between waterings.",
+        "watering_reminder": "Water deeply weekly, but allow the soil to dry out between waterings.",
         "harvest_time": "fall",
         "toxicity": "non-toxic",
         "care_tips": "Prune to maintain shape and encourage fruit production. Remove any dead branches.",
@@ -4189,7 +4189,7 @@
             "Peppers"
         ],
         "maintenance_level": "low",
-        "watering_reminder": "Water deeply once a week, ensuring the soil stays moist but not soggy.",
+        "watering_reminder": "Water deeply weekly, ensuring the soil stays moist but not soggy.",
         "harvest_time": "late spring to early summer",
         "toxicity": "non-toxic",
         "care_tips": "Mulch around the base of the plant to maintain soil moisture and suppress weeds.",
@@ -4224,7 +4224,7 @@
             "Cabbage"
         ],
         "maintenance_level": "low",
-        "watering_reminder": "Water deeply once a week, allowing the soil to dry out between waterings.",
+        "watering_reminder": "Water deeply weekly, allowing the soil to dry out between waterings.",
         "harvest_time": "summer",
         "toxicity": "toxic if ingested in large quantities",
         "care_tips": "Deadhead regularly to encourage continued blooming and prevent self-seeding.",
@@ -4294,7 +4294,7 @@
             "Peppers"
         ],
         "maintenance_level": "low",
-        "watering_reminder": "Water deeply once a week, allowing the soil to dry between waterings.",
+        "watering_reminder": "Water deeply weekly, allowing the soil to dry between waterings.",
         "harvest_time": "summer",
         "toxicity": "non-toxic",
         "care_tips": "Deadhead regularly to encourage more blooms throughout the growing season.",
@@ -4364,7 +4364,7 @@
             "Astilbes"
         ],
         "maintenance_level": "medium",
-        "watering_reminder": "Water deeply once a week, allowing the soil to dry slightly between waterings.",
+        "watering_reminder": "Water deeply weekly, allowing the soil to dry slightly between waterings.",
         "harvest_time": "spring to early summer",
         "toxicity": "toxic if ingested",
         "care_tips": "Cut back after blooming to encourage fresh growth and prevent reseeding.",
@@ -4399,7 +4399,7 @@
             "Black-eyed Susan"
         ],
         "maintenance_level": "low",
-        "watering_reminder": "Water deeply once a week, allowing the soil to dry out between waterings.",
+        "watering_reminder": "Water deeply weekly, allowing the soil to dry out between waterings.",
         "harvest_time": "summer",
         "toxicity": "non-toxic",
         "care_tips": "Deadhead spent flowers to encourage continued blooming.",
@@ -5184,7 +5184,7 @@
     {
         "id": 149,
         "name": "Chinese Evergreen (Aglaonema)",
-        "watering": "bi-weekly",
+        "watering": "biweekly",
         "details": "Chinese Evergreen is a low-maintenance, easy-care houseplant with attractive variegated foliage. It thrives in low to moderate light and prefers well-drained soil.",
         "image": "default.png",
         "cost": "$14",
@@ -5324,7 +5324,7 @@
     {
         "id": 153,
         "name": "Dracaena",
-        "watering": "bi-weekly",
+        "watering": "biweekly",
         "details": "Dracaena is a hardy and low-maintenance houseplant with striking long, arching leaves. It thrives in indirect light and prefers dry soil between waterings.",
         "image": "default.png",
         "cost": "$22",
@@ -5394,7 +5394,7 @@
     {
         "id": 155,
         "name": "Ponytail palm",
-        "watering": "bi-weekly",
+        "watering": "biweekly",
         "details": "Ponytail palm is a unique, drought-tolerant plant known for its bulbous base and long, spiky leaves. It prefers bright, indirect light and well-drained soil.",
         "image": "default.png",
         "cost": "$30",
@@ -5429,7 +5429,7 @@
     {
         "id": 156,
         "name": "Jade plant",
-        "watering": "bi-weekly",
+        "watering": "biweekly",
         "details": "Jade plant is a succulent with thick, glossy, dark green leaves. It is a low-maintenance plant that prefers bright, indirect light and well-drained soil.",
         "image": "default.png",
         "cost": "$15",
@@ -5499,7 +5499,7 @@
     {
         "id": 158,
         "name": "String of pearls",
-        "watering": "bi-weekly",
+        "watering": "biweekly",
         "details": "String of pearls is a unique, trailing succulent known for its bead-like leaves. It thrives in bright, indirect light and well-drained soil, requiring minimal watering.",
         "image": "default.png",
         "cost": "$20",
@@ -5554,7 +5554,7 @@
             "Succulents"
         ],
         "maintenance_level": "low",
-        "watering_reminder": "Soak for 20-30 minutes once a week and shake off excess water.",
+        "watering_reminder": "Soak for 20-30 minutes weekly and shake off excess water.",
         "harvest_time": "not applicable",
         "toxicity": "non-toxic",
         "care_tips": "Ensure proper air circulation and avoid waterlogging.",
@@ -5569,7 +5569,7 @@
     {
         "id": 160,
         "name": "Cast iron plant (Aspidistra)",
-        "watering": "bi-weekly",
+        "watering": "biweekly",
         "details": "The cast iron plant is a tough, low-maintenance houseplant known for its dark green, glossy leaves. It thrives in low light and is highly resistant to neglect.",
         "image": "default.png",
         "cost": "$25",

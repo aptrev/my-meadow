@@ -8,7 +8,6 @@ import plantsData from '../data/plants.json';
 import "../style/toolbar.css";
 import '../style/home.css';
 import '../style/outdooredit.css';
-import { CollapseButton } from "./Buttons/Buttons";
 
 export default function PlantInfo({ garden, plants, plant, onSelect, plots }) {
     const [show, setShow] = useState(true);
@@ -24,6 +23,8 @@ export default function PlantInfo({ garden, plants, plant, onSelect, plots }) {
     }
 
     useEffect(() => {
+        console.log("Selected plant:", plant);
+        console.log("Selected plantssss:", plants);
         if (plant) {
             // Match by plant name or ID from your props
             const matchedPlant = plantsData.find(p => p.name === plant.name);

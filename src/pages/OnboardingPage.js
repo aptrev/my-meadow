@@ -5,103 +5,26 @@ import shelfImage from '../assets/images/shelf.png';
 import cobblestoneImage from '../assets/images/cobblestone.png';
 import '../style/home.css';
 import AppContainer from "../components/AppContainer/AppContainer";
-import { collection, addDoc, updateDoc, doc, getDoc, arrayUnion } from "firebase/firestore";
-import db from '../firebase/FirebaseDB'
 import { AuthContext } from "../components/AuthProvider";
 import { createGarden } from '../utilities/FirebaseUtils'
 
-const templates = [
-  {
-    plots: [
-      {
-        id: null,
-        shape: 'circle',
-        name: 'plot',
-        plant: null,
-        x: 100,
-        y: 250,
-        rotation: 0,
-        radius: 50,
-        draggable: true
-      },
-      {
-        id: null,
-        shape: 'rect',
-        name: 'plot',
-        plant: null,
-        x: 200,
-        y: 250,
-        rotation: 0,
-        width: 100,
-        height: 100,
-        draggable: true
-      },
-      {
-        id: null,
-        shape: 'ellipse',
-        name: 'plot',
-        plant: null,
-        x: 400,
-        y: 250,
-        rotation: 0,
-        radius: {
-          x: 75,
-          y: 50,
-        },
-        draggable: true
-      },
-      {
-        id: null,
-        shape: 'arc',
-        name: 'plot',
-        plant: null,
-        x: 600,
-        y: 250,
-        rotation: 0,
-        innerRadius: 25,
-        outerRadius: 50,
-        angle: 180,
-        draggable: true
-      },
-      {
-        id: null,
-        shape: 'polygon',
-        name: 'plot',
-        plant: null,
-        x: 800,
-        y: 250,
-        rotation: 0,
-        sides: 6,
-        radius: 50,
-        draggable: true
-      },
-      {
-        id: null,
-        shape: 'wedge',
-        name: 'plot',
-        plant: null,
-        x: 100,
-        y: 125,
-        radius: 100,
-        angle: 60,
-        rotation: -120,
-        draggable: true
-      },
-      {
-        id: null,
-        shape: 'ring',
-        name: 'plot',
-        plant: null,
-        x: 400,
-        y: 100,
-        rotation: 0,
-        innerRadius: 25,
-        outerRadius: 50,
-        draggable: true
-      }
-    ],
-  }
-]
+const getRandomFillRotation = () => {
+  const min = 0;
+  const max = 360;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const getRandomFillScaleX = () => {
+  const min = 0.05;
+  const max = 0.5;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const getRandomFillScaleY = () => {
+  const min = 0.05;
+  const max = 0.5;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 const Onboarding = () => {
   const [location, setLocation] = useState("indoor");
@@ -160,6 +83,9 @@ const Onboarding = () => {
       paths: [],
       objects: [],
       text: [],
+      randomFillRotation: getRandomFillRotation(),
+      randomFillScaleX: getRandomFillScaleX(),
+      randomFillScaleY: getRandomFillScaleY(),
     };
 
     localStorage.setItem("selectedTemplate", template);

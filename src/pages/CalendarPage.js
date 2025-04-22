@@ -9,6 +9,7 @@ import { useParams } from "react-router-dom";
 import GardenNavbar from "../components/GardenNavbar";
 import Sidebar from "../components/Sidebar/Sidebar";
 import { retrieveGarden } from '../utilities/FirebaseUtils';
+import AppContainer from "../components/AppContainer/AppContainer";
 
 const plant_species = [
   {
@@ -17,20 +18,6 @@ const plant_species = [
     src: 'marigold.png',
     color: 'orange',
     waterFrequency: 'every 2 days'
-  },
-  {
-    id: 324,
-    name: 'Magnolia',
-    src: 'magnolia.png',
-    color: 'beige',
-    waterFrequency: 'weekly'
-  },
-  {
-    id: 1194,
-    name: 'Begonia',
-    src: 'begonia.png',
-    color: 'pink',
-    waterFrequency: 'every 3 days'
   },
   {
     id: 6791,
@@ -42,39 +29,74 @@ const plant_species = [
 ];
 
 const frequencyMap = {
+  "daily": 1,
   "every 2 days": 2,
   "every 3 days": 3,
-  "weekly": 7
+  "twice a week": 3,
+  "weekly": 7,
+  "biweekly": 14
 };
 
 const MyMeadowCalendar = () => {
   const { id } = useParams();
   const [view, setView] = useState("timeGridDay");
   const [showSidebar, setShowSidebar] = useState(false);
-  const [notes, setNotes] = useState("Reap and gather tomatoes from Garden 1\nBuy new iris seeds\nPay neighbor to weed garden");
+  const [notes, setNotes] = useState("Reap and gather tomatoes from Garden \nBuy new iris seeds\nPay neighbor to weed garden");
   const [garden, setGarden] = useState(null);
   const [events, setEvents] = useState([]);
-
-  // generate watering events based on plots and plant schedule
+  
+  useEffect(() => {
+    if (id) {
+      retrieveGarden(id)
+        .then((data) => {
+          // Ensure plants data is correctly merged with existing data from Firebase
+          // data.plants = plant_species;
+          setGarden(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching garden:", error);
+        });
+    }
+  }, [id]);
+  
+  useEffect(() => {
+    // Check that garden and garden.plots are available
+    
+    if (garden && garden.plots) {
+      const generated = generateWateringEvents(garden.plots);
+      setEvents(generated);
+    }
+  }, [garden]);  // Re-run the effect only when garden changes
+  
   const generateWateringEvents = (plots) => {
-    const now = new Date(); // current date
-    const plantIds = plots.map(p => p.plant).filter(Boolean); // get all planted IDs
-    const uniquePlantIds = [...new Set(plantIds)];
-
-    let newEvents = [];
-
-    uniquePlantIds.forEach(id => {
-      const plant = plant_species.find(p => p.id === id);
-      if (!plant || !plant.waterFrequency) return;
-
-      const interval = frequencyMap[plant.waterFrequency];
+    console.log("GARDEN DATA: ", garden);
+    console.log("ID: ", id);
+  
+    const now = new Date();
+    if (!garden) return []; // Avoid error if garden is not loaded yet
+  
+    let gardenPlants = [];
+  
+    // Normalize access to plants/flowers
+    if (garden.location === "outdoor") {
+      gardenPlants = garden.plants || [];
+    } else if (garden.location === "indoor") {
+      gardenPlants = (garden.pots || []).map(pot => pot.flower).filter(Boolean); // Get each flower in a pot
+    }
+  
+    console.log("Normalized Plants: ", gardenPlants);
+  
+    const newEvents = [];
+  
+    gardenPlants.forEach(plant => {
+      const interval = frequencyMap[plant.waterFrequency] || 7; // Default to 7 days if undefined
       if (!interval) return;
-
+  
       let current = new Date(now);
-
+  
       for (let i = 0; i < 10; i++) {
         const date = new Date(current);
-        date.setHours(8, 0, 0, 0); // 8am
+        date.setHours(10, 0, 0, 0);  // Set watering time to 10am
         newEvents.push({
           title: `Water ${plant.name}`,
           start: date.toISOString()
@@ -82,53 +104,28 @@ const MyMeadowCalendar = () => {
         current.setDate(current.getDate() + interval);
       }
     });
-
+  
     return newEvents;
   };
-
-  useEffect(() => {
-    let gardens = [];
-    try {
-      gardens = JSON.parse(localStorage.getItem("gardens")) || [];
-    } catch (e) {
-      gardens = [];
-    }
-    const selectedId = localStorage.getItem("gardenId");
-    const garden = gardens.find(g => g.id === selectedId);
-    setGarden(garden);
-  }, []);
-
-  useEffect(() => {
-    if (id) {
-      retrieveGarden(id)
-        .then((data) => {
-          data.plants = plant_species;
-          setGarden(data);
-        });
-    }
-  }, [id]);
-
-  useEffect(() => {
-    if (garden?.plots) {
-      const generated = generateWateringEvents(garden.plots);
-      setEvents(generated);
-    }
-  }, [garden]);
+  
 
   return (
-    <div>
-      <GardenNavbar onGardenChange={() => window.location.reload()} onSidebarToggle={() => setShowSidebar(true)} />
-      <Sidebar show={showSidebar} onClose={() => setShowSidebar(false)} />
+    <AppContainer>
 
       <div className="text-center my-3">
-        <ButtonGroup setView={setView} />
+        <h3 className="mb-2" 
+                style={{ 
+                  fontFamily: '"Lucida Handwriting", "Cursive", sans-serif', 
+                  fontSize: '3rem'
+                }}>{garden?.name ? `${garden.name}'s Calendar` : "Loading garden..."}</h3>
       </div>
 
       <div className="container">
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          initialView={view}
+          initialView="dayGridMonth"
           events={events}
+          height="auto"
         />
       </div>
 
@@ -141,17 +138,8 @@ const MyMeadowCalendar = () => {
           onChange={(e) => setNotes(e.target.value)}
         />
       </div>
-    </div>
+    </AppContainer>
   );
 };
-
-const ButtonGroup = ({ setView }) => (
-  <>
-    <button className="btn btn-success mx-1" onClick={() => setView("dayGridDay")}>Day</button>
-    <button className="btn btn-success mx-1" onClick={() => setView("timeGridThreeDay")}>3 Days</button>
-    <button className="btn btn-success mx-1" onClick={() => setView("timeGridWeek")}>Week</button>
-    <button className="btn btn-success mx-1" onClick={() => setView("dayGridMonth")}>Month</button>
-  </>
-);
 
 export default MyMeadowCalendar;

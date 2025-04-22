@@ -1,0 +1,48 @@
+:root {
+    --sidebar-bg-color: var(--primaryLightGreen);
+    --sidebar-color: var(--primaryDarkGreen);
+    --sidebar-color-hover: white;
+    --sidebar-icon-color: white;
+    /* --sidebar-button-color: white; */
+}
+
+.sidebar {
+    color: var(--sidebar-color);
+    background-color: var(--sidebar-bg-color);
+}
+
+.sidebar .offcanvas-body {
+    padding: 0;
+}
+
+.sidebar a:first-child {
+    border-top: 2px solid var(--sidebar-color);
+}
+
+.sidebar a {
+    padding: 10px;
+    border-bottom: 2px solid var(--sidebar-color);
+    overflow: hidden;
+    position: relative;
+}
+
+.sidebar a::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--sidebar-color), transparent );
+    transition: width 0.4s ease-in-out;
+    z-index: -1;
+  }
+
+.sidebar a:hover{
+    color: var(--sidebar-color-hover);
+}
+
+.sidebar a:hover::before {
+    color: var(--sidebar-color-hover);
+    width: 100%;
+}

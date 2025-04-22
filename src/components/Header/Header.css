@@ -1,0 +1,64 @@
+:root {
+    --header-bg-color: var(--primaryDarkGreen);
+    --header-logo-color: white;
+    --header-button-color: white;
+}
+
+.site-header {
+    position: relative;
+    padding: 0;
+    width: 100%;
+    margin: 0 auto;
+    /* display: flex;
+  flex-direction: column; */
+    box-sizing: border-box;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.site-header .tool-overlay {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--secondaryDarkGreen);
+    -webkit-mask: url("../../assets/images/decor/garden-tools-mask.svg");
+    mask: url("../../assets/images/decor/garden-tools-mask.svg");
+    mask-repeat: repeat;
+    mask-mode: luminance;
+    /* mask-size: contain; */
+}
+
+/* .svg-wrapper {
+    z-index: 1;
+    height: 100%;
+    background-color: var(--header-bg-color);
+} */
+
+.svg-header-logo {
+    cursor: pointer;
+    max-height: 50px;
+    width: 100%;
+    filter:
+        drop-shadow(-1px -1px 0px var(--header-bg-color)) drop-shadow(2px -1px 0px var(--header-bg-color)) drop-shadow(2px 2px 0px var(--header-bg-color)) drop-shadow(-1px 2px 0px var(--header-bg-color))
+}
+
+.btn-bar {
+    outline: none !important;
+    color: white !important;
+    background-color: var(--primaryDarkGreen) !important;
+    /* border: 2px solid var(--primaryLightGreen) !important; */
+    
+}
+
+.btn-bar:hover,
+.btn-bar:active,
+.btn-bar:focus {
+    color: var(--primaryDarkGreen) !important;
+    background-color: white !important;
+    backdrop-filter: blur(5px) !important;
+    /* border: 2px solid transparent !important; */
+}

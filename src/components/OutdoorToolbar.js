@@ -1,16 +1,14 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState } from 'react';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton'
 import Button from 'react-bootstrap/Button'
 import { Toolbar } from "radix-ui";
-import { Collapsible } from "radix-ui";
-import { PlusCircle, Flower2, XLg, Circle, Square, Star, ArrowCounterclockwise, ArrowClockwise, Trash3 } from 'react-bootstrap-icons';
-import Overlay from 'react-bootstrap/Overlay';
-import { ReactSVG } from 'react-svg'
+import { ArrowCounterclockwise, ArrowClockwise, Trash3 } from 'react-bootstrap-icons';
 import "../style/toolbar.css";
 import "../style/home.css";
 
-export default function OutdoorToolbar({ onUndo, onRedo, onDelete, stageButtons, elementButtons, selectedElement }) {
+export default function OutdoorToolbar({ onUndo, onRedo, onDelete, stageButtons, checked,
+    elementButtons, selectedElement, sliderValue, onSliderChange }) {
     const [selected, setSelected] = useState(Array.from({length: stageButtons.length}, () => false));
 
     const handleSelect = (index) => {
@@ -23,17 +21,17 @@ export default function OutdoorToolbar({ onUndo, onRedo, onDelete, stageButtons,
     return (
         <div className='d-flex flex-row align-items-center justify-content-center position-absolute w-100'>
             <Toolbar.Root className="ToolbarRoot position-relative">
-                <div className='d-flex d-row justify-content-center align-items-center'>
+                <div className='d-flex d-row justify-content-center align-items-center gap-1'>
                     {stageButtons.map((button, index) => {
                         return <ToggleButton
-                            className={`${(selected[index] ? 'active' : '')}`}
+                            className={`${(checked[index] ? 'active' : '')}`}
                             key={button.id}
                             id={button.id}
                             type='checkbox'
                             variant='toggle'
                             name={button.name}
                             title={button.name}
-                            checked={selected[index]}
+                            checked={checked[index]}
                             onChange={(e) => handleSelect(index)}
                         >{button.label}</ToggleButton>
                     })}
