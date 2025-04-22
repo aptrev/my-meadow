@@ -15,8 +15,11 @@ import trashIcon from '../assets/images/trash.png';
 import LeftSidebarIndoor from '../components/LeftSidebarIndoor';
 import ElementPicker from '../components/ElementPicker';
 import PlantInfo from '../components/PlantInfo';
-import { retrieveGarden } from '../utilities/FirebaseUtils'; 
+import { retrieveGarden, updateGarden } from '../utilities/FirebaseUtils'; 
 import '../style/indooredit.css';
+import { Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { updateCurrentUser } from 'firebase/auth';
 
 export default function IndoorEditPage() {
   const { id } = useParams();
@@ -40,6 +43,7 @@ export default function IndoorEditPage() {
   const trashImg = useImage(trashIcon)[0];
   const stageRef = useRef();
   const containerRef = useRef();
+  const navigate = useNavigate();
 
   const stageSize = { width: 435, height: 435, scale: 1 };
 
@@ -77,10 +81,28 @@ export default function IndoorEditPage() {
     }
   }, [id]);
 
-  const saveGarden = useCallback((pots) => {
-    const newGarden = { ...garden, pots };
+  const saveGarden = useCallback((pots, plants) => {
+    const newGarden = { 
+      ...garden, 
+      pots, 
+      plants // Add the plants array here
+    };
+    
+    // Logging for debugging purposes
+    // console.log("Garden Info Indoor Edit: ", garden);
+    // console.log("Pots Info Indoor Edit: ", pots);
+    // console.log("Plants Info Indoor Edit: ", plants);
+  
+    // Save to localStorage
     localStorage.setItem('savedGarden', JSON.stringify(newGarden));
+  
+    // Update the garden in Firebase
+    updateGarden(id, newGarden)
+      .catch((e) => {
+        console.error(`Error saving garden: ${newGarden.name}`, e);
+      });
   }, [garden]);
+  
 
   useEffect(() => {
     if (pots.length > 0) {
@@ -298,6 +320,7 @@ export default function IndoorEditPage() {
           <Toast.Body className="text-white text-center">{toastMessage}</Toast.Body>
         </Toast>
       </ToastContainer>
+
     </Container>
   );
 }

@@ -24,6 +24,7 @@ export default function PlantInfo({ garden, plants, plant, onSelect, plots }) {
 
     useEffect(() => {
         console.log("Selected plant:", plant);
+        console.log("Selected plantssss:", plants);
         if (plant) {
             // Match by plant name or ID from your props
             const matchedPlant = plantsData.find(p => p.name === plant.name);

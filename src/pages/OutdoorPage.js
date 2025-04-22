@@ -184,6 +184,18 @@ const Outdoor = () => {
         </>
       )}
       <ToastContainer />
+      <Button 
+        onClick={() => navigate(`/calendar/${id}`)} 
+        style={{
+          backgroundColor: 'white',
+          color: 'black',
+          border: '2px solid black',
+          marginTop: '40px',
+          marginBottom: '20px'
+        }}
+      >
+        Go to Calendar
+      </Button>
     </AppContainer>
   );
 };
